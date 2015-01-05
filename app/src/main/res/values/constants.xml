@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="ohc_network_b_cast_port">4242</integer>
+    <integer name="ohc_network_rx_l_port">4243</integer>
+</resources>

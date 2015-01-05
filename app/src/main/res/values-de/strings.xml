@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">OHC</string>
+    <string name="uname">Benutzer</string>
+    <string name="connect">Verbinden</string>
+    <string name="password">Passwort</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="status_connecing">Verbinde...</string>
+    <string name="status_failed">Verbindung fehlgeschlagen</string>
+    <string name="status_nofind">Basisstation nicht gefunden</string>
+    <string name="status_fail_network">Initialisierung fehlgeschlagen</string>
+
+</resources>
