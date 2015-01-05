@@ -65,12 +65,8 @@ public class OHC_login extends ActionBarActivity
 
 	public void update_network_status(boolean state)
 	{
-		if(state)
-		{
+		if(!state)
 			this.t_status.setText(R.string.status_nofind);
-		}
-		else
-			this.t_status.setText("");
 		this.findViewById(R.id.bt_connect).setEnabled(OHC.network != null);
 	}
 

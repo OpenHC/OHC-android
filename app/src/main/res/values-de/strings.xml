@@ -9,6 +9,7 @@
     <string name="status_connecing">Verbinde...</string>
     <string name="status_failed">Verbindung fehlgeschlagen</string>
     <string name="status_nofind">Basisstation nicht gefunden</string>
+    <string name="status_found">Basisstation gefunden. IP: </string>
     <string name="status_fail_network">Initialisierung fehlgeschlagen</string>
 
 </resources>

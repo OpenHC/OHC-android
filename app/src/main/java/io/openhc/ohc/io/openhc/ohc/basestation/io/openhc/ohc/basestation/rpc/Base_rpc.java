@@ -24,7 +24,7 @@ public class Base_rpc
 		{
 			InetAddress addr = InetAddress.getByName(object.getString("ip_address"));
 			int port = object.getInt("port");
-			this.station.update_address(new InetSocketAddress(addr, port));
+			this.station.update_endpoint(new InetSocketAddress(addr, port));
 		}
 		catch (Exception ex)
 		{

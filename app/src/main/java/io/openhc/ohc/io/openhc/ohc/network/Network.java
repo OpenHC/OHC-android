@@ -29,6 +29,7 @@ public class Network
 	private Context ctx;
 
 	private Receiver receiver;
+	private Sender sender;
 	private int port_b_cast;
 
 	public Network(Context ctx) throws Exception
@@ -84,7 +85,8 @@ public class Network
 
 	public Sender setup_sender(Basestation bs)
 	{
-		return new Sender();
+		this.sender = new Sender();
+		return this.sender;
 	}
 
 	public Receiver setup_receiver(Basestation bs)

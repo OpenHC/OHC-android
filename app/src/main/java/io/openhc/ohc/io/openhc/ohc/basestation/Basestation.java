@@ -10,8 +10,10 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_login;
+import io.openhc.ohc.R;
 import io.openhc.ohc.io.openhc.ohc.basestation.io.openhc.ohc.basestation.rpc.Base_rpc;
 import io.openhc.ohc.io.openhc.ohc.network.Network;
+import io.openhc.ohc.io.openhc.ohc.network.Sender;
 
 public class Basestation
 {
@@ -20,6 +22,7 @@ public class Basestation
 	private Base_rpc rpc_interface;
 
 	private InetSocketAddress endpoint_address;
+	private Sender sender;
 
 	public Basestation(OHC_login login_form)
 	{
@@ -33,11 +36,15 @@ public class Basestation
 		return this.login_form;
 	}
 
-	public void update_address(InetSocketAddress addr)
+	public void update_endpoint(InetSocketAddress addr)
 	{
 		this.login_form.update_network_status(addr != null);
+		this.login_form.set_status(this.login_form.getString(R.string.status_found) + addr.getHostString());
 		this.endpoint_address = addr;
 		OHC.logger.log(Level.INFO , String.format("Endpoint address updated: %s:%s", addr.getAddress().getHostAddress(), Integer.toString(addr.getPort())));
+		if(this.sender != null)
+			this.sender.kill();
+		this.sender = new Sender(this.endpoint_address);
 	}
 
 	public void handle_packet(JSONObject packet)
@@ -45,6 +52,7 @@ public class Basestation
 		try
 		{
 			String method = packet.getString("method");
+			OHC.logger.log(Level.WARNING, "Received RPC call: " + method);
 			this.rpc_interface.getClass().getMethod(method, JSONObject.class).invoke(this.rpc_interface, packet);
 		}
 		catch(Exception ex)

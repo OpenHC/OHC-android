@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.io.openhc.ohc.basestation.Basestation;
 
-public class Receiver extends AsyncTask<Void, Void, Void>
+public class Receiver extends AsyncTask<Void, JSONObject, Void>
 {
 	private DatagramSocket socket;
 	private Basestation basestation;
@@ -31,9 +31,10 @@ public class Receiver extends AsyncTask<Void, Void, Void>
 			try
 			{
 				this.socket.receive(packet);
+				OHC.logger.log(Level.WARNING, "Packet received");
 				String jsonStr = new String(packet.getData(), "UTF-8");
 				JSONObject json = new JSONObject(jsonStr);
-				this.basestation.handle_packet(json);
+				this.publishProgress(json);
 			}
 			catch(Exception ex)
 			{
@@ -42,6 +43,12 @@ public class Receiver extends AsyncTask<Void, Void, Void>
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void onProgressUpdate(JSONObject... args)
+	{
+		this.basestation.handle_packet(args[0]);
 	}
 
 	public int get_port()
