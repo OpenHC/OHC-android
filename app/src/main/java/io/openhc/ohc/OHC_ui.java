@@ -1,44 +1,44 @@
 package io.openhc.ohc;
 
-import android.content.Context;
-import android.net.DhcpInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.nio.charset.Charset;
-import java.util.logging.Logger;
 
-import io.openhc.ohc.io.openhc.ohc.basestation.Basestation;
-import io.openhc.ohc.io.openhc.ohc.network.BroadcastSender;
-
-
-public class OHC_login extends ActionBarActivity
+public class OHC_ui extends ActionBarActivity implements View.OnClickListener, TextWatcher
 {
 	private TextView t_status;
 	private Button bt_connect;
 	private EditText e_uname;
 	private EditText e_passwd;
 
+	private boolean nw_status;
+	private boolean lc_status;
+	private boolean lg_status;
+
+	private OHC ohc;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_ohc_login);
+		this.ohc = new OHC(this);
+		this.setContentView(ohc.get_current_view());
 		this.t_status = (TextView)this.findViewById(R.id.t_status);
 		this.bt_connect = (Button)this.findViewById(R.id.bt_connect);
 		this.e_uname = (EditText)this.findViewById(R.id.e_uname);
 		this.e_passwd = (EditText)this.findViewById(R.id.e_passwd);
-		new OHC(this).init();
+		this.e_uname.addTextChangedListener(this);
+		this.e_passwd.addTextChangedListener(this);
+		this.bt_connect.setOnClickListener(this);
+		this.ohc.init();
 	}
 
 	@Override
@@ -63,11 +63,46 @@ public class OHC_login extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	public void onClick(View v)
+	{
+		if(v == this.bt_connect)
+		{
+			this.lg_status = true;
+			this.recalc_bt_connect();
+			this.ohc.connect(this.e_uname.getText().toString(), this.e_passwd.getText().toString());
+		}
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence cs, int start, int count, int after)
+	{
+
+	}
+
+	public void onTextChanged(CharSequence cs, int start, int before, int count)
+	{
+		this.lc_status = this.e_passwd.length() > 0 && this.e_uname.length() > 0;
+		this.recalc_bt_connect();
+	}
+
+	@Override
+	public void afterTextChanged(Editable e)
+	{
+
+	}
+
+	public void recalc_bt_connect()
+	{
+		this.bt_connect.setEnabled(this.nw_status && this.lc_status && !this.lg_status);
+	}
+
 	public void update_network_status(boolean state)
 	{
 		if(!state)
 			this.t_status.setText(R.string.status_nofind);
-		this.findViewById(R.id.bt_connect).setEnabled(OHC.network != null);
+		this.nw_status = state;
+		this.recalc_bt_connect();
 	}
 
 	public void set_status(String str)

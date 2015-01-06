@@ -1,49 +1,38 @@
-package io.openhc.ohc.io.openhc.ohc.basestation;
-
-import android.content.Context;
+package io.openhc.ohc.basestation;
 
 import org.json.JSONObject;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
-import io.openhc.ohc.OHC_login;
 import io.openhc.ohc.R;
-import io.openhc.ohc.io.openhc.ohc.basestation.io.openhc.ohc.basestation.rpc.Base_rpc;
-import io.openhc.ohc.io.openhc.ohc.network.Network;
-import io.openhc.ohc.io.openhc.ohc.network.Sender;
+import io.openhc.ohc.basestation.rpc.Base_rpc;
+import io.openhc.ohc.skynet.Network;
+import io.openhc.ohc.skynet.Sender;
 
 public class Basestation
 {
 	private Network network;
-	private OHC_login login_form;
+	private OHC ohc;
 	private Base_rpc rpc_interface;
 
 	private InetSocketAddress endpoint_address;
 	private Sender sender;
 
-	public Basestation(OHC_login login_form)
+	public Basestation(OHC ohc)
 	{
-		this.network = OHC.network;
-		this.login_form = login_form;
+		this.network = ohc.network;
+		this.ohc = ohc;
 		this.rpc_interface = new Base_rpc(this);
-	}
-
-	public OHC_login get_context()
-	{
-		return this.login_form;
 	}
 
 	public void update_endpoint(InetSocketAddress addr)
 	{
-		this.login_form.update_network_status(addr != null);
-		this.login_form.set_status(this.login_form.getString(R.string.status_found) + addr.getHostString());
+		this.ohc.get_context().update_network_status(addr != null);
+		this.ohc.get_context().set_status(this.ohc.get_context().getString(R.string.status_found) + addr.getHostString());
 		this.endpoint_address = addr;
 		OHC.logger.log(Level.INFO , String.format("Endpoint address updated: %s:%s", addr.getAddress().getHostAddress(), Integer.toString(addr.getPort())));
-		if(this.sender != null)
-			this.sender.kill();
 		this.sender = new Sender(this.endpoint_address);
 	}
 
@@ -58,6 +47,21 @@ public class Basestation
 		catch(Exception ex)
 		{
 			OHC.logger.log(Level.SEVERE, "JSON encoded data is missing valid rpc data: " + ex.getMessage());
+		}
+	}
+
+	public void login(String uname, String passwd)
+	{
+		try
+		{
+			JSONObject json = new JSONObject();
+			json.put("method", "login").put("uname", uname).put("passwd", passwd);
+			Sender s = new Sender(this.endpoint_address);
+			s.execute(json);
+		}
+		catch (Exception ex)
+		{
+			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
 	}
 }

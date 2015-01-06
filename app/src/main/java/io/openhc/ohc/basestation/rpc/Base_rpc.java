@@ -1,4 +1,4 @@
-package io.openhc.ohc.io.openhc.ohc.basestation.io.openhc.ohc.basestation.rpc;
+package io.openhc.ohc.basestation.rpc;
 
 import org.json.JSONObject;
 
@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
-import io.openhc.ohc.io.openhc.ohc.basestation.Basestation;
+import io.openhc.ohc.basestation.Basestation;
 
 public class Base_rpc
 {

@@ -1,4 +1,4 @@
-package io.openhc.ohc.io.openhc.ohc.network;
+package io.openhc.ohc.skynet;
 
 import android.os.AsyncTask;
 
@@ -9,7 +9,7 @@ import java.net.DatagramSocket;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
-import io.openhc.ohc.io.openhc.ohc.basestation.Basestation;
+import io.openhc.ohc.basestation.Basestation;
 
 public class Receiver extends AsyncTask<Void, JSONObject, Void>
 {

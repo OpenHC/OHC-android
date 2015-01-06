@@ -1,4 +1,4 @@
-package io.openhc.ohc.io.openhc.ohc.network;
+package io.openhc.ohc.skynet;
 
 import android.content.Context;
 import android.net.DhcpInfo;
@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
-import io.openhc.ohc.OHC_login;
+import io.openhc.ohc.OHC_ui;
 
 public class BroadcastSender extends AsyncTask<String, Void, Void>
 {

@@ -1,26 +1,20 @@
-package io.openhc.ohc.io.openhc.ohc.network;
+package io.openhc.ohc.skynet;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import org.json.JSONObject;
 
-import java.math.BigInteger;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.nio.channels.DatagramChannel;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.R;
-import io.openhc.ohc.io.openhc.ohc.basestation.Basestation;
+import io.openhc.ohc.basestation.Basestation;
 
 public class Network
 {
@@ -29,7 +23,6 @@ public class Network
 	private Context ctx;
 
 	private Receiver receiver;
-	private Sender sender;
 	private int port_b_cast;
 
 	public Network(Context ctx) throws Exception
@@ -81,12 +74,6 @@ public class Network
 		{
 			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
-	}
-
-	public Sender setup_sender(Basestation bs)
-	{
-		this.sender = new Sender();
-		return this.sender;
 	}
 
 	public Receiver setup_receiver(Basestation bs)

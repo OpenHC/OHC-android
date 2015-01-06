@@ -11,5 +11,7 @@
     <string name="status_nofind">Couldn\'t find basestation</string>
     <string name="status_found">Basestation found. IP: </string>
     <string name="status_fail_network">Initialization failed</string>
+    <string name="status_connecting">Connecting...</string>
+    <string name="status_connection_failed">Connection failed</string>
 
 </resources>

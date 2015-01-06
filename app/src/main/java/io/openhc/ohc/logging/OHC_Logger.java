@@ -1,4 +1,4 @@
-package io.openhc.ohc.io.openhc.ohc.io.openhc.ohc.logging;
+package io.openhc.ohc.logging;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
