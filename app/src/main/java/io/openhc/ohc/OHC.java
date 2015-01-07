@@ -16,6 +16,7 @@ public class OHC
 	public Network network = null;
 
 	private OHC_ui login_form;
+	private Basestation station;
 
 	private int ui_current_view = R.layout.activity_ohc_login;
 
@@ -39,7 +40,7 @@ public class OHC
 			this.login_form.set_status(this.login_form.getString(R.string.status_fail_network));
 			return;
 		}
-		Basestation station = new Basestation(this);
+		this.station = new Basestation(this);
 		Receiver receiver = network.setup_receiver(station);
 		receiver.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); //Run this task in parallel to others
 		network.get_basestation_address(station);
@@ -57,6 +58,6 @@ public class OHC
 
 	public void connect(String uname, String passwd)
 	{
-
+		this.station.login(uname, passwd);
 	}
 }

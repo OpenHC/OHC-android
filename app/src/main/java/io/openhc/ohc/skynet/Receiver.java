@@ -31,8 +31,8 @@ public class Receiver extends AsyncTask<Void, JSONObject, Void>
 			try
 			{
 				this.socket.receive(packet);
-				OHC.logger.log(Level.WARNING, "Packet received");
 				String jsonStr = new String(packet.getData(), "UTF-8");
+				OHC.logger.log(Level.INFO, "Packet received: " + jsonStr);
 				JSONObject json = new JSONObject(jsonStr);
 				this.publishProgress(json);
 			}

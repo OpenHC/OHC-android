@@ -11,6 +11,10 @@ import java.net.SocketAddress;
 import java.net.SocketException;
 import java.nio.channels.DatagramChannel;
 import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import io.openhc.ohc.OHC;
 
 public class Sender extends AsyncTask<JSONObject, Void, Void>
 {
@@ -25,7 +29,8 @@ public class Sender extends AsyncTask<JSONObject, Void, Void>
 	{
 		try
 		{
-			String str = json.toString();
+			String str = json[0].toString();
+			OHC.logger.log(Level.INFO, "Sending: " + str);
 			byte[] data = str.getBytes(Charset.forName("UTF-8"));
 			DatagramSocket socket = DatagramChannel.open().socket();
 			DatagramPacket packet = new DatagramPacket(data, data.length, this.endpoint_address);
@@ -34,7 +39,7 @@ public class Sender extends AsyncTask<JSONObject, Void, Void>
 		}
 		catch (Exception ex)
 		{
-
+			OHC.logger.log(Level.SEVERE, "Failed to send packet: " + ex.getMessage(), ex);
 		}
 		return null;
 	}

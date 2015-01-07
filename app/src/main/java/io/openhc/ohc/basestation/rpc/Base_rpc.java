@@ -32,12 +32,12 @@ public class Base_rpc
 		}
 	}
 
-	public void set_login_token(JSONObject object)
+	public void set_session_token(JSONObject object)
 	{
 		try
 		{
-			String token = object.getString("login_token");
-			this.station.set_login_token(token);
+			String token = object.getString("session_token");
+			this.station.set_session_token(token);
 		}
 		catch (Exception ex)
 		{

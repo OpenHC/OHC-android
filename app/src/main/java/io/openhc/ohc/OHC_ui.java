@@ -38,6 +38,7 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 		this.e_uname.addTextChangedListener(this);
 		this.e_passwd.addTextChangedListener(this);
 		this.bt_connect.setOnClickListener(this);
+		this.t_status.setText(getString(R.string.status_nofind));
 		this.ohc.init();
 	}
 

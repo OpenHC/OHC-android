@@ -19,7 +19,7 @@ public class Basestation
 	private Sender sender;
 
 	private InetSocketAddress endpoint_address;
-	private String login_token = null;
+	private String session_token = null;
 
 
 	public Basestation(OHC ohc)
@@ -35,13 +35,14 @@ public class Basestation
 		this.ohc.get_context().update_network_status(addr != null);
 		this.ohc.get_context().set_status(this.ohc.get_context().getString(R.string.status_found) + addr.getHostString());
 		this.endpoint_address = addr;
-		OHC.logger.log(Level.INFO , String.format("Endpoint address updated: %s:%s", addr.getAddress().getHostAddress(), Integer.toString(addr.getPort())));
+		OHC.logger.log(Level.INFO, String.format("Endpoint address updated: %s:%s", addr.getAddress().getHostAddress(), Integer.toString(addr.getPort())));
 		this.sender = new Sender(this.endpoint_address);
 	}
 
-	public void set_login_token(String token)
+	public void set_session_token(String token)
 	{
-		this.login_token = token;
+		OHC.logger.log(Level.INFO, "Session token updated");
+		this.session_token = token;
 	}
 
 	//Dynamic calls to Base_rpc depending on the received JSON data
