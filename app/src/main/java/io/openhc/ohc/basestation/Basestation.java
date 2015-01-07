@@ -16,9 +16,11 @@ public class Basestation
 	private Network network;
 	private OHC ohc;
 	private Base_rpc rpc_interface;
+	private Sender sender;
 
 	private InetSocketAddress endpoint_address;
-	private Sender sender;
+	private String login_token = null;
+
 
 	public Basestation(OHC ohc)
 	{
@@ -27,6 +29,7 @@ public class Basestation
 		this.rpc_interface = new Base_rpc(this);
 	}
 
+	//Code being called from Base_rpc
 	public void update_endpoint(InetSocketAddress addr)
 	{
 		this.ohc.get_context().update_network_status(addr != null);
@@ -36,12 +39,20 @@ public class Basestation
 		this.sender = new Sender(this.endpoint_address);
 	}
 
+	public void set_login_token(String token)
+	{
+		this.login_token = token;
+	}
+
+	//Dynamic calls to Base_rpc depending on the received JSON data
 	public void handle_packet(JSONObject packet)
 	{
 		try
 		{
 			String method = packet.getString("method");
 			OHC.logger.log(Level.WARNING, "Received RPC call: " + method);
+			//Dynamically reflecting into the local instance of Base_rpc to dynamically call functions inside
+			//Base_rpc depending on the method supplied by the main control unit (OHC-node)
 			this.rpc_interface.getClass().getMethod(method, JSONObject.class).invoke(this.rpc_interface, packet);
 		}
 		catch(Exception ex)
@@ -50,12 +61,28 @@ public class Basestation
 		}
 	}
 
+	//RPC functions calling methods on the main control unit (OHC-node)
 	public void login(String uname, String passwd)
 	{
 		try
 		{
 			JSONObject json = new JSONObject();
 			json.put("method", "login").put("uname", uname).put("passwd", passwd);
+			Sender s = new Sender(this.endpoint_address);
+			s.execute(json);
+		}
+		catch (Exception ex)
+		{
+			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+		}
+	}
+
+	public void get_num_devices()
+	{
+		try
+		{
+			JSONObject json = new JSONObject();
+			json.put("method", "get_num_devices");
 			Sender s = new Sender(this.endpoint_address);
 			s.execute(json);
 		}

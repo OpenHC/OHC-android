@@ -28,7 +28,20 @@ public class Base_rpc
 		}
 		catch (Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid ip address configuration: " + ex.getMessage());
+			OHC.logger.log(Level.WARNING, "Received invalid ip address configuration: " + ex.getMessage(), ex);
+		}
+	}
+
+	public void set_login_token(JSONObject object)
+	{
+		try
+		{
+			String token = object.getString("login_token");
+			this.station.set_login_token(token);
+		}
+		catch (Exception ex)
+		{
+			OHC.logger.log(Level.WARNING, "Received invalid login token configuration: " + ex.getMessage(), ex);
 		}
 	}
 }
