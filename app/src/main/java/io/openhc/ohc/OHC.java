@@ -1,11 +1,13 @@
 package io.openhc.ohc;
 
 import android.os.AsyncTask;
+import android.widget.ArrayAdapter;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.openhc.ohc.basestation.Basestation;
+import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.logging.OHC_Logger;
 import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.Receiver;
@@ -15,14 +17,14 @@ public class OHC
 	public static OHC_Logger logger = new OHC_Logger(Logger.getLogger("OHC"));
 	public Network network = null;
 
-	private OHC_ui login_form;
+	private OHC_ui context;
 	private Basestation station;
 
 	private int ui_current_view = R.layout.activity_ohc_login;
 
 	public OHC(OHC_ui ctx)
 	{
-		this.login_form = ctx;
+		this.context = ctx;
 		try
 		{
 			network = new Network(ctx);
@@ -37,7 +39,7 @@ public class OHC
 	{
 		if(this.network == null)
 		{
-			this.login_form.set_status(this.login_form.getString(R.string.status_fail_network));
+			this.context.set_status(this.context.getString(R.string.status_fail_network));
 			return;
 		}
 		this.station = new Basestation(this);
@@ -51,13 +53,24 @@ public class OHC
 		return this.ui_current_view;
 	}
 
+	public void set_view(int id)
+	{
+		this.context.setContentView(id);
+		this.ui_current_view = id;
+	}
+
 	public OHC_ui get_context()
 	{
-		return this.login_form;
+		return this.context;
 	}
 
 	public void connect(String uname, String passwd)
 	{
 		this.station.login(uname, passwd);
+	}
+
+	public void init_device_overview(Basestation bs)
+	{
+		ArrayAdapter<Device> deviceAdapter = new ArrayAdapter<Device>();
 	}
 }

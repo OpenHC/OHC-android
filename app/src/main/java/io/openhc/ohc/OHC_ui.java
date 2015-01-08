@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 
@@ -18,6 +19,8 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	private Button bt_connect;
 	private EditText e_uname;
 	private EditText e_passwd;
+
+	private ListView lv_devices;
 
 	private boolean nw_status;
 	private boolean lc_status;
@@ -29,17 +32,30 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		this.ohc = new OHC(this);
 		this.setContentView(ohc.get_current_view());
-		this.t_status = (TextView)this.findViewById(R.id.t_status);
-		this.bt_connect = (Button)this.findViewById(R.id.bt_connect);
-		this.e_uname = (EditText)this.findViewById(R.id.e_uname);
-		this.e_passwd = (EditText)this.findViewById(R.id.e_passwd);
-		this.e_uname.addTextChangedListener(this);
-		this.e_passwd.addTextChangedListener(this);
-		this.bt_connect.setOnClickListener(this);
-		this.t_status.setText(getString(R.string.status_nofind));
-		this.ohc.init();
+	}
+
+	@Override
+	public void setContentView(int id)
+	{
+		super.setContentView(id);
+		if(id == R.layout.activity_ohc_login)
+		{
+			this.ohc = new OHC(this);
+			this.t_status = (TextView) this.findViewById(R.id.t_status);
+			this.bt_connect = (Button) this.findViewById(R.id.bt_connect);
+			this.e_uname = (EditText) this.findViewById(R.id.e_uname);
+			this.e_passwd = (EditText) this.findViewById(R.id.e_passwd);
+			this.e_uname.addTextChangedListener(this);
+			this.e_passwd.addTextChangedListener(this);
+			this.bt_connect.setOnClickListener(this);
+			this.t_status.setText(getString(R.string.status_nofind));
+			this.ohc.init();
+		}
+		else if(id == R.layout.activity_ohc_overview)
+		{
+			this.lv_devices = (ListView) this.findViewById(R.id.lv_devices);
+		}
 	}
 
 	@Override
@@ -109,5 +125,10 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	public void set_status(String str)
 	{
 		this.t_status.setText(str);
+	}
+
+	public ListView get_lv_devices()
+	{
+		return this.lv_devices;
 	}
 }

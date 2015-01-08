@@ -67,7 +67,7 @@ public class Network
 		{
 			JSONObject json = new JSONObject();
 			json.put("method", "get_ip").put("port", this.receiver.get_port());
-			BroadcastSender b_cast_sender = new BroadcastSender(this.ctx, this.port_b_cast);
+			Broadcast_sender b_cast_sender = new Broadcast_sender(this.ctx, this.port_b_cast);
 			b_cast_sender.execute(json.toString());
 		}
 		catch (Exception ex)

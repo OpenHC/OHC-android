@@ -1,12 +1,17 @@
 package io.openhc.ohc.basestation;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.R;
+import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.rpc.Base_rpc;
 import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.Sender;
@@ -19,7 +24,11 @@ public class Basestation
 	private Sender sender;
 
 	private InetSocketAddress endpoint_address;
-	private String session_token = null;
+	private String session_token = "";
+	private int num_devices = -1;
+	private List<String> device_ids;
+
+	HashMap<String, Device> devices = new HashMap<>();
 
 
 	public Basestation(OHC ohc)
@@ -43,6 +52,39 @@ public class Basestation
 	{
 		OHC.logger.log(Level.INFO, "Session token updated");
 		this.session_token = token;
+		this.get_num_devices();
+	}
+
+	public void set_num_devices(int num_devices)
+	{
+		OHC.logger.log(Level.INFO, "Number of attached devices updated: " + num_devices);
+		this.num_devices = num_devices;
+		this.device_ids = new ArrayList<>();
+		for(int i = 0; i < this.num_devices; i++)
+		{
+			this.get_device_id(i);
+		}
+	}
+
+	public void set_device_id(int index, String id)
+	{
+		OHC.logger.log(Level.INFO, String.format("Setting id of device [%d]: %s", index, id));
+		if(index >= this.num_devices || index < 0)
+		{
+			OHC.logger.log(Level.WARNING, String.format("Device index '%d' out of range. Max %d", index, this.num_devices - 1));
+			return;
+		}
+		this.device_ids.set(index, id);
+		this.get_device_name(id);
+	}
+
+	public void device_set_name(String device_id, String name)
+	{
+		this.devices.put(device_id, new Device(name, device_id));
+		if(this.device_ids.indexOf(device_id) == this.num_devices - 1)
+		{
+			this.ohc.init_device_overview(this);
+		}
 	}
 
 	//Dynamic calls to Base_rpc depending on the received JSON data
@@ -51,15 +93,22 @@ public class Basestation
 		try
 		{
 			String method = packet.getString("method");
-			OHC.logger.log(Level.WARNING, "Received RPC call: " + method);
-			//Dynamically reflecting into the local instance of Base_rpc to dynamically call functions inside
-			//Base_rpc depending on the method supplied by the main control unit (OHC-node)
+			OHC.logger.log(Level.WARNING, "Received RPC: " + method);
+			/*Dynamically reflecting into the local instance of Base_rpc to dynamically call functions inside
+			Base_rpc depending on the method supplied by the main control unit (OHC-node)*/
 			this.rpc_interface.getClass().getMethod(method, JSONObject.class).invoke(this.rpc_interface, packet);
 		}
 		catch(Exception ex)
 		{
 			OHC.logger.log(Level.SEVERE, "JSON encoded data is missing valid rpc data: " + ex.getMessage());
 		}
+	}
+
+	private void make_rpc_call(JSONObject json) throws JSONException
+	{
+		json.put("session_token", this.session_token);
+		Sender s = new Sender(this.endpoint_address);
+		s.execute(json);
 	}
 
 	//RPC functions calling methods on the main control unit (OHC-node)
@@ -69,8 +118,7 @@ public class Basestation
 		{
 			JSONObject json = new JSONObject();
 			json.put("method", "login").put("uname", uname).put("passwd", passwd);
-			Sender s = new Sender(this.endpoint_address);
-			s.execute(json);
+			this.make_rpc_call(json);
 		}
 		catch (Exception ex)
 		{
@@ -84,8 +132,35 @@ public class Basestation
 		{
 			JSONObject json = new JSONObject();
 			json.put("method", "get_num_devices");
-			Sender s = new Sender(this.endpoint_address);
-			s.execute(json);
+			this.make_rpc_call(json);
+		}
+		catch (Exception ex)
+		{
+			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+		}
+	}
+
+	public void get_device_id(int index)
+	{
+		try
+		{
+			JSONObject json = new JSONObject();
+			json.put("method", "get_device_id").put("index", index);
+			this.make_rpc_call(json);
+		}
+		catch (Exception ex)
+		{
+			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+		}
+	}
+
+	public void get_device_name(String id)
+	{
+		try
+		{
+			JSONObject json = new JSONObject();
+			json.put("method", "device_get_name").put("id", id);
+			this.make_rpc_call(json);
 		}
 		catch (Exception ex)
 		{

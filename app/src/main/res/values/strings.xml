@@ -13,5 +13,6 @@
     <string name="status_fail_network">Initialization failed</string>
     <string name="status_connecting">Connecting...</string>
     <string name="status_connection_failed">Connection failed</string>
+    <string name="status_login_failed">Wrong username or password</string>
 
 </resources>
