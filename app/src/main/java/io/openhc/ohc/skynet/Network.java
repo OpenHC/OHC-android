@@ -29,15 +29,14 @@ public class Network
 	{
 		Resources resources = ctx.getResources();
 		this.port_b_cast = resources.getInteger(R.integer.ohc_network_b_cast_port);
-		int port_l_rx = resources.getInteger(R.integer.ohc_network_rx_l_port);
 		OHC.logger.log(Level.INFO, "Broadcast port is " + port_b_cast);
-		OHC.logger.log(Level.INFO, "Local RX port is " + port_l_rx);
 		try
 		{
 			DatagramChannel channel = DatagramChannel.open();
 			this.socket = channel.socket();
-			this.socket.bind(new InetSocketAddress(InetAddress.getByName("0.0.0.0"), port_l_rx));
-			OHC.logger.log(Level.INFO, "Listening on port " + port_l_rx);
+			//Neat trick: Setting port to 0 makes the socket pick a random unused port
+			this.socket.bind(new InetSocketAddress(InetAddress.getByName("0.0.0.0"), 0));
+			OHC.logger.log(Level.INFO, "Listening on port " + this.socket.getLocalPort());
 		}
 		catch (Exception ex)
 		{

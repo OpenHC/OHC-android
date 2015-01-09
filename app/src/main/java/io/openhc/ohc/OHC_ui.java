@@ -1,5 +1,6 @@
 package io.openhc.ohc;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
@@ -32,16 +33,18 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		this.setContentView(ohc.get_current_view());
+		if(this.ohc == null)
+			this.ohc = new OHC(this);
+		this.setContentView(this.ohc.get_current_view());
 	}
 
 	@Override
 	public void setContentView(int id)
 	{
 		super.setContentView(id);
+		this.ohc.set_current_view(id);
 		if(id == R.layout.activity_ohc_login)
 		{
-			this.ohc = new OHC(this);
 			this.t_status = (TextView) this.findViewById(R.id.t_status);
 			this.bt_connect = (Button) this.findViewById(R.id.bt_connect);
 			this.e_uname = (EditText) this.findViewById(R.id.e_uname);
@@ -67,6 +70,12 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	}
 
 	@Override
+	public void onBackPressed()
+	{
+		super.onBackPressed();
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
@@ -88,6 +97,7 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 			this.lg_status = true;
 			this.recalc_bt_connect();
 			this.ohc.connect(this.e_uname.getText().toString(), this.e_passwd.getText().toString());
+			this.set_status(getString(R.string.status_connecting));
 		}
 	}
 
@@ -125,6 +135,13 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	public void set_status(String str)
 	{
 		this.t_status.setText(str);
+	}
+
+	public void login_wrong()
+	{
+		this.lg_status = false;
+		this.set_status(getString(R.string.status_login_failed));
+		this.recalc_bt_connect();
 	}
 
 	public ListView get_lv_devices()

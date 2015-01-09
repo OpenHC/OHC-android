@@ -6,7 +6,9 @@ import org.json.JSONObject;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
@@ -48,11 +50,19 @@ public class Basestation
 		this.sender = new Sender(this.endpoint_address);
 	}
 
-	public void set_session_token(String token)
+	public void set_session_token(String token, boolean success)
 	{
-		OHC.logger.log(Level.INFO, "Session token updated");
-		this.session_token = token;
-		this.get_num_devices();
+		if(success)
+		{
+			OHC.logger.log(Level.INFO, "Session token updated");
+			this.session_token = token;
+			this.get_num_devices();
+		}
+		else
+		{
+			OHC.logger.log(Level.WARNING, "Wrong username and/or password");
+			this.ohc.get_context().login_wrong();
+		}
 	}
 
 	public void set_num_devices(int num_devices)
@@ -62,6 +72,7 @@ public class Basestation
 		this.device_ids = new ArrayList<>();
 		for(int i = 0; i < this.num_devices; i++)
 		{
+			this.device_ids.add("");
 			this.get_device_id(i);
 		}
 	}
@@ -78,12 +89,12 @@ public class Basestation
 		this.get_device_name(id);
 	}
 
-	public void device_set_name(String device_id, String name)
+	public void set_device_name(String device_id, String name)
 	{
 		this.devices.put(device_id, new Device(name, device_id));
 		if(this.device_ids.indexOf(device_id) == this.num_devices - 1)
 		{
-			this.ohc.init_device_overview(this);
+			this.ohc.draw_device_overview();
 		}
 	}
 
@@ -159,12 +170,24 @@ public class Basestation
 		try
 		{
 			JSONObject json = new JSONObject();
-			json.put("method", "device_get_name").put("id", id);
+			json.put("method", "get_device_name").put("id", id);
 			this.make_rpc_call(json);
 		}
 		catch (Exception ex)
 		{
 			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
+	}
+
+	public List<Device> get_devices()
+	{
+		List<Device> devices = new ArrayList<>();
+		Iterator it = this.devices.entrySet().iterator();
+		while(it.hasNext())
+		{
+			devices.add((Device)((Map.Entry)it.next()).getValue());
+			it.remove();
+		}
+		return devices;
 	}
 }

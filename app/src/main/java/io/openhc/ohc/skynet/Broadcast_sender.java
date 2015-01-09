@@ -35,11 +35,12 @@ public class Broadcast_sender extends AsyncTask<String, Void, Void>
 			OHC.logger.log(Level.WARNING, "Failed to retrieve dhcp info.");
 			return null;
 		}
-		int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
+		//Figure out the broadcast address
+		int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask; //Unseparated broadcast address
 		byte[] quads = new byte[4];
 		for (int k = 0; k < 4; k++)
-			quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
-		try
+			quads[k] = (byte) ((broadcast >> k * 8) & 0xFF); //Shift one byte out
+		try //Might return an invalid address if dhcp settings are garbage
 		{
 			return InetAddress.getByAddress(quads);
 		}

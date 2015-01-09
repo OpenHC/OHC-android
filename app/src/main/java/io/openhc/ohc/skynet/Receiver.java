@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.basestation.Basestation;
 
+/*Using an async task to get received data transfered to the UI thread without
+   having to care about synchronisation manually*/
 public class Receiver extends AsyncTask<Void, JSONObject, Void>
 {
 	private DatagramSocket socket;
@@ -34,6 +36,7 @@ public class Receiver extends AsyncTask<Void, JSONObject, Void>
 				String jsonStr = new String(packet.getData(), "UTF-8");
 				OHC.logger.log(Level.INFO, "Packet received: " + jsonStr);
 				JSONObject json = new JSONObject(jsonStr);
+				//Publish received data to UI thread via progress notification
 				this.publishProgress(json);
 			}
 			catch(Exception ex)
@@ -45,6 +48,7 @@ public class Receiver extends AsyncTask<Void, JSONObject, Void>
 		return null;
 	}
 
+	//This function is synchronized to the UI thread
 	@Override
 	public void onProgressUpdate(JSONObject... args)
 	{

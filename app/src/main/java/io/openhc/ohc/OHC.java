@@ -53,6 +53,11 @@ public class OHC
 		return this.ui_current_view;
 	}
 
+	public void set_current_view(int id)
+	{
+		this.ui_current_view = id;
+	}
+
 	public void set_view(int id)
 	{
 		this.context.setContentView(id);
@@ -69,8 +74,10 @@ public class OHC
 		this.station.login(uname, passwd);
 	}
 
-	public void init_device_overview(Basestation bs)
+	public void draw_device_overview()
 	{
-		ArrayAdapter<Device> deviceAdapter = new ArrayAdapter<Device>();
+		this.set_view(R.layout.activity_ohc_overview);
+		ArrayAdapter<Device> deviceAdapter = new ArrayAdapter<Device>(this.context, R.layout.list_view_item, this.station.get_devices());
+		this.context.get_lv_devices().setAdapter(deviceAdapter);
 	}
 }
