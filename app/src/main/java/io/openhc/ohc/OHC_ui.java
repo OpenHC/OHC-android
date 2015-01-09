@@ -13,6 +13,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
+import java.net.InetAddress;
+import java.util.logging.Level;
+
+import io.openhc.ohc.skynet.Broadcaster;
+import io.openhc.ohc.skynet.transaction.Transaction_generator;
+
 
 public class OHC_ui extends ActionBarActivity implements View.OnClickListener, TextWatcher
 {
@@ -94,10 +102,33 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	{
 		if(v == this.bt_connect)
 		{
-			this.lg_status = true;
+			/*this.lg_status = true;
 			this.recalc_bt_connect();
 			this.ohc.connect(this.e_uname.getText().toString(), this.e_passwd.getText().toString());
-			this.set_status(getString(R.string.status_connecting));
+			this.set_status(getString(R.string.status_connecting));*/
+			try
+			{
+				InetAddress addr = Broadcaster.get_broadcast_address(this);
+				Broadcaster b = new Broadcaster(addr, 4242, new Broadcaster.Broadcast_receiver()
+				{
+					@Override
+					public void on_receive_transaction(Transaction_generator.Transaction transaction)
+					{
+						if(!transaction.do_retry())
+							OHC.logger.log(Level.WARNING, "Target unreachable");
+						else
+							OHC.logger.log(Level.INFO, transaction.get_response().toString());
+					}
+				});
+				JSONObject obj = new JSONObject();
+				obj.put("method", "get_ip");
+				Transaction_generator.Transaction trans = new Transaction_generator().generate_transaction(obj);
+				b.execute(trans);
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace();
+			}
 		}
 	}
 

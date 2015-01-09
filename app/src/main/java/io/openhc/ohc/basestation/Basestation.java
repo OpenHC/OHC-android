@@ -17,6 +17,7 @@ import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.rpc.Base_rpc;
 import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.Sender;
+import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 public class Basestation
 {
@@ -24,6 +25,7 @@ public class Basestation
 	private OHC ohc;
 	private Base_rpc rpc_interface;
 	private Sender sender;
+	private Transaction_generator transaction_gen;
 
 	private InetSocketAddress endpoint_address;
 	private String session_token = "";
@@ -38,6 +40,7 @@ public class Basestation
 		this.network = ohc.network;
 		this.ohc = ohc;
 		this.rpc_interface = new Base_rpc(this);
+		this.transaction_gen = new Transaction_generator();
 	}
 
 	//Code being called from Base_rpc
@@ -189,5 +192,10 @@ public class Basestation
 			it.remove();
 		}
 		return devices;
+	}
+
+	public void receive_transaction()
+	{
+
 	}
 }

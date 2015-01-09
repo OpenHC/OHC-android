@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.Basestation;
+import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 public class Network
 {
@@ -65,7 +66,7 @@ public class Network
 		try
 		{
 			JSONObject json = new JSONObject();
-			json.put("method", "get_ip").put("port", this.receiver.get_port());
+			json.put("method", "get_ip").put("rport", this.receiver.get_port());
 			Broadcast_sender b_cast_sender = new Broadcast_sender(this.ctx, this.port_b_cast);
 			b_cast_sender.execute(json.toString());
 		}
@@ -73,6 +74,11 @@ public class Network
 		{
 			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
+	}
+
+	public void send_transaction(Transaction_generator.Transaction transaction)
+	{
+
 	}
 
 	public Receiver setup_receiver(Basestation bs)
