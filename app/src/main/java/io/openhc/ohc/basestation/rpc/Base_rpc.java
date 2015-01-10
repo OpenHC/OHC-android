@@ -124,12 +124,14 @@ public class Base_rpc
 				double max_value = field_json.getDouble("max_value");
 				double min_value = field_json.getDouble("min_value");
 				boolean writable = field_json.getBoolean("writable");
-				Field.Type data_type = Field.Type.valueOf(type);
-				Field field = new Field(data_type, name, min_value, max_value, writable);
+				Field.Type data_type = Field.Type.valueOf(type.toUpperCase());
+				Field field = new Field(this.station, id, field_id, data_type, name, min_value, max_value, writable, value);
 				this.station.device_set_field(id, field_id, field);
 			}
 			catch(Exception ex)
 			{
+				OHC.logger.log(Level.WARNING, "Received invalid field configuration: " +
+						ex.getMessage(), ex);
 				this.station.device_set_field(id, field_id, new Field());
 			}
 		}

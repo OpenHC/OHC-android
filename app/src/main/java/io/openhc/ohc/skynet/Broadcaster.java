@@ -134,7 +134,6 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 								else
 									OHC.logger.log(Level.WARNING,
 											"Received invalid transaction uuid");
-
 							}
 							catch(Exception ex)
 							{

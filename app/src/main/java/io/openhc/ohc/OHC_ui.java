@@ -17,6 +17,7 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 import java.net.InetAddress;
+import java.util.List;
 import java.util.logging.Level;
 
 import io.openhc.ohc.skynet.Broadcaster;
@@ -32,6 +33,7 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	private EditText e_passwd;
 
 	private ListView lv_devices;
+	private ListView lv_fields;
 
 	private boolean nw_status;
 	private boolean lc_status;
@@ -68,6 +70,10 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 		{
 			this.lv_devices = (ListView) this.findViewById(R.id.lv_devices);
 			this.lv_devices.setOnItemClickListener(this);
+		}
+		else if(id == R.layout.activity_ohc_device)
+		{
+			this.lv_fields = (ListView) this.findViewById(R.id.lv_fields);
 		}
 	}
 
@@ -172,5 +178,10 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	public ListView get_lv_devices()
 	{
 		return this.lv_devices;
+	}
+
+	public ListView get_lv_fields()
+	{
+		return this.lv_fields;
 	}
 }

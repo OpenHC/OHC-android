@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
@@ -237,6 +238,21 @@ public class Basestation implements Sender.Packet_receiver
 		{
 			JSONObject json = new JSONObject();
 			json.put("method", "device_get_field").put("device_id", id_dev).put("field_id", id_field);
+			this.make_rpc_call(json);
+		}
+		catch(Exception ex)
+		{
+			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+		}
+	}
+
+	public void device_set_field_value(String id_dev, int id_field, Object value)
+	{
+		try
+		{
+			JSONObject json = new JSONObject();
+			json.put("method", "device_set_field_value").put("device_id", id_dev)
+					.put("field_id", id_field).put("value", value);
 			this.make_rpc_call(json);
 		}
 		catch(Exception ex)

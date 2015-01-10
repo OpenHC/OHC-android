@@ -117,7 +117,7 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	public void draw_device_view(Device dev)
 	{
 		this.set_view(R.layout.activity_ohc_device);
-		Field_adapter deviceAdapter = new Field_adapter(this.context, R.layout.list_view_item, dev.get_fields());
-		this.context.get_lv_devices().setAdapter(deviceAdapter);
+		Field_adapter field_adapter = new Field_adapter(this.context, R.layout.list_view_group, dev.get_fields());
+		this.context.get_lv_fields().setAdapter(field_adapter);
 	}
 }

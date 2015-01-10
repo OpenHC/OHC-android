@@ -18,12 +18,13 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.R;
+import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.device.Field;
 import io.openhc.ohc.ui.input.filter.Input_filter_float;
 import io.openhc.ohc.ui.input.filter.Input_filter_int;
 import io.openhc.ohc.ui.input.filter.Input_filter_string;
 
-public class Field_adapter extends ArrayAdapter
+public class Field_adapter extends ArrayAdapter<Field>
 {
 	private List<Field> fields;
 
@@ -94,6 +95,7 @@ public class Field_adapter extends ArrayAdapter
 				v_value = null;
 		}
 		v_value.setEnabled(field.is_writable());
+		group.addView(v_value);
 		return group;
 	}
 }
