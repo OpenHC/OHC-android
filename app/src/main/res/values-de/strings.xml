@@ -6,7 +6,8 @@
     <string name="connect">Verbinden</string>
     <string name="password">Passwort</string>
     <string name="action_settings">Einstellungen</string>
-    <string name="status_nofind">Basisstation nicht gefunden</string>
+    <string name="status_searching">Suche Basisstation</string>
+    <string name="status_not_found">Basisstation nicht gefunden</string>
     <string name="status_found">Basisstation gefunden. IP: </string>
     <string name="status_fail_network">Initialisierung fehlgeschlagen</string>
     <string name="status_connecting">Verbinde...</string>

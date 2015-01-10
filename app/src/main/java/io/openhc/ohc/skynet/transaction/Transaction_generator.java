@@ -22,12 +22,12 @@ public class Transaction_generator
 		UUID uuid = UUID.randomUUID();
 		try
 		{
-			return new Transaction(json, uuid);
+			return new Transaction(json, uuid, tries);
 		}
-		catch (JSONException ex)
+		catch(JSONException ex)
 		{
-			/*This should NEVER, absolutely __NEVER__ happen (except if you plug in a broken JSON object)
-			 But that's why it's called an exception, isn't it?*/
+			/* This should NEVER, absolutely __NEVER__ happen (except if you hand in a broken JSON object)
+			 * But that's why it's called an exception, isn't it?*/
 			OHC.logger.log(Level.SEVERE, "Transaction generator dying x(");
 		}
 		return null;
@@ -35,27 +35,24 @@ public class Transaction_generator
 
 	public class Transaction
 	{
+		public final String UUID_KEY = "transaction_uuid";
+
 		private JSONObject json_request;
 		private JSONObject json_response;
 		private UUID uuid;
 		private int retry_counter;
-		private int max_retry;
-
-		protected Transaction(JSONObject json, UUID uuid) throws JSONException
-		{
-			this(json,uuid, 5);
-		}
+		private int max_retry_num;
 
 		protected Transaction(JSONObject json, UUID uuid, int max_retry) throws JSONException
 		{
 			this.json_request = json;
 			this.uuid = uuid;
-			this.max_retry = max_retry;
+			this.max_retry_num = max_retry;
 			try
 			{
-				json.put("transaction_uuid", this.get_uuid());
+				json.put(UUID_KEY, this.get_uuid());
 			}
-			catch (JSONException ex)
+			catch(JSONException ex)
 			{
 				OHC.logger.log(Level.SEVERE, "FATAL ERROR! FAILED TO SET TRANSACTION ID!");
 				throw ex;
@@ -96,15 +93,24 @@ public class Transaction_generator
 		{
 			try
 			{
-				return this.get_uuid().equals(json.getString("transaction_uuid"));
+				return this.get_uuid().equals(json.getString(UUID_KEY));
 			}
-			catch (Exception ex) { }
-			return false;
+			catch(Exception ex)
+			{
+				return false;
+			}
 		}
 
 		public boolean do_retry()
 		{
-			return this.retry_counter < this.max_retry || this.max_retry == 0;
+			return this.retry_counter < this.max_retry_num || this.max_retry_num == 0;
+		}
+
+		public void reset()
+		{
+			this.uuid = UUID.randomUUID();
+			this.retry_counter = 0;
+			this.json_response = null;
 		}
 	}
 }

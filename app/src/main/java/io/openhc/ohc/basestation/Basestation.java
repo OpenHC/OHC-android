@@ -1,8 +1,12 @@
 package io.openhc.ohc.basestation;
 
+import android.content.res.Resources;
+import android.os.AsyncTask;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,15 +20,16 @@ import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.rpc.Base_rpc;
 import io.openhc.ohc.skynet.Network;
+import io.openhc.ohc.skynet.Receiver;
 import io.openhc.ohc.skynet.Sender;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
-public class Basestation
+public class Basestation implements Sender.Packet_receiver
 {
 	private Network network;
 	private OHC ohc;
 	private Base_rpc rpc_interface;
-	private Sender sender;
+	private Resources resources;
 	private Transaction_generator transaction_gen;
 
 	private InetSocketAddress endpoint_address;
@@ -35,22 +40,27 @@ public class Basestation
 	HashMap<String, Device> devices = new HashMap<>();
 
 
-	public Basestation(OHC ohc)
+	public Basestation(OHC ohc, InetSocketAddress station_address, Resources resources) throws IOException
 	{
-		this.network = ohc.network;
+		this.resources = resources;
+		this.network = new Network(this);
 		this.ohc = ohc;
 		this.rpc_interface = new Base_rpc(this);
 		this.transaction_gen = new Transaction_generator();
+		this.endpoint_address = station_address;
+
+		//Receiver for state updates initiated by the basestation
+		Receiver receiver = network.setup_receiver();
+		receiver.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); //Run this task in parallel to others
 	}
 
 	//Code being called from Base_rpc
 	public void update_endpoint(InetSocketAddress addr)
 	{
 		this.ohc.get_context().update_network_status(addr != null);
-		this.ohc.get_context().set_status(this.ohc.get_context().getString(R.string.status_found) + addr.getHostString());
 		this.endpoint_address = addr;
-		OHC.logger.log(Level.INFO, String.format("Endpoint address updated: %s:%s", addr.getAddress().getHostAddress(), Integer.toString(addr.getPort())));
-		this.sender = new Sender(this.endpoint_address);
+		OHC.logger.log(Level.INFO, String.format("Endpoint address updated: %s:%s",
+				addr.getAddress().getHostAddress(), Integer.toString(addr.getPort())));
 	}
 
 	public void set_session_token(String token, boolean success)
@@ -110,19 +120,22 @@ public class Basestation
 			OHC.logger.log(Level.WARNING, "Received RPC: " + method);
 			/*Dynamically reflecting into the local instance of Base_rpc to dynamically call functions inside
 			Base_rpc depending on the method supplied by the main control unit (OHC-node)*/
-			this.rpc_interface.getClass().getMethod(method, JSONObject.class).invoke(this.rpc_interface, packet);
+			this.rpc_interface.getClass().getMethod(method,
+					JSONObject.class).invoke(this.rpc_interface, packet);
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.SEVERE, "JSON encoded data is missing valid rpc data: " + ex.getMessage());
+			OHC.logger.log(Level.SEVERE, "JSON encoded data is missing valid rpc data: " +
+					ex.getMessage());
 		}
 	}
 
 	private void make_rpc_call(JSONObject json) throws JSONException
 	{
 		json.put("session_token", this.session_token);
-		Sender s = new Sender(this.endpoint_address);
-		s.execute(json);
+		Sender s = new Sender(this.endpoint_address, this);
+		Transaction_generator.Transaction transaction = this.transaction_gen.generate_transaction(json);
+		s.execute(transaction);
 	}
 
 	//RPC functions calling methods on the main control unit (OHC-node)
@@ -134,7 +147,7 @@ public class Basestation
 			json.put("method", "login").put("uname", uname).put("passwd", passwd);
 			this.make_rpc_call(json);
 		}
-		catch (Exception ex)
+		catch(Exception ex)
 		{
 			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
@@ -148,7 +161,7 @@ public class Basestation
 			json.put("method", "get_num_devices");
 			this.make_rpc_call(json);
 		}
-		catch (Exception ex)
+		catch(Exception ex)
 		{
 			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
@@ -162,7 +175,7 @@ public class Basestation
 			json.put("method", "get_device_id").put("index", index);
 			this.make_rpc_call(json);
 		}
-		catch (Exception ex)
+		catch(Exception ex)
 		{
 			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
@@ -176,7 +189,7 @@ public class Basestation
 			json.put("method", "get_device_name").put("id", id);
 			this.make_rpc_call(json);
 		}
-		catch (Exception ex)
+		catch(Exception ex)
 		{
 			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
@@ -188,14 +201,25 @@ public class Basestation
 		Iterator it = this.devices.entrySet().iterator();
 		while(it.hasNext())
 		{
-			devices.add((Device)((Map.Entry)it.next()).getValue());
+			devices.add((Device) ((Map.Entry) it.next()).getValue());
 			it.remove();
 		}
 		return devices;
 	}
 
-	public void receive_transaction()
+	public Resources get_resources()
 	{
+		return this.resources;
+	}
 
+	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	{
+		JSONObject json = transaction.get_response();
+		if(json != null)
+		{
+			this.handle_packet(json);
+			return;
+		}
+		OHC.logger.log(Level.WARNING, String.format("Didn't receive response for transaction %s in time. Resending", transaction.get_uuid()));
 	}
 }

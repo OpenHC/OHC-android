@@ -60,7 +60,6 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 			this.e_uname.addTextChangedListener(this);
 			this.e_passwd.addTextChangedListener(this);
 			this.bt_connect.setOnClickListener(this);
-			this.t_status.setText(getString(R.string.status_nofind));
 			this.ohc.init();
 		}
 		else if(id == R.layout.activity_ohc_overview)
@@ -84,14 +83,15 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 
 		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings)
+		if(id == R.id.action_settings)
 			return true;
 
 		return super.onOptionsItemSelected(item);
@@ -102,11 +102,11 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	{
 		if(v == this.bt_connect)
 		{
-			/*this.lg_status = true;
+			this.lg_status = true;
 			this.recalc_bt_connect();
 			this.ohc.connect(this.e_uname.getText().toString(), this.e_passwd.getText().toString());
-			this.set_status(getString(R.string.status_connecting));*/
-			try
+			this.set_status(getString(R.string.status_connecting));
+			/*try
 			{
 				InetAddress addr = Broadcaster.get_broadcast_address(this);
 				Broadcaster b = new Broadcaster(addr, 4242, new Broadcaster.Broadcast_receiver()
@@ -125,10 +125,10 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 				Transaction_generator.Transaction trans = new Transaction_generator().generate_transaction(obj);
 				b.execute(trans);
 			}
-			catch (Exception ex)
+			catch(Exception ex)
 			{
 				ex.printStackTrace();
-			}
+			}*/
 		}
 	}
 
@@ -157,8 +157,6 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 
 	public void update_network_status(boolean state)
 	{
-		if(!state)
-			this.t_status.setText(R.string.status_nofind);
 		this.nw_status = state;
 		this.recalc_bt_connect();
 	}

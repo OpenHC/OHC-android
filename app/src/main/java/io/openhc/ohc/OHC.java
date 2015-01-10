@@ -3,19 +3,26 @@ package io.openhc.ohc;
 import android.os.AsyncTask;
 import android.widget.ArrayAdapter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.logging.OHC_Logger;
+import io.openhc.ohc.skynet.Broadcaster;
 import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.Receiver;
+import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
-public class OHC
+public class OHC implements Broadcaster.Broadcast_receiver
 {
 	public static OHC_Logger logger = new OHC_Logger(Logger.getLogger("OHC"));
-	public Network network = null;
 
 	private OHC_ui context;
 	private Basestation station;
@@ -25,27 +32,44 @@ public class OHC
 	public OHC(OHC_ui ctx)
 	{
 		this.context = ctx;
-		try
-		{
-			network = new Network(ctx);
-		}
-		catch (Exception ex)
-		{
-			logger.log(Level.SEVERE, "Couldn't create Network handler: " + ex.getMessage(), ex);
-		}
 	}
 
 	public void init()
 	{
-		if(this.network == null)
-		{
+		this.find_basestation_lan();
+	}
+
+	//Retrieve address of basestation via udp broadcast
+	public void find_basestation_lan()
+	{
+		int bcast_port = this.context.getResources().getInteger(R.integer.ohc_network_b_cast_port);
+		if(Network.find_basestation_lan(this.context, bcast_port, this))
+			this.context.set_status(this.context.getString(R.string.status_searching));
+		else
 			this.context.set_status(this.context.getString(R.string.status_fail_network));
-			return;
+	}
+
+	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	{
+		JSONObject json = transaction.get_response();
+		if(json != null)
+		{
+			try
+			{
+				InetAddress addr = InetAddress.getByName(json.getString("ip_address"));
+				int port = json.getInt("port");
+				this.station = new Basestation(this, new InetSocketAddress(addr, port), this.context.getResources());
+				this.context.update_network_status(true);
+				this.context.set_status(this.context.getString(R.string.status_found) + addr.getHostAddress());
+				return;
+			}
+			catch(Exception ex)
+			{
+				logger.log(Level.WARNING, "Received invalid endpoint configuration: " + ex.getMessage(), ex);
+			}
+			this.context.update_network_status(false);
+			this.context.set_status(this.context.getString(R.string.status_not_found));
 		}
-		this.station = new Basestation(this);
-		Receiver receiver = network.setup_receiver(station);
-		receiver.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); //Run this task in parallel to others
-		network.get_basestation_address(station);
 	}
 
 	public int get_current_view()

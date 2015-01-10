@@ -3,8 +3,10 @@ package io.openhc.ohc.skynet;
 import android.content.Context;
 import android.content.res.Resources;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -21,14 +23,14 @@ public class Network
 {
 	protected DatagramSocket socket;
 
-	private Context ctx;
+	private Basestation station;
 
 	private Receiver receiver;
 	private int port_b_cast;
 
-	public Network(Context ctx) throws Exception
+	public Network(Basestation bs) throws IOException
 	{
-		Resources resources = ctx.getResources();
+		Resources resources = bs.get_resources();
 		this.port_b_cast = resources.getInteger(R.integer.ohc_network_b_cast_port);
 		OHC.logger.log(Level.INFO, "Broadcast port is " + port_b_cast);
 		try
@@ -39,51 +41,40 @@ public class Network
 			this.socket.bind(new InetSocketAddress(InetAddress.getByName("0.0.0.0"), 0));
 			OHC.logger.log(Level.INFO, "Listening on port " + this.socket.getLocalPort());
 		}
-		catch (Exception ex)
+		catch(IOException ex)
 		{
 			OHC.logger.log(Level.SEVERE, "Couldn't create comm socket: " + ex.getMessage(), ex);
 			throw ex;
 		}
-		this.ctx = ctx;
 	}
 
-	public boolean connect(SocketAddress addr)
+	public static boolean find_basestation_lan(Context ctx, int port, Broadcaster.Broadcast_receiver receiver)
 	{
+		Transaction_generator gen = new Transaction_generator();
+		JSONObject json = new JSONObject();
 		try
 		{
-			this.socket.connect(addr);
-			return true;
+			json.put("method", "get_ip");
 		}
-		catch (Exception ex)
+		catch(JSONException ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Couldn't connect comm socket: " + ex.toString());
+			//Can't happen, all prameters are static
+			OHC.logger.log(Level.SEVERE, "This can't happen");
+		}
+		Transaction_generator.Transaction transaction = gen.generate_transaction(json);
+		InetAddress broadcast_addr = Broadcaster.get_broadcast_address(ctx);
+		if(broadcast_addr != null)
+		{
+			Broadcaster bc = new Broadcaster(broadcast_addr, port, receiver);
+			bc.execute(transaction);
+			return true;
 		}
 		return false;
 	}
 
-	public void get_basestation_address(Basestation base)
+	public Receiver setup_receiver()
 	{
-		try
-		{
-			JSONObject json = new JSONObject();
-			json.put("method", "get_ip").put("rport", this.receiver.get_port());
-			Broadcast_sender b_cast_sender = new Broadcast_sender(this.ctx, this.port_b_cast);
-			b_cast_sender.execute(json.toString());
-		}
-		catch (Exception ex)
-		{
-			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
-		}
-	}
-
-	public void send_transaction(Transaction_generator.Transaction transaction)
-	{
-
-	}
-
-	public Receiver setup_receiver(Basestation bs)
-	{
-		this.receiver = new Receiver(this.socket, bs);
+		this.receiver = new Receiver(this.socket, this.station);
 		return this.receiver;
 	}
 
