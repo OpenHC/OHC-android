@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.device.Device;
+import io.openhc.ohc.basestation.device.Field;
 import io.openhc.ohc.basestation.rpc.Base_rpc;
 import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.Receiver;
@@ -105,9 +106,30 @@ public class Basestation implements Sender.Packet_receiver
 	public void set_device_name(String device_id, String name)
 	{
 		this.devices.put(device_id, new Device(name, device_id));
-		if(this.device_ids.indexOf(device_id) == this.num_devices - 1)
+		this.device_get_num_fields(device_id);
+	}
+
+	public void device_set_num_fields(String id, int num_fields)
+	{
+		Device dev = this.devices.get(id);
+		if(dev != null)
 		{
-			this.ohc.draw_device_overview();
+			dev.set_field_num(num_fields);
+			for(int i = 0; i < num_fields; i++)
+			{
+				this.device_get_field(id, i);
+			}
+		}
+	}
+
+	public void device_set_field(String id_dev, int id_field, Field field)
+	{
+		Device dev = this.devices.get(id_dev);
+		if(dev != null)
+		{
+			dev.set_field(id_field, field);
+			if(this.device_ids.indexOf(id_dev) == this.num_devices -1 && dev.get_field_num() - 1 == id_field)
+				ohc.draw_device_overview();
 		}
 	}
 
@@ -195,6 +217,34 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	public void device_get_num_fields(String id)
+	{
+		try
+		{
+			JSONObject json = new JSONObject();
+			json.put("method", "device_get_num_fields").put("id", id);
+			this.make_rpc_call(json);
+		}
+		catch(Exception ex)
+		{
+			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+		}
+	}
+
+	public void device_get_field(String id_dev, int id_field)
+	{
+		try
+		{
+			JSONObject json = new JSONObject();
+			json.put("method", "device_get_field").put("device_id", id_dev).put("field_id", id_field);
+			this.make_rpc_call(json);
+		}
+		catch(Exception ex)
+		{
+			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+		}
+	}
+
 	public List<Device> get_devices()
 	{
 		List<Device> devices = new ArrayList<>();
@@ -220,6 +270,6 @@ public class Basestation implements Sender.Packet_receiver
 			this.handle_packet(json);
 			return;
 		}
-		OHC.logger.log(Level.WARNING, String.format("Didn't receive response for transaction %s in time. Resending", transaction.get_uuid()));
+		OHC.logger.log(Level.WARNING, String.format("Didn't receive response for transaction %s in time", transaction.get_uuid()));
 	}
 }

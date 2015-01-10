@@ -73,11 +73,11 @@ public class Sender extends AsyncTask<Transaction_generator.Transaction, Void,
 					DatagramPacket packet = new DatagramPacket(data_tx, data_tx.length,
 							this.endpoint_address);
 					socket.send(packet);
-					OHC.logger.log(Level.INFO, "Broadcast packet send.");
+					OHC.logger.log(Level.INFO, "UDP packet send.");
 				}
 				catch(Exception ex)
 				{
-					OHC.logger.log(Level.WARNING, "Failed to send broadcast: " + ex.toString(), ex);
+					OHC.logger.log(Level.WARNING, "Failed to send packet: " + ex.toString(), ex);
 				}
 				try
 				{
@@ -106,7 +106,7 @@ public class Sender extends AsyncTask<Transaction_generator.Transaction, Void,
 							catch(Exception ex)
 							{
 								OHC.logger.log(Level.WARNING,
-										"Received invalid data on broadcast rx channel: " +
+										"Received invalid data on rx channel: " +
 												ex.getMessage());
 							}
 						}
@@ -127,7 +127,7 @@ public class Sender extends AsyncTask<Transaction_generator.Transaction, Void,
 		catch(IOException ex)
 		{
 			OHC.logger.log(Level.SEVERE,
-					"Failed to create listening socket for broadcast response: " +
+					"Failed to create listening socket for response: " +
 							ex.getMessage(),
 					ex);
 		}

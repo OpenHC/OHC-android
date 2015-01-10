@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -22,7 +23,8 @@ import io.openhc.ohc.skynet.Broadcaster;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 
-public class OHC_ui extends ActionBarActivity implements View.OnClickListener, TextWatcher
+public class OHC_ui extends ActionBarActivity implements View.OnClickListener, TextWatcher,
+		AdapterView.OnItemClickListener
 {
 	private TextView t_status;
 	private Button bt_connect;
@@ -65,6 +67,7 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 		else if(id == R.layout.activity_ohc_overview)
 		{
 			this.lv_devices = (ListView) this.findViewById(R.id.lv_devices);
+			this.lv_devices.setOnItemClickListener(this);
 		}
 	}
 
@@ -79,7 +82,12 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	@Override
 	public void onBackPressed()
 	{
-		super.onBackPressed();
+		if(this.ohc.get_current_view() == R.layout.activity_ohc_device)
+		{
+			ohc.draw_device_overview();
+		}
+		else
+			super.onBackPressed();
 	}
 
 	@Override
@@ -106,29 +114,6 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 			this.recalc_bt_connect();
 			this.ohc.connect(this.e_uname.getText().toString(), this.e_passwd.getText().toString());
 			this.set_status(getString(R.string.status_connecting));
-			/*try
-			{
-				InetAddress addr = Broadcaster.get_broadcast_address(this);
-				Broadcaster b = new Broadcaster(addr, 4242, new Broadcaster.Broadcast_receiver()
-				{
-					@Override
-					public void on_receive_transaction(Transaction_generator.Transaction transaction)
-					{
-						if(!transaction.do_retry())
-							OHC.logger.log(Level.WARNING, "Target unreachable");
-						else
-							OHC.logger.log(Level.INFO, transaction.get_response().toString());
-					}
-				});
-				JSONObject obj = new JSONObject();
-				obj.put("method", "get_ip");
-				Transaction_generator.Transaction trans = new Transaction_generator().generate_transaction(obj);
-				b.execute(trans);
-			}
-			catch(Exception ex)
-			{
-				ex.printStackTrace();
-			}*/
 		}
 	}
 
@@ -138,6 +123,7 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 
 	}
 
+	@Override
 	public void onTextChanged(CharSequence cs, int start, int before, int count)
 	{
 		this.lc_status = this.e_passwd.length() > 0 && this.e_uname.length() > 0;
@@ -148,6 +134,16 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	public void afterTextChanged(Editable e)
 	{
 
+	}
+
+	@Override
+	public void onItemClick(AdapterView parent, View view, int position, long id)
+	{
+		if(this.ohc.get_current_view() == R.layout.activity_ohc_overview)
+		{
+			OHC.logger.log(Level.WARNING.INFO, String.format("Item %d in device view clicked", position));
+			this.ohc.device_show_details(position);
+		}
 	}
 
 	public void recalc_bt_connect()

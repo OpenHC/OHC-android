@@ -4,10 +4,12 @@ import org.json.JSONObject;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.Objects;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.basestation.Basestation;
+import io.openhc.ohc.basestation.device.Field;
 
 public class Base_rpc
 {
@@ -28,7 +30,8 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid ip address configuration: " + ex.getMessage(), ex);
+			OHC.logger.log(Level.WARNING, "Received invalid ip address configuration: " +
+					ex.getMessage(), ex);
 		}
 	}
 
@@ -42,7 +45,8 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid login token configuration: " + ex.getMessage(), ex);
+			OHC.logger.log(Level.WARNING, "Received invalid login token configuration: " +
+					ex.getMessage(), ex);
 		}
 	}
 
@@ -55,7 +59,8 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid rpc response for set_num_devices: " + ex.getMessage(), ex);
+			OHC.logger.log(Level.WARNING, "Received invalid rpc response for set_num_devices: " +
+					ex.getMessage(), ex);
 		}
 	}
 
@@ -69,7 +74,8 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid rpc response for set_device_id: " + ex.getMessage(), ex);
+			OHC.logger.log(Level.WARNING, "Received invalid rpc response for set_device_id: " +
+					ex.getMessage(), ex);
 		}
 	}
 
@@ -83,7 +89,54 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid rpc response for set_device_name: " + ex.getMessage(), ex);
+			OHC.logger.log(Level.WARNING, "Received invalid rpc response for set_device_name: " +
+					ex.getMessage(), ex);
+		}
+	}
+
+	public void device_set_num_fields(JSONObject object)
+	{
+		try
+		{
+			String id = object.getString("id");
+			int num_fields = object.getInt("num_fields");
+			this.station.device_set_num_fields(id, num_fields);
+		}
+		catch(Exception ex)
+		{
+			OHC.logger.log(Level.WARNING, "Received invalid rpc response for device_set_num_fields: " +
+					ex.getMessage(), ex);
+		}
+	}
+
+	public void device_set_field(JSONObject object)
+	{
+		try
+		{
+			String id = object.getString("device_id");
+			int field_id = object.getInt("field_id");
+			try
+			{
+				JSONObject field_json = object.getJSONObject("field");
+				String name = field_json.getString("name");
+				String type = field_json.getString("type");
+				Object value = field_json.get("value");
+				double max_value = field_json.getDouble("max_value");
+				double min_value = field_json.getDouble("min_value");
+				boolean writable = field_json.getBoolean("writable");
+				Field.Type data_type = Field.Type.valueOf(type);
+				Field field = new Field(data_type, name, min_value, max_value, writable);
+				this.station.device_set_field(id, field_id, field);
+			}
+			catch(Exception ex)
+			{
+				this.station.device_set_field(id, field_id, new Field());
+			}
+		}
+		catch(Exception ex)
+		{
+			OHC.logger.log(Level.WARNING, "Received invalid rpc response for device_set_field: " +
+					ex.getMessage(), ex);
 		}
 	}
 }

@@ -1,14 +1,18 @@
 package io.openhc.ohc.basestation.device;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class Device
 {
 	private String name;
 	private String id;
 
-	private List<Field> fields = new ArrayList<>();
+	private HashMap<Integer, Field> fields = new HashMap<>();
+	private int field_num;
 
 	public Device(String name, String id)
 	{
@@ -23,12 +27,41 @@ public class Device
 
 	public void add_field(int id, Field f)
 	{
-		this.fields.set(id, f);
+		this.fields.put(id, f);
 	}
 
 	public void rm_field(int id)
 	{
-		this.fields.set(id, null);
+		this.fields.remove(id);
+	}
+
+	public void set_field(int id, Field field)
+	{
+		this.fields.put(id, field);
+	}
+
+	public int get_field_num()
+	{
+		return this.field_num;
+	}
+
+	public void set_field_num(int num)
+	{
+		this.field_num = num;
+	}
+
+	public List<Field> get_fields()
+	{
+		List<Field> fields = new ArrayList<>();
+		Iterator it = this.fields.entrySet().iterator();
+		while(it.hasNext())
+		{
+			Field field = (Field)((Map.Entry)it.next()).getValue();
+			if(field.is_accessible())
+				fields.add(field);
+			it.remove();
+		}
+		return fields;
 	}
 
 	@Override

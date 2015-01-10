@@ -1,6 +1,7 @@
 package io.openhc.ohc;
 
 import android.os.AsyncTask;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import org.json.JSONException;
@@ -19,6 +20,7 @@ import io.openhc.ohc.skynet.Broadcaster;
 import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.Receiver;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
+import io.openhc.ohc.ui.Field_adapter;
 
 public class OHC implements Broadcaster.Broadcast_receiver
 {
@@ -28,6 +30,8 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	private Basestation station;
 
 	private int ui_current_view = R.layout.activity_ohc_login;
+
+	private ArrayAdapter<Device> device_adapter;
 
 	public OHC(OHC_ui ctx)
 	{
@@ -101,7 +105,19 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	public void draw_device_overview()
 	{
 		this.set_view(R.layout.activity_ohc_overview);
-		ArrayAdapter<Device> deviceAdapter = new ArrayAdapter<Device>(this.context, R.layout.list_view_item, this.station.get_devices());
+		this.device_adapter = new ArrayAdapter<Device>(this.context, R.layout.list_view_item, this.station.get_devices());
+		this.context.get_lv_devices().setAdapter(this.device_adapter);
+	}
+
+	public void device_show_details(int position)
+	{
+		this.draw_device_view(this.device_adapter.getItem(position));
+	}
+
+	public void draw_device_view(Device dev)
+	{
+		this.set_view(R.layout.activity_ohc_device);
+		Field_adapter deviceAdapter = new Field_adapter(this.context, R.layout.list_view_item, dev.get_fields());
 		this.context.get_lv_devices().setAdapter(deviceAdapter);
 	}
 }
