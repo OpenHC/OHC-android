@@ -261,6 +261,25 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	public void device_set_name(Device dev, String name)
+	{
+		this.device_set_name(dev.get_id(), name);
+	}
+
+	public void device_set_name(String id, String name)
+	{
+		try
+		{
+			JSONObject json = new JSONObject();
+			json.put("method", "set_device_name").put("id", id).put("name", name);
+			this.make_rpc_call(json);
+		}
+		catch(Exception ex)
+		{
+			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+		}
+	}
+
 	public List<Device> get_devices()
 	{
 		List<Device> devices = new ArrayList<>();

@@ -33,6 +33,8 @@ public class OHC implements Broadcaster.Broadcast_receiver
 
 	private ArrayAdapter<Device> device_adapter;
 
+	private Device current_device;
+
 	public OHC(OHC_ui ctx)
 	{
 		this.context = ctx;
@@ -97,6 +99,16 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		return this.context;
 	}
 
+	public Device get_current_device()
+	{
+		return this.current_device;
+	}
+
+	public Basestation get_basestation()
+	{
+		return this.station;
+	}
+
 	public void connect(String uname, String passwd)
 	{
 		this.station.login(uname, passwd);
@@ -118,6 +130,10 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	{
 		this.set_view(R.layout.activity_ohc_device);
 		Field_adapter field_adapter = new Field_adapter(this.context, R.layout.list_view_group, dev.get_fields());
+		this.context.get_iv_action_bar_icon().setImageResource(R.drawable.ic_launcher);
+		this.context.get_et_action_bar_name().setText(dev.get_name());
+		this.context.get_et_action_bar_name().addTextChangedListener(this.context);
 		this.context.get_lv_fields().setAdapter(field_adapter);
+		this.current_device = dev;
 	}
 }

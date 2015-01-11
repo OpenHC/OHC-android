@@ -53,6 +53,16 @@ public class Device
 		this.field_num = num;
 	}
 
+	public String get_name()
+	{
+		return this.name;
+	}
+
+	public String get_id()
+	{
+		return this.id;
+	}
+
 	public List<Field> get_fields()
 	{
 		List<Field> fields = new ArrayList<>();

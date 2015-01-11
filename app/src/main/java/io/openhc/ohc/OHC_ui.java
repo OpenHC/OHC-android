@@ -1,16 +1,20 @@
 package io.openhc.ohc;
 
 import android.content.res.Configuration;
+import android.media.Image;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,6 +38,9 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 
 	private ListView lv_devices;
 	private ListView lv_fields;
+
+	private ImageView iv_header_icon;
+	private EditText et_header_name;
 
 	private boolean nw_status;
 	private boolean lc_status;
@@ -74,6 +81,16 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 		else if(id == R.layout.activity_ohc_device)
 		{
 			this.lv_fields = (ListView) this.findViewById(R.id.lv_fields);
+			ViewGroup layout = (ViewGroup)this.getLayoutInflater().inflate(R.layout.action_bar_device,
+					null);
+			ActionBar action_bar = this.getSupportActionBar();
+			action_bar.setDisplayShowHomeEnabled(false);
+			action_bar.setDisplayShowTitleEnabled(false);
+			action_bar.setDisplayShowCustomEnabled(true);
+			action_bar.setCustomView(layout);
+			this.iv_header_icon = (ImageView)this.findViewById(R.id.iv_icon);
+			this.iv_header_icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+			this.et_header_name = (EditText)this.findViewById(R.id.et_name);
 		}
 	}
 
@@ -132,14 +149,20 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	@Override
 	public void onTextChanged(CharSequence cs, int start, int before, int count)
 	{
-		this.lc_status = this.e_passwd.length() > 0 && this.e_uname.length() > 0;
-		this.recalc_bt_connect();
+		if(this.ohc.get_current_view() == R.layout.activity_ohc_login)
+		{
+			this.lc_status = this.e_passwd.length() > 0 && this.e_uname.length() > 0;
+			this.recalc_bt_connect();
+		}
 	}
 
 	@Override
 	public void afterTextChanged(Editable e)
 	{
-
+		if(this.ohc.get_current_view() == R.layout.activity_ohc_device)
+		{
+			this.ohc.get_basestation().device_set_name(ohc.get_current_device(), e.toString());
+		}
 	}
 
 	@Override
@@ -183,5 +206,15 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	public ListView get_lv_fields()
 	{
 		return this.lv_fields;
+	}
+
+	public ImageView get_iv_action_bar_icon()
+	{
+		return this.iv_header_icon;
+	}
+
+	public EditText get_et_action_bar_name()
+	{
+		return this.et_header_name;
 	}
 }
