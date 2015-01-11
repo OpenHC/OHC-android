@@ -62,34 +62,40 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	{
 		super.setContentView(id);
 		this.ohc.set_current_view(id);
+		ViewGroup layout = null;
 		if(id == R.layout.activity_ohc_login)
 		{
-			this.t_status = (TextView) this.findViewById(R.id.t_status);
-			this.bt_connect = (Button) this.findViewById(R.id.bt_connect);
-			this.e_uname = (EditText) this.findViewById(R.id.e_uname);
-			this.e_passwd = (EditText) this.findViewById(R.id.e_passwd);
+			this.t_status = (TextView)this.findViewById(R.id.t_status);
+			this.bt_connect = (Button)this.findViewById(R.id.bt_connect);
+			this.e_uname = (EditText)this.findViewById(R.id.e_uname);
+			this.e_passwd = (EditText)this.findViewById(R.id.e_passwd);
 			this.e_uname.addTextChangedListener(this);
 			this.e_passwd.addTextChangedListener(this);
 			this.bt_connect.setOnClickListener(this);
 			this.ohc.init();
+			layout = (ViewGroup)this.getLayoutInflater().inflate(R.layout.action_bar_login, null);
 		}
 		else if(id == R.layout.activity_ohc_overview)
 		{
-			this.lv_devices = (ListView) this.findViewById(R.id.lv_devices);
+			this.lv_devices = (ListView)this.findViewById(R.id.lv_devices);
 			this.lv_devices.setOnItemClickListener(this);
+			layout = (ViewGroup)this.getLayoutInflater().inflate(R.layout.action_bar_overview, null);
 		}
 		else if(id == R.layout.activity_ohc_device)
 		{
-			this.lv_fields = (ListView) this.findViewById(R.id.lv_fields);
-			ViewGroup layout = (ViewGroup)this.getLayoutInflater().inflate(R.layout.action_bar_device,
-					null);
-			ActionBar action_bar = this.getSupportActionBar();
-			action_bar.setDisplayShowHomeEnabled(false);
-			action_bar.setDisplayShowTitleEnabled(false);
-			action_bar.setDisplayShowCustomEnabled(true);
-			action_bar.setCustomView(layout);
-			this.iv_header_icon = (ImageView)this.findViewById(R.id.iv_icon);
-			this.iv_header_icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+			this.lv_fields = (ListView)this.findViewById(R.id.lv_fields);
+			layout = (ViewGroup)this.getLayoutInflater().inflate(R.layout.action_bar_device, null);
+		}
+		ActionBar action_bar = this.getSupportActionBar();
+		action_bar.setDisplayShowHomeEnabled(false);
+		action_bar.setDisplayShowTitleEnabled(false);
+		action_bar.setDisplayShowCustomEnabled(true);
+		action_bar.setCustomView(layout);
+		this.iv_header_icon = (ImageView)this.findViewById(R.id.iv_icon);
+		this.iv_header_icon.setImageResource(R.drawable.ic_launcher);
+		this.iv_header_icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+		if(id == R.layout.activity_ohc_device)
+		{
 			this.et_header_name = (EditText)this.findViewById(R.id.et_name);
 		}
 	}
@@ -108,6 +114,10 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 		if(this.ohc.get_current_view() == R.layout.activity_ohc_device)
 		{
 			ohc.draw_device_overview();
+		}
+		else if(this.ohc.get_current_view() == R.layout.activity_ohc_overview)
+		{
+			ohc.draw_login_page();
 		}
 		else
 			super.onBackPressed();
@@ -196,6 +206,13 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 		this.lg_status = false;
 		this.set_status(getString(R.string.status_login_failed));
 		this.recalc_bt_connect();
+	}
+
+	public void set_login_status(boolean state)
+	{
+		this.lg_status = state;
+		if(this.bt_connect != null)
+			this.recalc_bt_connect();
 	}
 
 	public ListView get_lv_devices()

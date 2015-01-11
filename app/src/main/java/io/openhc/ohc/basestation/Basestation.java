@@ -26,6 +26,7 @@ import io.openhc.ohc.skynet.Receiver;
 import io.openhc.ohc.skynet.Sender;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
+//TODO Rewrite remote resource management, new handling of responses
 public class Basestation implements Sender.Packet_receiver
 {
 	private Network network;
@@ -72,6 +73,7 @@ public class Basestation implements Sender.Packet_receiver
 			OHC.logger.log(Level.INFO, "Session token updated");
 			this.session_token = token;
 			this.get_num_devices();
+			this.ohc.get_context().set_login_status(false);
 		}
 		else
 		{

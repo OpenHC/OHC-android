@@ -32,6 +32,7 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	private int ui_current_view = R.layout.activity_ohc_login;
 
 	private ArrayAdapter<Device> device_adapter;
+	private Field_adapter field_adapter;
 
 	private Device current_device;
 
@@ -114,10 +115,16 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		this.station.login(uname, passwd);
 	}
 
+	public void draw_login_page()
+	{
+		this.set_view(R.layout.activity_ohc_login);
+	}
+
 	public void draw_device_overview()
 	{
 		this.set_view(R.layout.activity_ohc_overview);
-		this.device_adapter = new ArrayAdapter<Device>(this.context, R.layout.list_view_item, this.station.get_devices());
+		if(this.device_adapter == null)
+			this.device_adapter = new ArrayAdapter<Device>(this.context, R.layout.list_view_item, this.station.get_devices());
 		this.context.get_lv_devices().setAdapter(this.device_adapter);
 	}
 
@@ -129,11 +136,11 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	public void draw_device_view(Device dev)
 	{
 		this.set_view(R.layout.activity_ohc_device);
-		Field_adapter field_adapter = new Field_adapter(this.context, R.layout.list_view_group, dev.get_fields());
-		this.context.get_iv_action_bar_icon().setImageResource(R.drawable.ic_launcher);
+		if(this.field_adapter == null)
+			this.field_adapter = new Field_adapter(this.context, R.layout.list_view_group, dev.get_fields());
 		this.context.get_et_action_bar_name().setText(dev.get_name());
 		this.context.get_et_action_bar_name().addTextChangedListener(this.context);
-		this.context.get_lv_fields().setAdapter(field_adapter);
+		this.context.get_lv_fields().setAdapter(this.field_adapter);
 		this.current_device = dev;
 	}
 }
