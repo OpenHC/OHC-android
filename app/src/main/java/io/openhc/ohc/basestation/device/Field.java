@@ -5,15 +5,12 @@ import android.text.TextWatcher;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 
-import java.util.HashMap;
-import java.util.Objects;
-
-import io.openhc.ohc.basestation.Basestation;
+import io.openhc.ohc.OHC;
 
 public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListener,
 		SeekBar.OnSeekBarChangeListener
 {
-	private Basestation station;
+	private OHC ohc;
 	private String device_id;
 	private int field_id;
 	private Type type;
@@ -30,9 +27,9 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 		this.accessible = false;
 	}
 
-	public Field(Basestation bs, String devie_id, int field_id, Type type, String name, double min_value, double max_value, boolean writable)
+	public Field(OHC ohc, String devie_id, int field_id, Type type, String name, double min_value, double max_value, boolean writable)
 	{
-		this(bs, devie_id, field_id, type, name, min_value, max_value, writable, null);
+		this(ohc, devie_id, field_id, type, name, min_value, max_value, writable, null);
 		switch(type)
 		{
 			case SLIDER:
@@ -54,9 +51,9 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 		}
 	}
 
-	public Field(Basestation bs, String devie_id, int field_id, Type type, String name, double min_value, double max_value, boolean writable, Object value)
+	public Field(OHC ohc, String devie_id, int field_id, Type type, String name, double min_value, double max_value, boolean writable, Object value)
 	{
-		this.station = bs;
+		this.ohc = ohc;
 		this.device_id = devie_id;
 		this.field_id = field_id;
 		this.type = type;
@@ -72,7 +69,7 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 	public void set_value(Object value) throws ClassCastException
 	{
 		this.value = this.type.get_data_type().cast(value);
-		this.station.device_set_field_value(this.device_id, this.field_id, this.value);
+		this.ohc.get_basestation().device_set_field_value(this.device_id, this.field_id, this.value);
 	}
 
 	public Type get_type()
@@ -171,7 +168,7 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 		STRING(String.class, "string"),
 		ONOFF(Boolean.class, "onoff"),
 		BOOL(Boolean.class, "bool"),
-		SLIDER(Double.class, "slider");
+		SLIDER(Integer.class, "slider");
 
 		private Class c;
 

@@ -74,9 +74,9 @@ public class OHC implements Broadcaster.Broadcast_receiver
 			{
 				logger.log(Level.WARNING, "Received invalid endpoint configuration: " + ex.getMessage(), ex);
 			}
-			this.context.update_network_status(false);
-			this.context.set_status(this.context.getString(R.string.status_not_found));
 		}
+		this.context.update_network_status(false);
+		this.context.set_status(this.context.getString(R.string.status_not_found));
 	}
 
 	public int get_current_view()
@@ -138,6 +138,12 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		this.set_view(R.layout.activity_ohc_device);
 		if(this.field_adapter == null)
 			this.field_adapter = new Field_adapter(this.context, R.layout.list_view_group, dev.get_fields());
+		else if(this.current_device != dev)
+		{
+			this.field_adapter.clear();
+			this.field_adapter.addAll(dev.get_fields());
+			this.field_adapter.notifyDataSetChanged();
+		}
 		this.context.get_et_action_bar_name().setText(dev.get_name());
 		this.context.get_et_action_bar_name().addTextChangedListener(this.context);
 		this.context.get_lv_fields().setAdapter(this.field_adapter);

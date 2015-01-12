@@ -72,7 +72,11 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 			this.e_uname.addTextChangedListener(this);
 			this.e_passwd.addTextChangedListener(this);
 			this.bt_connect.setOnClickListener(this);
-			this.ohc.init();
+			this.t_status.setOnClickListener(this);
+			this.lc_status = this.e_passwd.length() > 0 && this.e_uname.length() > 0;
+			this.recalc_bt_connect();
+			if(this.ohc.get_basestation() == null)
+				this.ohc.init();
 			layout = (ViewGroup)this.getLayoutInflater().inflate(R.layout.action_bar_login, null);
 		}
 		else if(id == R.layout.activity_ohc_overview)
@@ -147,6 +151,13 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 			this.recalc_bt_connect();
 			this.ohc.connect(this.e_uname.getText().toString(), this.e_passwd.getText().toString());
 			this.set_status(getString(R.string.status_connecting));
+		}
+		else if(v == this.t_status)
+		{
+			if(!this.nw_status)
+			{
+				this.ohc.find_basestation_lan();
+			}
 		}
 	}
 

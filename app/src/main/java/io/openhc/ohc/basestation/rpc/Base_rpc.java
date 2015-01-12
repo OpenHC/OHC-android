@@ -13,11 +13,11 @@ import io.openhc.ohc.basestation.device.Field;
 
 public class Base_rpc
 {
-	private final Basestation station;
+	private OHC ohc;
 
-	public Base_rpc(Basestation station)
+	public Base_rpc(OHC ohc)
 	{
-		this.station = station;
+		this.ohc = ohc;
 	}
 
 	public void set_ip_address(JSONObject object)
@@ -26,7 +26,7 @@ public class Base_rpc
 		{
 			InetAddress addr = InetAddress.getByName(object.getString("ip_address"));
 			int port = object.getInt("port");
-			this.station.update_endpoint(new InetSocketAddress(addr, port));
+			this.ohc.get_basestation().update_endpoint(new InetSocketAddress(addr, port));
 		}
 		catch(Exception ex)
 		{
@@ -41,7 +41,7 @@ public class Base_rpc
 		{
 			String token = object.getString("session_token");
 			boolean success = object.getBoolean("success");
-			this.station.set_session_token(token, success);
+			this.ohc.get_basestation().set_session_token(token, success);
 		}
 		catch(Exception ex)
 		{
@@ -55,7 +55,7 @@ public class Base_rpc
 		try
 		{
 			int num_devices = object.getInt("num_devices");
-			this.station.set_num_devices(num_devices);
+			this.ohc.get_basestation().set_num_devices(num_devices);
 		}
 		catch(Exception ex)
 		{
@@ -70,7 +70,7 @@ public class Base_rpc
 		{
 			String id = object.getString("id");
 			int index = object.getInt("index");
-			this.station.set_device_id(index, id);
+			this.ohc.get_basestation().set_device_id(index, id);
 		}
 		catch(Exception ex)
 		{
@@ -85,7 +85,7 @@ public class Base_rpc
 		{
 			String id = object.getString("id");
 			String name = object.getString("name");
-			this.station.set_device_name(id, name);
+			this.ohc.get_basestation().set_device_name(id, name);
 		}
 		catch(Exception ex)
 		{
@@ -100,7 +100,7 @@ public class Base_rpc
 		{
 			String id = object.getString("id");
 			int num_fields = object.getInt("num_fields");
-			this.station.device_set_num_fields(id, num_fields);
+			this.ohc.get_basestation().device_set_num_fields(id, num_fields);
 		}
 		catch(Exception ex)
 		{
@@ -125,14 +125,14 @@ public class Base_rpc
 				double min_value = field_json.getDouble("min_value");
 				boolean writable = field_json.getBoolean("writable");
 				Field.Type data_type = Field.Type.valueOf(type.toUpperCase());
-				Field field = new Field(this.station, id, field_id, data_type, name, min_value, max_value, writable, value);
-				this.station.device_set_field(id, field_id, field);
+				Field field = new Field(this.ohc, id, field_id, data_type, name, min_value, max_value, writable, value);
+				this.ohc.get_basestation().device_set_field(id, field_id, field);
 			}
 			catch(Exception ex)
 			{
 				OHC.logger.log(Level.WARNING, "Received invalid field configuration: " +
 						ex.getMessage(), ex);
-				this.station.device_set_field(id, field_id, new Field());
+				this.ohc.get_basestation().device_set_field(id, field_id, new Field());
 			}
 		}
 		catch(Exception ex)

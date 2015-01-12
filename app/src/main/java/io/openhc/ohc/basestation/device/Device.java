@@ -72,7 +72,6 @@ public class Device
 			Field field = (Field)((Map.Entry)it.next()).getValue();
 			if(field.is_accessible())
 				fields.add(field);
-			it.remove();
 		}
 		return fields;
 	}

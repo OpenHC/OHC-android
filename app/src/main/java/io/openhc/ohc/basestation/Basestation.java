@@ -48,7 +48,7 @@ public class Basestation implements Sender.Packet_receiver
 		this.resources = resources;
 		this.network = new Network(this);
 		this.ohc = ohc;
-		this.rpc_interface = new Base_rpc(this);
+		this.rpc_interface = new Base_rpc(ohc);
 		this.transaction_gen = new Transaction_generator();
 		this.endpoint_address = station_address;
 

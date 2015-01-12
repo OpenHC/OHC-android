@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Layout;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ public class Field_adapter extends ArrayAdapter<Field>
 		TableLayout.LayoutParams layout = new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 				this.dip_to_px(64), 0.5F);
 		layout.setMargins(dip_to_px(5), 0, dip_to_px(5), 0);
+		tv_key.setGravity(Gravity.CENTER_VERTICAL);
 		tv_key.setLayoutParams(layout);
 		OHC.logger.log(Level.INFO, "Generating view for field " + field.get_name());
 		View v_value;
