@@ -1,5 +1,6 @@
 package io.openhc.ohc.basestation.device;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,7 +10,7 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 
-public class Device
+public class Device implements Serializable
 {
 	private String name;
 	private String id;
