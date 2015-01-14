@@ -24,6 +24,7 @@ import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Void, Transaction_generator.Transaction> implements Socket_timeout.Socket_provider
 {
+	private final OHC ohc;
 	private final InetAddress broadcast_addr;
 	private final int rport;
 	private final int timeout;
@@ -31,27 +32,28 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 
 	private DatagramSocket socket_rx;
 
-	public Broadcaster(InetAddress broadcast_addr, int rport, Broadcast_receiver receiver)
+	public Broadcaster(OHC ohc, InetAddress broadcast_addr, int rport, Broadcast_receiver receiver)
 	{
 		//Pretty "low" default timeout but broadcasts will only work inside LANs thus 100ms is an adequate value
-		this(broadcast_addr, rport, 100, receiver);
+		this(ohc, broadcast_addr, rport, 100, receiver);
 	}
 
-	public Broadcaster(InetAddress broadcast_addr, int rport, int timeout, Broadcast_receiver receiver)
+	public Broadcaster(OHC ohc, InetAddress broadcast_addr, int rport, int timeout, Broadcast_receiver receiver)
 	{
+		this.ohc = ohc;
 		this.receiver = receiver;
 		this.broadcast_addr = broadcast_addr;
 		this.rport = rport;
 		this.timeout = timeout;
 	}
 
-	public static InetAddress get_broadcast_address(Context ctx)
+	public static InetAddress get_broadcast_address(OHC ohc)
 	{
-		WifiManager wifi = (WifiManager) ctx.getSystemService(Context.WIFI_SERVICE);
+		WifiManager wifi = (WifiManager) ohc.get_context().getSystemService(Context.WIFI_SERVICE);
 		DhcpInfo dhcp = wifi.getDhcpInfo();
 		if(dhcp == null)
 		{
-			OHC.logger.log(Level.WARNING, "Failed to retrieve dhcp info.");
+			ohc.logger.log(Level.WARNING, "Failed to retrieve dhcp info.");
 			return null;
 		}
 		//Figure out the broadcast address
@@ -65,7 +67,7 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Failed to retrieve broadcast address from dhcp info.");
+			ohc.logger.log(Level.WARNING, "Failed to retrieve broadcast address from dhcp info.");
 			return null;
 		}
 	}
@@ -101,11 +103,11 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 					DatagramPacket packet = new DatagramPacket(data_tx, data_tx.length,
 							this.broadcast_addr, this.rport);
 					socket.send(packet);
-					OHC.logger.log(Level.INFO, "Broadcast packet send.");
+					this.ohc.logger.log(Level.INFO, "Broadcast packet send.");
 				}
 				catch(Exception ex)
 				{
-					OHC.logger.log(Level.WARNING, "Failed to send broadcast: " + ex.toString(), ex);
+					this.ohc.logger.log(Level.WARNING, "Failed to send broadcast: " + ex.toString(), ex);
 				}
 				try
 				{
@@ -113,7 +115,7 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 					/*One more timeout that's slightly longer than the socket timeout itself.
 					* Used to make a socket timeout that does receive a lot of data but not
 					* a valid response to it's transaction*/
-					Socket_timeout timeout = new Socket_timeout(this, this.timeout + 1);
+					Socket_timeout timeout = new Socket_timeout(ohc, this, this.timeout + 1);
 					timeout.start();
 					try
 					{
@@ -132,12 +134,12 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 									timeout.cancel();
 								}
 								else
-									OHC.logger.log(Level.WARNING,
+									this.ohc.logger.log(Level.WARNING,
 											"Received invalid transaction uuid");
 							}
 							catch(Exception ex)
 							{
-								OHC.logger.log(Level.WARNING,
+								this.ohc.logger.log(Level.WARNING,
 										"Received invalid data on broadcast rx channel: " +
 												ex.getMessage());
 							}
@@ -150,18 +152,18 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 				}
 				catch(IOException ex)
 				{
-					OHC.logger.log(Level.SEVERE, "Socket failed to receive data: " + ex.getMessage(), ex);
+					this.ohc.logger.log(Level.SEVERE, "Socket failed to receive data: " + ex.getMessage(), ex);
 				}
 				transaction.inc_retry_counter();
 			}
 		}
 		catch(IOException ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Failed to create listening socket for broadcast response: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Failed to create listening socket for broadcast response: " + ex.getMessage(), ex);
 		}
 		catch(JSONException ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Broken JSON supplied: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Broken JSON supplied: " + ex.getMessage(), ex);
 		}
 		return transaction;
 	}

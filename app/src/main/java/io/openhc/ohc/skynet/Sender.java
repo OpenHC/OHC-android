@@ -25,19 +25,21 @@ public class Sender extends AsyncTask<Transaction_generator.Transaction, Void,
 	SocketAddress endpoint_address;
 	private final int timeout;
 	private final Packet_receiver receiver;
+	private final OHC ohc;
 
 	private DatagramSocket socket_rx;
 
-	public Sender(SocketAddress endpoint, Packet_receiver receiver)
+	public Sender(OHC ohc, SocketAddress endpoint, Packet_receiver receiver)
 	{
 		/*UDP control turns out to be pretty unresponsive with more latency
 		* should rather use JSON via HTTP with gzip compression and larger
 		* control data chunks*/
-		this(endpoint, 300, receiver);
+		this(ohc, endpoint, 300, receiver);
 	}
 
-	public Sender(SocketAddress endpoint, int timeout, Packet_receiver receiver)
+	public Sender(OHC ohc, SocketAddress endpoint, int timeout, Packet_receiver receiver)
 	{
+		this.ohc = ohc;
 		this.receiver = receiver;
 		this.endpoint_address = endpoint;
 		this.timeout = timeout;
@@ -73,11 +75,10 @@ public class Sender extends AsyncTask<Transaction_generator.Transaction, Void,
 					DatagramPacket packet = new DatagramPacket(data_tx, data_tx.length,
 							this.endpoint_address);
 					socket.send(packet);
-					OHC.logger.log(Level.INFO, "UDP packet send.");
 				}
 				catch(Exception ex)
 				{
-					OHC.logger.log(Level.WARNING, "Failed to send packet: " + ex.toString(), ex);
+					this.ohc.logger.log(Level.WARNING, "Failed to send packet: " + ex.toString(), ex);
 				}
 				try
 				{
@@ -85,7 +86,7 @@ public class Sender extends AsyncTask<Transaction_generator.Transaction, Void,
 					/*One more timeout that's slightly longer than the socket timeout itself.
 					* Used to make a socket timeout that does receive a lot of data but not
 					* a valid response to it's transaction*/
-					Socket_timeout timeout = new Socket_timeout(this, this.timeout + 1);
+					Socket_timeout timeout = new Socket_timeout(this.ohc, this, this.timeout + 1);
 					try
 					{
 						while(!valid_response_received)
@@ -105,7 +106,7 @@ public class Sender extends AsyncTask<Transaction_generator.Transaction, Void,
 							}
 							catch(Exception ex)
 							{
-								OHC.logger.log(Level.WARNING,
+								this.ohc.logger.log(Level.WARNING,
 										"Received invalid data on rx channel: " +
 												ex.getMessage());
 							}
@@ -118,7 +119,7 @@ public class Sender extends AsyncTask<Transaction_generator.Transaction, Void,
 				}
 				catch(IOException ex)
 				{
-					OHC.logger.log(Level.SEVERE, "Socket failed to receive data: " + ex.getMessage(),
+					this.ohc.logger.log(Level.SEVERE, "Socket failed to receive data: " + ex.getMessage(),
 							ex);
 				}
 				transaction.inc_retry_counter();
@@ -126,14 +127,14 @@ public class Sender extends AsyncTask<Transaction_generator.Transaction, Void,
 		}
 		catch(IOException ex)
 		{
-			OHC.logger.log(Level.SEVERE,
+			this.ohc.logger.log(Level.SEVERE,
 					"Failed to create listening socket for response: " +
 							ex.getMessage(),
 					ex);
 		}
 		catch(JSONException ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Broken JSON supplied: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Broken JSON supplied: " + ex.getMessage(), ex);
 		}
 		return transaction;
 	}

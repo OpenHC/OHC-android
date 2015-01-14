@@ -58,7 +58,6 @@ public class Field_adapter extends ArrayAdapter<Field>
 		layout.setMargins(dip_to_px(5), 0, dip_to_px(5), 0);
 		tv_key.setGravity(Gravity.CENTER_VERTICAL);
 		tv_key.setLayoutParams(layout);
-		OHC.logger.log(Level.INFO, "Generating view for field " + field.get_name());
 		View v_value;
 		switch(field.get_type())
 		{

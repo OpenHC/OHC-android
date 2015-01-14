@@ -30,27 +30,28 @@ import io.openhc.ohc.skynet.transaction.Transaction_generator;
 public class Basestation implements Sender.Packet_receiver
 {
 	private Network network;
-	private OHC ohc;
+	public final OHC ohc;
 	private Base_rpc rpc_interface;
 	private Resources resources;
 	private Transaction_generator transaction_gen;
 
-	private InetSocketAddress endpoint_address;
-	private String session_token = "";
-	private int num_devices = -1;
-	private List<String> device_ids;
+	private Basestation_state state;
 
-	HashMap<String, Device> devices = new HashMap<>();
-
-
-	public Basestation(OHC ohc, InetSocketAddress station_address, Resources resources) throws IOException
+	public Basestation(OHC ohc, Basestation_state state) throws IOException
 	{
-		this.resources = resources;
-		this.network = new Network(this);
+		this(ohc, state.get_remote_socket_address());
+		this.state = state;
+	}
+
+	public Basestation(OHC ohc, InetSocketAddress station_address) throws IOException
+	{
 		this.ohc = ohc;
+		this.resources = ohc.get_context().getResources();
+		this.network = new Network(this);
 		this.rpc_interface = new Base_rpc(ohc);
-		this.transaction_gen = new Transaction_generator();
-		this.endpoint_address = station_address;
+		this.transaction_gen = new Transaction_generator(ohc);
+		this.state = new Basestation_state();
+		this.state.set_remote_socket_addr(station_address);
 
 		//Receiver for state updates initiated by the basestation
 		Receiver receiver = network.setup_receiver();
@@ -61,8 +62,8 @@ public class Basestation implements Sender.Packet_receiver
 	public void update_endpoint(InetSocketAddress addr)
 	{
 		this.ohc.get_context().update_network_status(addr != null);
-		this.endpoint_address = addr;
-		OHC.logger.log(Level.INFO, String.format("Endpoint address updated: %s:%s",
+		this.state.set_remote_socket_addr(addr);
+		this.ohc.logger.log(Level.INFO, String.format("Endpoint address updated: %s:%s",
 				addr.getAddress().getHostAddress(), Integer.toString(addr.getPort())));
 	}
 
@@ -70,51 +71,49 @@ public class Basestation implements Sender.Packet_receiver
 	{
 		if(success)
 		{
-			OHC.logger.log(Level.INFO, "Session token updated");
-			this.session_token = token;
+			this.ohc.logger.log(Level.INFO, "Session token updated");
+			this.state.set_session_token(token);
 			this.get_num_devices();
 			this.ohc.get_context().set_login_status(false);
 		}
 		else
 		{
-			OHC.logger.log(Level.WARNING, "Wrong username and/or password");
+			this.ohc.logger.log(Level.WARNING, "Wrong username and/or password");
 			this.ohc.get_context().login_wrong();
 		}
 	}
 
 	public void set_num_devices(int num_devices)
 	{
-		OHC.logger.log(Level.INFO, "Number of attached devices updated: " + num_devices);
-		this.num_devices = num_devices;
-		this.device_ids = new ArrayList<>();
-		for(int i = 0; i < this.num_devices; i++)
+		this.ohc.logger.log(Level.INFO, "Number of attached devices updated: " + num_devices);
+		this.state.set_num_devices(num_devices);
+		for(int i = 0; i < this.state.get_num_devices(); i++)
 		{
-			this.device_ids.add("");
 			this.get_device_id(i);
 		}
 	}
 
 	public void set_device_id(int index, String id)
 	{
-		OHC.logger.log(Level.INFO, String.format("Setting id of device [%d]: %s", index, id));
-		if(index >= this.num_devices || index < 0)
+		this.ohc.logger.log(Level.INFO, String.format("Setting id of device [%d]: %s", index, id));
+		if(index >= this.state.get_num_devices() || index < 0)
 		{
-			OHC.logger.log(Level.WARNING, String.format("Device index '%d' out of range. Max %d", index, this.num_devices - 1));
+			this.ohc.logger.log(Level.WARNING, String.format("Device index '%d' out of range. Max %d", index, this.state.get_num_devices() - 1));
 			return;
 		}
-		this.device_ids.set(index, id);
+		this.state.put_device(id, null);
 		this.get_device_name(id);
 	}
 
 	public void set_device_name(String device_id, String name)
 	{
-		this.devices.put(device_id, new Device(name, device_id));
+		this.state.put_device(device_id, new Device(name, device_id));
 		this.device_get_num_fields(device_id);
 	}
 
 	public void device_set_num_fields(String id, int num_fields)
 	{
-		Device dev = this.devices.get(id);
+		Device dev = this.state.get_device(id);
 		if(dev != null)
 		{
 			dev.set_field_num(num_fields);
@@ -127,11 +126,11 @@ public class Basestation implements Sender.Packet_receiver
 
 	public void device_set_field(String id_dev, int id_field, Field field)
 	{
-		Device dev = this.devices.get(id_dev);
+		Device dev = this.state.get_device(id_dev);
 		if(dev != null)
 		{
 			dev.set_field(id_field, field);
-			if(this.device_ids.indexOf(id_dev) == this.num_devices -1 && dev.get_field_num() - 1 == id_field)
+			if(this.state.get_device_ids().indexOf(id_dev) == this.state.get_num_devices() - 1 && dev.get_field_num() - 1 == id_field)
 				ohc.draw_device_overview();
 		}
 	}
@@ -142,7 +141,7 @@ public class Basestation implements Sender.Packet_receiver
 		try
 		{
 			String method = packet.getString("method");
-			OHC.logger.log(Level.WARNING, "Received RPC: " + method);
+			this.ohc.logger.log(Level.WARNING, "Received RPC: " + method);
 			/*Dynamically reflecting into the local instance of Base_rpc to dynamically call functions inside
 			Base_rpc depending on the method supplied by the main control unit (OHC-node)*/
 			this.rpc_interface.getClass().getMethod(method,
@@ -150,15 +149,15 @@ public class Basestation implements Sender.Packet_receiver
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.SEVERE, "JSON encoded data is missing valid rpc data: " +
+			this.ohc.logger.log(Level.SEVERE, "JSON encoded data is missing valid rpc data: " +
 					ex.getMessage());
 		}
 	}
 
 	private void make_rpc_call(JSONObject json) throws JSONException
 	{
-		json.put("session_token", this.session_token);
-		Sender s = new Sender(this.endpoint_address, this);
+		json.put("session_token", this.state.get_session_token());
+		Sender s = new Sender(this.ohc, this.state.get_remote_socket_address(), this);
 		Transaction_generator.Transaction transaction = this.transaction_gen.generate_transaction(json);
 		s.execute(transaction);
 	}
@@ -174,7 +173,7 @@ public class Basestation implements Sender.Packet_receiver
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -188,7 +187,7 @@ public class Basestation implements Sender.Packet_receiver
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -202,7 +201,7 @@ public class Basestation implements Sender.Packet_receiver
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -216,7 +215,7 @@ public class Basestation implements Sender.Packet_receiver
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -230,7 +229,7 @@ public class Basestation implements Sender.Packet_receiver
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -244,7 +243,7 @@ public class Basestation implements Sender.Packet_receiver
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -259,7 +258,7 @@ public class Basestation implements Sender.Packet_receiver
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
 	}
 
@@ -278,25 +277,23 @@ public class Basestation implements Sender.Packet_receiver
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
+			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
 	}
 
 	public List<Device> get_devices()
 	{
-		List<Device> devices = new ArrayList<>();
-		Iterator it = this.devices.entrySet().iterator();
-		while(it.hasNext())
-		{
-			devices.add((Device) ((Map.Entry) it.next()).getValue());
-			it.remove();
-		}
-		return devices;
+		return this.state.get_devices();
 	}
 
 	public Resources get_resources()
 	{
 		return this.resources;
+	}
+
+	public Device get_device(String id)
+	{
+		return this.state.get_device(id);
 	}
 
 	public void on_receive_transaction(Transaction_generator.Transaction transaction)
@@ -307,6 +304,6 @@ public class Basestation implements Sender.Packet_receiver
 			this.handle_packet(json);
 			return;
 		}
-		OHC.logger.log(Level.WARNING, String.format("Didn't receive response for transaction %s in time", transaction.get_uuid()));
+		this.ohc.logger.log(Level.WARNING, String.format("Didn't receive response for transaction %s in time", transaction.get_uuid()));
 	}
 }

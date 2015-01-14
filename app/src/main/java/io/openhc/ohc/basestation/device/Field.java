@@ -5,12 +5,14 @@ import android.text.TextWatcher;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 
+import java.io.Serializable;
+
 import io.openhc.ohc.OHC;
 
 public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListener,
-		SeekBar.OnSeekBarChangeListener
+		SeekBar.OnSeekBarChangeListener, Serializable
 {
-	private OHC ohc;
+	private transient OHC ohc; //Don't try to serialize OHC instance. It must be recreated at app start
 	private String device_id;
 	private int field_id;
 	private Type type;
@@ -24,7 +26,7 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 
 	public Field()
 	{
-		this.accessible = false;
+
 	}
 
 	public Field(OHC ohc, String devie_id, int field_id, Type type, String name, double min_value, double max_value, boolean writable)
@@ -100,6 +102,16 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 	public Object get_value()
 	{
 		return this.value;
+	}
+
+	public void set_accessible(boolean accessible)
+	{
+		this.accessible = accessible;
+	}
+
+	public void set_ohc_instance(OHC ohc)
+	{
+		this.ohc = ohc;
 	}
 
 	@Override

@@ -10,11 +10,23 @@ import io.openhc.ohc.OHC;
 
 public class Transaction_generator
 {
-	public static int DEFAULT_RETRY_COUNT = 5;
+	private final int default_retry_count;
+	private final OHC ohc;
+
+	public Transaction_generator(OHC ohc)
+	{
+		this(ohc, 5);
+	}
+
+	public Transaction_generator(OHC ohc, int retry_count)
+	{
+		this.default_retry_count = retry_count;
+		this.ohc = ohc;
+	}
 
 	public Transaction generate_transaction(JSONObject json)
 	{
-		return generate_transaction(json, DEFAULT_RETRY_COUNT);
+		return generate_transaction(json, this.default_retry_count);
 	}
 
 	public Transaction generate_transaction(JSONObject json, int tries)
@@ -22,13 +34,13 @@ public class Transaction_generator
 		UUID uuid = UUID.randomUUID();
 		try
 		{
-			return new Transaction(json, uuid, tries);
+			return new Transaction(this.ohc, json, uuid, tries);
 		}
 		catch(JSONException ex)
 		{
 			/* This should NEVER, absolutely __NEVER__ happen (except if you hand in a broken JSON object)
 			 * But that's why it's called an exception, isn't it?*/
-			OHC.logger.log(Level.SEVERE, "Transaction generator dying x(");
+			this.ohc.logger.log(Level.SEVERE, "Transaction generator dying x(");
 		}
 		return null;
 	}
@@ -43,7 +55,7 @@ public class Transaction_generator
 		private int retry_counter;
 		private int max_retry_num;
 
-		protected Transaction(JSONObject json, UUID uuid, int max_retry) throws JSONException
+		protected Transaction(OHC ohc, JSONObject json, UUID uuid, int max_retry) throws JSONException
 		{
 			this.json_request = json;
 			this.uuid = uuid;
@@ -54,7 +66,7 @@ public class Transaction_generator
 			}
 			catch(JSONException ex)
 			{
-				OHC.logger.log(Level.SEVERE, "FATAL ERROR! FAILED TO SET TRANSACTION ID!");
+				ohc.logger.log(Level.SEVERE, "FATAL ERROR! FAILED TO SET TRANSACTION ID!");
 				throw ex;
 			}
 		}

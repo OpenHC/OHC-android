@@ -30,7 +30,7 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid ip address configuration: " +
+			this.ohc.logger.log(Level.WARNING, "Received invalid ip address configuration: " +
 					ex.getMessage(), ex);
 		}
 	}
@@ -45,7 +45,7 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid login token configuration: " +
+			this.ohc.logger.log(Level.WARNING, "Received invalid login token configuration: " +
 					ex.getMessage(), ex);
 		}
 	}
@@ -59,7 +59,7 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid rpc response for set_num_devices: " +
+			this.ohc.logger.log(Level.WARNING, "Received invalid rpc response for set_num_devices: " +
 					ex.getMessage(), ex);
 		}
 	}
@@ -74,7 +74,7 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid rpc response for set_device_id: " +
+			this.ohc.logger.log(Level.WARNING, "Received invalid rpc response for set_device_id: " +
 					ex.getMessage(), ex);
 		}
 	}
@@ -89,7 +89,7 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid rpc response for set_device_name: " +
+			this.ohc.logger.log(Level.WARNING, "Received invalid rpc response for set_device_name: " +
 					ex.getMessage(), ex);
 		}
 	}
@@ -104,7 +104,7 @@ public class Base_rpc
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid rpc response for device_set_num_fields: " +
+			this.ohc.logger.log(Level.WARNING, "Received invalid rpc response for device_set_num_fields: " +
 					ex.getMessage(), ex);
 		}
 	}
@@ -130,14 +130,16 @@ public class Base_rpc
 			}
 			catch(Exception ex)
 			{
-				OHC.logger.log(Level.WARNING, "Received invalid field configuration: " +
+				this.ohc.logger.log(Level.WARNING, "Received invalid field configuration: " +
 						ex.getMessage(), ex);
-				this.ohc.get_basestation().device_set_field(id, field_id, new Field());
+				Field field = new Field();
+				field.set_accessible(false);
+				this.ohc.get_basestation().device_set_field(id, field_id, field);
 			}
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.WARNING, "Received invalid rpc response for device_set_field: " +
+			this.ohc.logger.log(Level.WARNING, "Received invalid rpc response for device_set_field: " +
 					ex.getMessage(), ex);
 		}
 	}

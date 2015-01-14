@@ -1,22 +1,37 @@
 package io.openhc.ohc.logging;
 
+import android.util.Log;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.openhc.ohc.OHC;
+
 public class OHC_Logger
 {
-	private final Logger logger;
+	private final String tag;
 
-	public OHC_Logger(Logger logger)
+	public OHC_Logger(String tag)
 	{
-		this.logger = logger;
+		this.tag = tag;
 	}
 
 	public void log(Level level, String str)
 	{
-		this.logger.log(level, str);
+		if(level == Level.SEVERE)
+		{
+			Log.e(this.tag, str);
+		}
+		else if(level == Level.WARNING)
+		{
+			Log.w(this.tag, str);
+		}
+		else
+		{
+			Log.d(this.tag, str);
+		}
 	}
 
 	public void log(Level level, Exception ex)

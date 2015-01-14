@@ -32,25 +32,25 @@ public class Network
 	{
 		Resources resources = bs.get_resources();
 		this.port_b_cast = resources.getInteger(R.integer.ohc_network_b_cast_port);
-		OHC.logger.log(Level.INFO, "Broadcast port is " + port_b_cast);
+		bs.ohc.logger.log(Level.INFO, "Broadcast port is " + port_b_cast);
 		try
 		{
 			DatagramChannel channel = DatagramChannel.open();
 			this.socket = channel.socket();
 			//Neat trick: Setting port to 0 makes the socket pick a random unused port
 			this.socket.bind(new InetSocketAddress(InetAddress.getByName("0.0.0.0"), 0));
-			OHC.logger.log(Level.INFO, "Listening on port " + this.socket.getLocalPort());
+			bs.ohc.logger.log(Level.INFO, "Listening on port " + this.socket.getLocalPort());
 		}
 		catch(IOException ex)
 		{
-			OHC.logger.log(Level.SEVERE, "Couldn't create comm socket: " + ex.getMessage(), ex);
+			bs.ohc.logger.log(Level.SEVERE, "Couldn't create comm socket: " + ex.getMessage(), ex);
 			throw ex;
 		}
 	}
 
-	public static boolean find_basestation_lan(Context ctx, int port, Broadcaster.Broadcast_receiver receiver)
+	public static boolean find_basestation_lan(OHC ohc, int port, Broadcaster.Broadcast_receiver receiver)
 	{
-		Transaction_generator gen = new Transaction_generator();
+		Transaction_generator gen = new Transaction_generator(ohc);
 		JSONObject json = new JSONObject();
 		try
 		{
@@ -59,13 +59,13 @@ public class Network
 		catch(JSONException ex)
 		{
 			//Can't happen, all prameters are static
-			OHC.logger.log(Level.SEVERE, "This can't happen");
+			ohc.logger.log(Level.SEVERE, "This can't happen");
 		}
 		Transaction_generator.Transaction transaction = gen.generate_transaction(json);
-		InetAddress broadcast_addr = Broadcaster.get_broadcast_address(ctx);
+		InetAddress broadcast_addr = Broadcaster.get_broadcast_address(ohc);
 		if(broadcast_addr != null)
 		{
-			Broadcaster bc = new Broadcaster(broadcast_addr, port, receiver);
+			Broadcaster bc = new Broadcaster(ohc, broadcast_addr, port, receiver);
 			bc.execute(transaction);
 			return true;
 		}

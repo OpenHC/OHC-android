@@ -10,11 +10,13 @@ import io.openhc.ohc.OHC;
 //Closes a socket after a given amount of time
 public class Socket_timeout extends TimerTask
 {
+	private final OHC ohc;
 	private final Socket_provider supplier;
 	private final long timeout;
 
-	public Socket_timeout(Socket_provider supplier, long timeout)
+	public Socket_timeout(OHC ohc, Socket_provider supplier, long timeout)
 	{
+		this.ohc = ohc;
 		this.supplier = supplier;
 		this.timeout = timeout;
 	}
@@ -31,11 +33,11 @@ public class Socket_timeout extends TimerTask
 		try
 		{
 			socket.close();
-			OHC.logger.log(Level.INFO, "Closing socket: " + socket.toString());
+			this.ohc.logger.log(Level.INFO, "Closing socket: " + socket.toString());
 		}
 		catch(Exception ex)
 		{
-			OHC.logger.log(Level.INFO, String.format("Closing socket %s : %s", socket.toString(), ex.getMessage()), ex);
+			this.ohc.logger.log(Level.INFO, String.format("Closing socket %s : %s", socket.toString(), ex.getMessage()), ex);
 		}
 	}
 

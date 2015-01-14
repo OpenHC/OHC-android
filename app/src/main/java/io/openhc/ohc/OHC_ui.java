@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.logging.Level;
@@ -53,15 +55,32 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	{
 		super.onCreate(savedInstanceState);
 		if(this.ohc == null)
-			this.ohc = new OHC(this);
-		this.setContentView(this.ohc.get_current_view());
+			if(savedInstanceState != null)
+				try
+				{
+					this.ohc = new OHC(this, savedInstanceState);
+				}
+				catch(IOException ex)
+				{
+					Log.e(this.getString(R.string.log_tag), "Failed to load saved state", ex);
+					this.ohc = new OHC(this);
+				}
+			else
+				this.ohc = new OHC(this);
+		this.setContentView(this.ohc.get_current_layout());
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstaceState)
+	{
+		super.onSaveInstanceState(savedInstaceState);
 	}
 
 	@Override
 	public void setContentView(int id)
 	{
 		super.setContentView(id);
-		this.ohc.set_current_view(id);
+		this.ohc.set_current_layout(id);
 		ViewGroup layout = null;
 		if(id == R.layout.activity_ohc_login)
 		{
@@ -115,11 +134,11 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	@Override
 	public void onBackPressed()
 	{
-		if(this.ohc.get_current_view() == R.layout.activity_ohc_device)
+		if(this.ohc.get_current_layout() == R.layout.activity_ohc_device)
 		{
 			ohc.draw_device_overview();
 		}
-		else if(this.ohc.get_current_view() == R.layout.activity_ohc_overview)
+		else if(this.ohc.get_current_layout() == R.layout.activity_ohc_overview)
 		{
 			ohc.draw_login_page();
 		}
@@ -170,7 +189,7 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	@Override
 	public void onTextChanged(CharSequence cs, int start, int before, int count)
 	{
-		if(this.ohc.get_current_view() == R.layout.activity_ohc_login)
+		if(this.ohc.get_current_layout() == R.layout.activity_ohc_login)
 		{
 			this.lc_status = this.e_passwd.length() > 0 && this.e_uname.length() > 0;
 			this.recalc_bt_connect();
@@ -180,18 +199,18 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	@Override
 	public void afterTextChanged(Editable e)
 	{
-		if(this.ohc.get_current_view() == R.layout.activity_ohc_device)
+		if(this.ohc.get_current_layout() == R.layout.activity_ohc_device)
 		{
-			this.ohc.get_basestation().device_set_name(ohc.get_current_device(), e.toString());
+			this.ohc.get_basestation().device_set_name(ohc.get_current_dev_id(), e.toString());
 		}
 	}
 
 	@Override
 	public void onItemClick(AdapterView parent, View view, int position, long id)
 	{
-		if(this.ohc.get_current_view() == R.layout.activity_ohc_overview)
+		if(this.ohc.get_current_layout() == R.layout.activity_ohc_overview)
 		{
-			OHC.logger.log(Level.WARNING.INFO, String.format("Item %d in device view clicked", position));
+			this.ohc.logger.log(Level.WARNING.INFO, String.format("Item %d in device view clicked", position));
 			this.ohc.device_show_details(position);
 		}
 	}

@@ -17,6 +17,11 @@ public class Device
 	private HashMap<Integer, Field> fields = new HashMap<>();
 	private int field_num;
 
+	public Device()
+	{
+
+	}
+
 	public Device(String name, String id)
 	{
 		this.name = name;
