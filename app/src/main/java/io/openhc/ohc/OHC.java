@@ -137,6 +137,11 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		return this.station;
 	}
 
+	public Ui_state get_ui_state()
+	{
+		return this.ui_state;
+	}
+
 	public void connect(String uname, String passwd)
 	{
 		this.station.login(uname, passwd);
@@ -176,5 +181,6 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		this.context.get_et_action_bar_name().addTextChangedListener(this.context);
 		this.context.get_lv_fields().setAdapter(this.field_adapter);
 		this.current_dev_id = dev_id;
+		this.ui_state.set_current_device_id(dev_id);
 	}
 }

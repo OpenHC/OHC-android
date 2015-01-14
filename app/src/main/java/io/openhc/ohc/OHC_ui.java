@@ -59,6 +59,7 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 				try
 				{
 					this.ohc = new OHC(this, savedInstanceState);
+					this.nw_status = this.ohc.get_basestation() != null;
 				}
 				catch(IOException ex)
 				{
@@ -67,13 +68,31 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 				}
 			else
 				this.ohc = new OHC(this);
-		this.setContentView(this.ohc.get_current_layout());
+		switch(this.ohc.get_current_layout())
+		{
+			case R.layout.activity_ohc_overview:
+				this.ohc.draw_device_overview();
+				break;
+			case R.layout.activity_ohc_device:
+				this.ohc.draw_device_view(this.ohc.get_current_dev_id());
+				break;
+			default:
+				this.setContentView(this.ohc.get_current_layout());
+		}
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle savedInstaceState)
 	{
 		super.onSaveInstanceState(savedInstaceState);
+		if(this.ohc != null)
+		{
+			savedInstaceState.putSerializable(this.getString(R.string.save_id_ohc),
+					this.ohc.get_ui_state());
+			if(this.ohc.get_basestation() != null)
+				savedInstaceState.putSerializable(this.getString(R.string.save_id_basestation),
+						this.ohc.get_basestation().get_state());
+		}
 	}
 
 	@Override

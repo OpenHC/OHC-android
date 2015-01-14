@@ -296,6 +296,11 @@ public class Basestation implements Sender.Packet_receiver
 		return this.state.get_device(id);
 	}
 
+	public Basestation_state get_state()
+	{
+		return this.state;
+	}
+
 	public void on_receive_transaction(Transaction_generator.Transaction transaction)
 	{
 		JSONObject json = transaction.get_response();

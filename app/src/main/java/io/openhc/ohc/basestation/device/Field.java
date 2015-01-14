@@ -12,7 +12,7 @@ import io.openhc.ohc.OHC;
 public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListener,
 		SeekBar.OnSeekBarChangeListener, Serializable
 {
-	private transient OHC ohc; //Don't try to serialize OHC instance. It must be recreated at app start
+	private transient OHC ohc; //Don't try to serialize OHC instance. It must be recreated @ app create
 	private String device_id;
 	private int field_id;
 	private Type type;
@@ -70,6 +70,7 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 	* supplied value is incompatible with the fields type*/
 	public void set_value(Object value) throws ClassCastException
 	{
+		//Dynamically cast the supplied object to the appropriate data type
 		this.value = this.type.get_data_type().cast(value);
 		this.ohc.get_basestation().device_set_field_value(this.device_id, this.field_id, this.value);
 	}
