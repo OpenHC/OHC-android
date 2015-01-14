@@ -99,9 +99,9 @@ public class Field_adapter extends ArrayAdapter<Field>
 				break;
 			case SLIDER:
 				SeekBar sb_value = new SeekBar(this.getContext());
-				sb_value.setOnSeekBarChangeListener(field);
 				sb_value.setMax((int)field.get_max());
 				sb_value.setProgress((Integer)field.get_value());
+				sb_value.setOnSeekBarChangeListener(field);
 				v_value = sb_value;
 				break;
 			default:

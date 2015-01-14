@@ -90,8 +90,10 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 			savedInstaceState.putSerializable(this.getString(R.string.save_id_ohc),
 					this.ohc.get_ui_state());
 			if(this.ohc.get_basestation() != null)
+			{
 				savedInstaceState.putSerializable(this.getString(R.string.save_id_basestation),
 						this.ohc.get_basestation().get_state());
+			}
 		}
 	}
 

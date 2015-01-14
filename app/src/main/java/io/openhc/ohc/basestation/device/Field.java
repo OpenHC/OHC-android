@@ -24,6 +24,8 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 
 	private Object value;
 
+	private String serial_value_store;
+
 	public Field()
 	{
 
@@ -68,7 +70,7 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 
 	/*Sets a new value for this field. Throws a ClassCastException if type of
 	* supplied value is incompatible with the fields type*/
-	public void set_value(Object value) throws ClassCastException
+	public void set_value(Object value, boolean from_user) throws ClassCastException
 	{
 		//Dynamically cast the supplied object to the appropriate data type
 		this.value = this.type.get_data_type().cast(value);
@@ -134,13 +136,13 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 		switch(this.type)
 		{
 			case INT:
-				this.set_value(Integer.parseInt(str));
+				this.set_value(Integer.parseInt(str), true);
 				break;
 			case FLOAT:
-				this.set_value(Double.parseDouble(str));
+				this.set_value(Double.parseDouble(str), true);
 				break;
 			case STRING:
-				this.set_value(str);
+				this.set_value(str, true);
 				break;
 		}
 	}
@@ -148,7 +150,7 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 	@Override
 	public void onCheckedChanged(CompoundButton bt, boolean state)
 	{
-		this.set_value(state);
+		this.set_value(state, true);
 	}
 
 	@Override
@@ -166,7 +168,7 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 	@Override
 	public void onProgressChanged(SeekBar sb, int progress, boolean from_user)
 	{
-		this.set_value(progress);
+		this.set_value(progress, true);
 	}
 
 	public boolean is_accessible()
