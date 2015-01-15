@@ -43,6 +43,7 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 
 	private ImageView iv_header_icon;
 	private EditText et_header_name;
+	private ImageView iv_header_settings;
 
 	private boolean nw_status;
 	private boolean lc_status;
@@ -138,6 +139,9 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 		this.iv_header_icon = (ImageView)this.findViewById(R.id.iv_icon);
 		this.iv_header_icon.setImageResource(R.drawable.ic_launcher);
 		this.iv_header_icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+		this.iv_header_settings = (ImageView)this.findViewById(R.id.iv_settings);
+		this.iv_header_settings.setImageResource(R.drawable.ic_action_settings);
+		this.iv_header_settings.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 		if(id == R.layout.activity_ohc_device)
 		{
 			this.et_header_name = (EditText)this.findViewById(R.id.et_name);
@@ -147,9 +151,7 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_ohc_login, menu);
-		return true;
+		return false;
 	}
 
 	@Override

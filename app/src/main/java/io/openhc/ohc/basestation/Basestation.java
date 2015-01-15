@@ -141,9 +141,9 @@ public class Basestation implements Sender.Packet_receiver
 		try
 		{
 			String method = packet.getString("method");
-			this.ohc.logger.log(Level.WARNING, "Received RPC: " + method);
+			this.ohc.logger.log(Level.INFO, "Received RPC: " + method);
 			/*Dynamically reflecting into the local instance of Base_rpc to dynamically call functions inside
-			Base_rpc depending on the method supplied by the main control unit (OHC-node)*/
+			* Base_rpc depending on the method supplied by the main control unit / basestation (OHC-node)*/
 			this.rpc_interface.getClass().getMethod(method,
 					JSONObject.class).invoke(this.rpc_interface, packet);
 		}
