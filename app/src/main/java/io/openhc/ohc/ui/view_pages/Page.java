@@ -5,13 +5,14 @@ import android.content.Context;
 import android.support.v7.app.ActionBarActivity;
 
 import io.openhc.ohc.OHC;
+import io.openhc.ohc.OHC_ui;
 
 public abstract class Page
 {
-	protected ActionBarActivity ctx;
+	protected OHC_ui ctx;
 	protected OHC ohc;
 
-	protected Page(ActionBarActivity ctx, OHC ohc)
+	protected Page(OHC_ui ctx, OHC ohc)
 	{
 		this.ctx = ctx;
 		this.ohc = ohc;

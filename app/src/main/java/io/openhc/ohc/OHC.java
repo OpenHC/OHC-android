@@ -178,7 +178,7 @@ public class OHC implements Broadcaster.Broadcast_receiver
 			this.field_adapter.notifyDataSetChanged();
 		}
 		this.context.get_et_action_bar_name().setText(dev.get_name());
-		this.context.get_et_action_bar_name().addTextChangedListener(this.context);
+		this.context.get_et_action_bar_name().addTextChangedListener(this.context.get_page_device());
 		this.context.get_lv_fields().setAdapter(this.field_adapter);
 		this.current_dev_id = dev_id;
 		this.ui_state.set_current_device_id(dev_id);

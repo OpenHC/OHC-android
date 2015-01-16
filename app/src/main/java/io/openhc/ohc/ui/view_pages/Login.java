@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import io.openhc.ohc.OHC;
+import io.openhc.ohc.OHC_ui;
 import io.openhc.ohc.R;
 
 public class Login extends Page implements View.OnClickListener, TextWatcher
@@ -31,7 +32,7 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 	private boolean lc_status;
 	private boolean lg_status;
 
-	public Login(ActionBarActivity ctx, OHC ohc)
+	public Login(OHC_ui ctx, OHC ohc)
 	{
 		super(ctx, ohc);
 	}
@@ -147,5 +148,10 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 	public int get_layout_id()
 	{
 		return R.layout.activity_ohc_login;
+	}
+
+	public void set_nw_status(boolean state)
+	{
+		this.nw_status = state;
 	}
 }
