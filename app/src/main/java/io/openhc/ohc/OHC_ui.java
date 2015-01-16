@@ -142,6 +142,7 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 		this.iv_header_settings = (ImageView)this.findViewById(R.id.iv_settings);
 		this.iv_header_settings.setImageResource(R.drawable.ic_action_settings);
 		this.iv_header_settings.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+		this.iv_header_settings.setOnClickListener(this);
 		if(id == R.layout.activity_ohc_device)
 		{
 			this.et_header_name = (EditText)this.findViewById(R.id.et_name);
@@ -200,6 +201,10 @@ public class OHC_ui extends ActionBarActivity implements View.OnClickListener, T
 			{
 				this.ohc.find_basestation_lan();
 			}
+		}
+		else if(v == this.iv_header_settings)
+		{
+
 		}
 	}
 
