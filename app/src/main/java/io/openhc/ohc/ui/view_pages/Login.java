@@ -29,9 +29,12 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 	private boolean lc_status;
 	private boolean lg_status;
 
-	public Login(OHC_ui ctx, OHC ohc)
+	private Settings settings;
+
+	public Login(OHC_ui ctx, OHC ohc, Settings settings)
 	{
 		super(ctx, ohc);
+		this.settings = settings;
 	}
 
 	public void init()
@@ -47,7 +50,10 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 		this.lc_status = this.e_passwd.length() > 0 && this.e_uname.length() > 0;
 		this.recalc_bt_connect();
 		if(this.ohc.get_basestation() == null)
-			this.ohc.init();
+			if(this.settings.is_ip_manually_set())
+				this.ohc.init(this.settings.get_ip_address());
+			else
+				this.ohc.init();
 		ViewGroup layout = (ViewGroup)this.ctx.getLayoutInflater().inflate(R.layout.action_bar_login, null);
 		ActionBar action_bar = this.ctx.getSupportActionBar();
 		action_bar.setDisplayShowHomeEnabled(false);

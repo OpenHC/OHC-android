@@ -13,6 +13,8 @@
     <string name="status_connecting">Connecting...</string>
     <string name="status_connection_failed">Connection failed</string>
     <string name="status_login_failed">Wrong username or password</string>
+    <string name="status_manual_wrong">Error in manual configuration</string>
+    <string name="status_manual">IP address manually set: </string>
     <string name="devices">Devices</string>
     <string name="ohc">OHC</string>
     <string name="settings">Settings</string>

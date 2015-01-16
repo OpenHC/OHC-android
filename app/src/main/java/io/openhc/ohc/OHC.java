@@ -57,6 +57,24 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		}
 	}
 
+	public void init(InetAddress addr)
+	{
+		int port = this.context.getResources().getInteger(R.integer.ohc_network_b_cast_port);
+		try
+		{
+			this.station = new Basestation(this, new InetSocketAddress(addr, port));
+			this.context.update_network_status(true);
+			this.context.set_status(this.context.getString(R.string.status_manual) + addr.getHostAddress());
+			return;
+		}
+		catch(Exception ex)
+		{
+			logger.log(Level.WARNING, "Invalid manual configuration: " + ex.getMessage(), ex);
+		}
+		this.context.update_network_status(false);
+		this.context.set_status(this.context.getString(R.string.status_manual_wrong));
+	}
+
 	public void init()
 	{
 		this.find_basestation_lan();
@@ -149,7 +167,8 @@ public class OHC implements Broadcaster.Broadcast_receiver
 
 	public void draw_device_overview()
 	{
-		this.set_layout(R.layout.activity_overview);
+		if(this.get_current_layout() != R.layout.activity_overview)
+			this.set_layout(R.layout.activity_overview);
 		if(this.device_adapter == null)
 			this.device_adapter = new ArrayAdapter<Device>(this.context, R.layout.list_view_item, this.station.get_devices());
 		this.context.get_lv_devices().setAdapter(this.device_adapter);
@@ -157,12 +176,12 @@ public class OHC implements Broadcaster.Broadcast_receiver
 
 	public void device_show_details(int position)
 	{
-		this.draw_device_view(this.device_adapter.getItem(position).get_id());
+		this.ui_state.set_current_device_id(this.device_adapter.getItem(position).get_id());
+		this.set_layout(R.layout.activity_device);
 	}
 
 	public void draw_device_view(String dev_id)
 	{
-		this.set_layout(R.layout.activity_device);
 		Device dev = station.get_device(dev_id);
 		if(this.field_adapter == null)
 			this.field_adapter = new Field_adapter(this.context, R.layout.list_view_group, dev.get_fields());
@@ -176,6 +195,5 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		this.context.get_et_action_bar_name().addTextChangedListener(this.context.get_page_device());
 		this.context.get_lv_fields().setAdapter(this.field_adapter);
 		this.current_dev_id = dev_id;
-		this.ui_state.set_current_device_id(dev_id);
 	}
 }

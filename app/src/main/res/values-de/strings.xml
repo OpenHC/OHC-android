@@ -13,6 +13,8 @@
     <string name="status_connecting">Verbinde...</string>
     <string name="status_connection_failed">Verbindung fehlgeschlagen</string>
     <string name="status_login_failed">Zugangsdaten inkorrekt</string>
+    <string name="status_manual_wrong">Fehler in manueller Konfigration</string>
+    <string name="status_manual">IP-Adresse manuell gesetzt: </string>
     <string name="devices">Geräte</string>
     <string name="ohc">OHC</string>
     <string name="settings">Einstellungen</string>

@@ -5,8 +5,9 @@
               android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="80dp"
         android:clickable="true"
+        android:background="@drawable/l_item_border"
         android:id="@+id/bl_ip_lan_manual">
         <TextView
             android:layout_width="wrap_content"
@@ -14,7 +15,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/ip_manual"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="45dp"
             android:id="@+id/tv_ip_lan_manual"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"/>
@@ -32,7 +33,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="80dp"
         android:id="@+id/st_set_ip_lan"
         android:clickable="true"
         android:layout_below="@id/bl_ip_lan_manual">

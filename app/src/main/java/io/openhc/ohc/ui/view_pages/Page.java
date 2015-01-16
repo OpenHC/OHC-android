@@ -26,7 +26,6 @@ public abstract class Page
 
 	}
 
-
 	public abstract int get_layout_id();
 	public abstract void init();
 }

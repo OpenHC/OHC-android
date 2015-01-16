@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -18,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import java.net.InetAddress;
 
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
@@ -39,12 +42,31 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 
 	private EditText et_ip_addr;
 
+	private final String ET_IP_ADDR_STR = "settings_et_ip_addr";
+
 	public Settings(OHC_ui ctx, OHC ohc)
 	{
 		super(ctx, ohc);
 		this.preferences = this.ctx.getPreferences(Context.MODE_PRIVATE);
 	}
 
+	public void store_state(Bundle save_state)
+	{
+		if(this.et_ip_addr != null)
+			save_state.putString(ET_IP_ADDR_STR, this.et_ip_addr.getText().toString());
+	}
+
+	public void restore_state(Bundle saved_state)
+	{
+		String et_ip = saved_state.getString(ET_IP_ADDR_STR);
+		if(et_ip != null)
+		{
+			this.show_ip_addr_dialog();
+			this.et_ip_addr.setText(et_ip);
+		}
+	}
+
+	@Override
 	public void init()
 	{
 		this.cb_ip_lan_manual = (CheckBox)this.ctx.findViewById(R.id.cb_ip_lan_manual);
@@ -102,6 +124,7 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		LayoutInflater inflater = this.ctx.getLayoutInflater();
 		RelativeLayout layout = (RelativeLayout)inflater.inflate(R.layout.dialog_ip_address, null);
 		this.et_ip_addr = (EditText)layout.findViewById(R.id.et_ip_addr);
+		this.et_ip_addr.setText(this.preferences.getString(this.ctx.getString(R.string.ohc_ip_lan), ""));
 		AlertDialog dialog = builder.create();
 		dialog.setCanceledOnTouchOutside(true);
 		dialog.setOnCancelListener(this);
@@ -139,10 +162,20 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		return R.layout.activity_settings;
 	}
 
-	public String get_ip_addr_dialog_text()
+	public boolean is_ip_manually_set()
 	{
-		if(this.et_ip_addr != null)
-			return et_ip_addr.getText().toString();
-		return null;
+		return this.preferences.getBoolean(this.ctx.getString(R.string.ohc_ip_lan_manual), false);
+	}
+
+	public InetAddress get_ip_address()
+	{
+		try
+		{
+			return InetAddress.getByName(this.preferences.getString(this.ctx.getString(R.string.ohc_ip_lan), ""));
+		}
+		catch(Exception ex)
+		{
+			return null;
+		}
 	}
 }
