@@ -1,18 +1,13 @@
 package io.openhc.ohc.basestation;
 
-import android.widget.ArrayAdapter;
-
 import java.io.Serializable;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.basestation.device.Device;

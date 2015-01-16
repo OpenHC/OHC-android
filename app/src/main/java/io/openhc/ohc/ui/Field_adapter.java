@@ -3,7 +3,6 @@ package io.openhc.ohc.ui;
 import android.content.Context;
 import android.text.InputFilter;
 import android.text.InputType;
-import android.text.Layout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,11 +16,8 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.logging.Level;
 
-import io.openhc.ohc.OHC;
 import io.openhc.ohc.R;
-import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.device.Field;
 import io.openhc.ohc.ui.input.filter.Input_filter_float;
 import io.openhc.ohc.ui.input.filter.Input_filter_int;

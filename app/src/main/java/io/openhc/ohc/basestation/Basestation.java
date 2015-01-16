@@ -8,16 +8,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
-import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.device.Field;
 import io.openhc.ohc.basestation.rpc.Base_rpc;

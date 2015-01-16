@@ -1,18 +1,14 @@
 package io.openhc.ohc;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.Basestation_state;
@@ -20,7 +16,6 @@ import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.logging.OHC_Logger;
 import io.openhc.ohc.skynet.Broadcaster;
 import io.openhc.ohc.skynet.Network;
-import io.openhc.ohc.skynet.Receiver;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 import io.openhc.ohc.ui.Field_adapter;
 import io.openhc.ohc.ui.Ui_state;

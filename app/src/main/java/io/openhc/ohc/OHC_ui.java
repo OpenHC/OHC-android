@@ -1,37 +1,19 @@
 package io.openhc.ohc;
 
-import android.content.res.Configuration;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.util.List;
-import java.util.logging.Level;
 
-import io.openhc.ohc.skynet.Broadcaster;
-import io.openhc.ohc.skynet.transaction.Transaction_generator;
 import io.openhc.ohc.ui.view_pages.Device;
 import io.openhc.ohc.ui.view_pages.Login;
 import io.openhc.ohc.ui.view_pages.Overview;
-import io.openhc.ohc.ui.view_pages.Page;
 
 
 public class OHC_ui extends ActionBarActivity

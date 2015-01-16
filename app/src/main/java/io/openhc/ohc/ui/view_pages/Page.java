@@ -1,9 +1,5 @@
 package io.openhc.ohc.ui.view_pages;
 
-import android.app.Activity;
-import android.content.Context;
-import android.support.v7.app.ActionBarActivity;
-
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
 

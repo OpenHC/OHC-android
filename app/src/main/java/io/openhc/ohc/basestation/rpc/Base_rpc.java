@@ -4,11 +4,9 @@ import org.json.JSONObject;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.Objects;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
-import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.device.Field;
 
 public class Base_rpc

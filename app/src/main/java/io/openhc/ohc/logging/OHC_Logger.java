@@ -5,9 +5,6 @@ import android.util.Log;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import io.openhc.ohc.OHC;
 
 public class OHC_Logger
 {
