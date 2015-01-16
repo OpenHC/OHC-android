@@ -75,7 +75,7 @@ public class Device extends Page implements View.OnClickListener, TextWatcher
 	@Override
 	public int get_layout_id()
 	{
-		return R.layout.activity_ohc_device;
+		return R.layout.activity_device;
 	}
 
 	public ListView get_lv_fields()

@@ -37,5 +37,6 @@
         android:layout_marginRight="5dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:clickable="true"
         android:layout_gravity="center"/>
 </RelativeLayout>

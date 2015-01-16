@@ -14,6 +14,7 @@ import java.io.IOException;
 import io.openhc.ohc.ui.view_pages.Device;
 import io.openhc.ohc.ui.view_pages.Login;
 import io.openhc.ohc.ui.view_pages.Overview;
+import io.openhc.ohc.ui.view_pages.Settings;
 
 
 public class OHC_ui extends ActionBarActivity
@@ -21,6 +22,7 @@ public class OHC_ui extends ActionBarActivity
 	private Login login;
 	private Overview overview;
 	private Device device;
+	private Settings settings;
 
 	private OHC ohc;
 
@@ -45,12 +47,13 @@ public class OHC_ui extends ActionBarActivity
 		this.login.set_nw_status(this.ohc.get_basestation() != null);
 		this.overview = new Overview(this, this.ohc);
 		this.device = new Device(this, this.ohc);
+		this.settings = new Settings(this, this.ohc);
 		switch(this.ohc.get_current_layout())
 		{
-			case R.layout.activity_ohc_overview:
+			case R.layout.activity_overview:
 				this.ohc.draw_device_overview();
 				break;
-			case R.layout.activity_ohc_device:
+			case R.layout.activity_device:
 				this.ohc.draw_device_view(this.ohc.get_current_dev_id());
 				break;
 			default:
@@ -79,18 +82,19 @@ public class OHC_ui extends ActionBarActivity
 	{
 		super.setContentView(id);
 		this.ohc.set_current_layout(id);
-		ViewGroup layout = null;
-		if(id == R.layout.activity_ohc_login)
+		switch(id)
 		{
-			this.login.init();
-		}
-		else if(id == R.layout.activity_ohc_overview)
-		{
-			this.overview.init();
-		}
-		else if(id == R.layout.activity_ohc_device)
-		{
-			this.device.init();
+			case R.layout.activity_login:
+				this.login.init();
+				break;
+			case R.layout.activity_settings:
+				this.settings.init();
+				break;
+			case R.layout.activity_overview:
+				this.overview.init();
+				break;
+			case R.layout.activity_device:
+				this.device.init();
 		}
 	}
 
@@ -103,11 +107,11 @@ public class OHC_ui extends ActionBarActivity
 	@Override
 	public void onBackPressed()
 	{
-		if(this.ohc.get_current_layout() == R.layout.activity_ohc_device)
+		if(this.ohc.get_current_layout() == R.layout.activity_device)
 		{
 			ohc.draw_device_overview();
 		}
-		else if(this.ohc.get_current_layout() == R.layout.activity_ohc_overview)
+		else if(this.ohc.get_current_layout() == R.layout.activity_overview)
 		{
 			ohc.draw_login_page();
 		}

@@ -112,7 +112,7 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 		}
 		else if(v == this.iv_header_settings)
 		{
-
+			this.ctx.setContentView(R.layout.activity_settings);
 		}
 	}
 
@@ -125,7 +125,7 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 	@Override
 	public void onTextChanged(CharSequence cs, int start, int before, int count)
 	{
-		if(this.ohc.get_current_layout() == R.layout.activity_ohc_login)
+		if(this.ohc.get_current_layout() == R.layout.activity_login)
 		{
 			this.lc_status = this.e_passwd.length() > 0 && this.e_uname.length() > 0;
 			this.recalc_bt_connect();
@@ -135,7 +135,7 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 	@Override
 	public void afterTextChanged(Editable e)
 	{
-		if(this.ohc.get_current_layout() == R.layout.activity_ohc_device)
+		if(this.ohc.get_current_layout() == R.layout.activity_device)
 		{
 			this.ohc.get_basestation().device_set_name(ohc.get_current_dev_id(), e.toString());
 		}
@@ -144,7 +144,7 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 	@Override
 	public int get_layout_id()
 	{
-		return R.layout.activity_ohc_login;
+		return R.layout.activity_login;
 	}
 
 	public void set_nw_status(boolean state)

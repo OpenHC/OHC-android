@@ -7,4 +7,7 @@
 
     <string name="save_id_ohc">ohc_state</string>
     <string name="save_id_basestation">ohc_bs_state</string>
+
+    <string name="ohc_ip_lan_manual">ohc_ip_lan_manual</string>
+    <string name="ohc_ip_lan">ohc_ip_lan</string>
 </resources>

@@ -144,12 +144,12 @@ public class OHC implements Broadcaster.Broadcast_receiver
 
 	public void draw_login_page()
 	{
-		this.set_layout(R.layout.activity_ohc_login);
+		this.set_layout(R.layout.activity_login);
 	}
 
 	public void draw_device_overview()
 	{
-		this.set_layout(R.layout.activity_ohc_overview);
+		this.set_layout(R.layout.activity_overview);
 		if(this.device_adapter == null)
 			this.device_adapter = new ArrayAdapter<Device>(this.context, R.layout.list_view_item, this.station.get_devices());
 		this.context.get_lv_devices().setAdapter(this.device_adapter);
@@ -162,7 +162,7 @@ public class OHC implements Broadcaster.Broadcast_receiver
 
 	public void draw_device_view(String dev_id)
 	{
-		this.set_layout(R.layout.activity_ohc_device);
+		this.set_layout(R.layout.activity_device);
 		Device dev = station.get_device(dev_id);
 		if(this.field_adapter == null)
 			this.field_adapter = new Field_adapter(this.context, R.layout.list_view_group, dev.get_fields());

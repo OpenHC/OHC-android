@@ -69,6 +69,6 @@ public class Overview extends Page implements View.OnClickListener, AdapterView.
 
 	public int get_layout_id()
 	{
-		return R.layout.activity_ohc_overview;
+		return R.layout.activity_overview;
 	}
 }

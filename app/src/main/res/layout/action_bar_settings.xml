@@ -20,23 +20,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/devices"
+        android:text="@string/settings"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:layout_centerVertical="true"
         android:id="@+id/textView"
         android:textColor="#ffffff"
         android:layout_toRightOf="@+id/iv_icon"
+        android:clickable="true"
         android:layout_weight="0.325"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/iv_settings"
-        android:layout_weight="0.175"
-        android:layout_marginRight="5dp"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:clickable="true"
-        android:layout_gravity="center"/>
 </RelativeLayout>
