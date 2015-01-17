@@ -5,12 +5,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.openhc.ohc.ui.view_pages.Device;

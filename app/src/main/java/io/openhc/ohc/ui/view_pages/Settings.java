@@ -5,18 +5,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -50,12 +46,14 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		this.preferences = this.ctx.getPreferences(Context.MODE_PRIVATE);
 	}
 
+	@Override
 	public void store_state(Bundle save_state)
 	{
 		if(this.et_ip_addr != null)
 			save_state.putString(ET_IP_ADDR_STR, this.et_ip_addr.getText().toString());
 	}
 
+	@Override
 	public void restore_state(Bundle saved_state)
 	{
 		String et_ip = saved_state.getString(ET_IP_ADDR_STR);
@@ -107,6 +105,7 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 			this.preferences.edit().putBoolean(this.ctx.getString(R.string.ohc_ip_lan_manual),
 					!this.cb_ip_lan_manual.isChecked()).commit();
 			this.update_view();
+			this.ctx.get_page_login().init_ohc();
 		}
 		else if(view == this.st_set_ip_lan)
 		{

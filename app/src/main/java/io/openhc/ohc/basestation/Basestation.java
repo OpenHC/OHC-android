@@ -28,6 +28,7 @@ public class Basestation implements Sender.Packet_receiver
 	private Base_rpc rpc_interface;
 	private Resources resources;
 	private Transaction_generator transaction_gen;
+	private AsyncTask rx_task;
 
 	private Basestation_state state;
 
@@ -49,7 +50,7 @@ public class Basestation implements Sender.Packet_receiver
 
 		//Receiver for state updates initiated by the basestation
 		Receiver receiver = network.setup_receiver();
-		receiver.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); //Run this task in parallel to others
+		this.rx_task = receiver.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); //Run this task in parallel to others
 	}
 
 	//Code being called from Base_rpc
@@ -295,6 +296,7 @@ public class Basestation implements Sender.Packet_receiver
 		return this.state;
 	}
 
+	@Override
 	public void on_receive_transaction(Transaction_generator.Transaction transaction)
 	{
 		JSONObject json = transaction.get_response();
@@ -304,5 +306,10 @@ public class Basestation implements Sender.Packet_receiver
 			return;
 		}
 		this.ohc.logger.log(Level.WARNING, String.format("Didn't receive response for transaction %s in time", transaction.get_uuid()));
+	}
+
+	public void destroy()
+	{
+		this.rx_task.cancel(true);
 	}
 }
