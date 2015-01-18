@@ -23,7 +23,7 @@ import io.openhc.ohc.ui.view_pages.Settings;
  * by this activity. Also this activity keeps track of the pages visited, creating a history
  * of visited pages to allow for easy navigation by native Android controls like the back button.
  *
- * @author Tobis Schramm
+ * @author Tobias Schramm
  */
 public class OHC_ui extends ActionBarActivity
 {
