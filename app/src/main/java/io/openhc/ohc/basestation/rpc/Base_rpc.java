@@ -9,8 +9,12 @@ import java.util.logging.Level;
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.basestation.device.Field;
 
-/* As a security measure this class is dedicated to RPCs. By only allowing RPCs to functions in
- * this class a potential attacker is prevented from gaining access to any internal functions*/
+/**
+ * As a security measure this class is dedicated to RPCs. By only allowing RPCs to functions in
+ * this class a potential attacker is prevented from gaining access to any internal functions
+ *
+ * @author Tobias Schramm
+ */
 public class Base_rpc
 {
 	private OHC ohc;

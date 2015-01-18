@@ -7,7 +7,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-//OOP representation of a smart device
+/**
+ * OOP representation of a smart device.
+ * Instances of this class are created by a Basestation object. When a RPC that registers a new
+ * device is received this class gets instantiated.
+ * Also it's fully serializable allowing for faster interaction by not having to request any
+ * additional data from the physical basestation over the network when the app context is changed
+ * e.g. by a user tilting his device causing the screen to rotate.
+ *
+ * @author Tobias Schramm
+ */
 public class Device implements Serializable
 {
 	private String name;

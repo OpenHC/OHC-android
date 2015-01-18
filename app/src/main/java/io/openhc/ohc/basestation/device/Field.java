@@ -9,6 +9,13 @@ import java.io.Serializable;
 
 import io.openhc.ohc.OHC;
 
+/**
+ * This class represents data in the memory of smart devices.
+ * All variables on a smart device that can be changed by the user are represented as fields.
+ * A field is a memory segment storing data of a specific type.
+ *
+ * @author Tobias Schramm
+ */
 public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListener,
 		SeekBar.OnSeekBarChangeListener, Serializable
 {

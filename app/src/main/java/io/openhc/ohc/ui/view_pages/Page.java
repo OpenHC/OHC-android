@@ -5,7 +5,12 @@ import android.os.Bundle;
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
 
-//Basic page class, common Interface
+/**
+ * Basic UI page. Common interface for all UI pages
+ * Allows modular UI design
+ *
+ * @author Tobias Schramm
+ */
 public abstract class Page
 {
 	protected OHC_ui ctx;

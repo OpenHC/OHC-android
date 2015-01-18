@@ -7,7 +7,11 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 
-//Closes a socket after a given amount of time
+/**
+ * Closes a socket after a given amount of time
+ *
+ * @author Tobias Schramm
+ */
 public class Socket_timeout extends TimerTask
 {
 	private final OHC ohc;

@@ -13,7 +13,11 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
 import io.openhc.ohc.R;
 
-//Defines the UI of a Device page
+/**
+ * Page for displaying a smart device
+ *
+ * @author Tobias Schramm
+ */
 public class Device extends Page implements View.OnClickListener, TextWatcher
 {
 	private ListView lv_fields;

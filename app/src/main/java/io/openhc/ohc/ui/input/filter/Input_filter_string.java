@@ -5,7 +5,11 @@ import android.text.Spanned;
 
 import io.openhc.ohc.basestation.device.Field;
 
-//Filter an EditText for any too short/long strings
+/**
+ * Filter an EditText for any too short/long strings
+ *
+ * @author Tobias Schramm
+ */
 public class Input_filter_string implements InputFilter
 {
 	private Field field;

@@ -20,7 +20,11 @@ import io.openhc.ohc.skynet.transaction.Transaction_generator;
 import io.openhc.ohc.ui.Field_adapter;
 import io.openhc.ohc.ui.Ui_state;
 
-//Main control class, contains all initialization logic
+/**
+ * Main control class, contains initialization and ui page change logic
+ *
+ * @author Tobias Schramm
+ */
 public class OHC implements Broadcaster.Broadcast_receiver
 {
 	public final OHC_Logger logger;

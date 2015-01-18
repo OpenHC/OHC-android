@@ -22,7 +22,10 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
 import io.openhc.ohc.R;
 
-//Shows the settings page
+/**
+ * Displays the settings page. Also utilizes the page store and load functions to recreate dialogs
+ * when the device orientation is changed
+ */
 public class Settings extends Page implements View.OnClickListener, DialogInterface.OnClickListener,
 		DialogInterface.OnCancelListener, DialogInterface.OnDismissListener
 {

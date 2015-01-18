@@ -20,7 +20,13 @@ import io.openhc.ohc.skynet.Receiver;
 import io.openhc.ohc.skynet.Sender;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
-//OOP representation of the Basestation (Gateway, OHC-Node)
+/**
+ * OOP representation of the Basestation (Gateway, OHC-Node)
+ * This class implements all high-level RPCs. It also holds a dedicated network handler allowing
+ * for the coexistence of multiple basestation instances
+ *
+ * @author Tobias Schramm
+ */
 public class Basestation implements Sender.Packet_receiver
 {
 	private Network network;

@@ -23,13 +23,18 @@ import io.openhc.ohc.ui.input.filter.Input_filter_float;
 import io.openhc.ohc.ui.input.filter.Input_filter_int;
 import io.openhc.ohc.ui.input.filter.Input_filter_string;
 
-//Translates a set of Fields for a given device into a set of views
+/**
+ * Translates a list of fields into a set of views
+ * Build on a basic ArrayAdapter but with field type sensitive selection of ui elements
+ *
+ * @author Tobias Schramm
+ */
 public class Field_adapter extends ArrayAdapter<Field>
 {
 	private List<Field> fields;
 
 	/**
-	 * Deafult constructo
+	 * Default constructor
 	 *
 	 * @param ctx UI context
 	 * @param resource Resource id

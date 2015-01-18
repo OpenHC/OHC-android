@@ -17,7 +17,14 @@ import io.openhc.ohc.ui.view_pages.Overview;
 import io.openhc.ohc.ui.view_pages.Page;
 import io.openhc.ohc.ui.view_pages.Settings;
 
-//Main activity, app entry point
+/**
+ * This is the only activity and entry point for the app.
+ * All the different layouts are organised in pages that update the layout being displayed
+ * by this activity. Also this activity keeps track of the pages visited, creating a history
+ * of visited pages to allow for easy navigation by native Android controls like the back button.
+ *
+ * @author Tobis Schramm
+ */
 public class OHC_ui extends ActionBarActivity
 {
 	private Login login;

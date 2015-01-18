@@ -14,7 +14,11 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
 import io.openhc.ohc.R;
 
-//Shows the login page
+/**
+ * The login page
+ *
+ * @author Tobias Schramm
+ */
 public class Login extends Page implements View.OnClickListener, TextWatcher
 {
 	private TextView t_status;

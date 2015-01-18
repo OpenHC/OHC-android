@@ -10,8 +10,12 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.basestation.Basestation;
 
-/*Using an async task to get received data transfered to the UI thread without
-   having to care about synchronisation manually*/
+/**
+ * UDP packet receiver. Automatically interprets UDP packets as JSON data, parses and checks it
+ * and tries to make a RPC from it
+ *
+ * @author Tobias Schramm
+ */
 public class Receiver extends AsyncTask<Void, JSONObject, Void>
 {
 	private DatagramSocket socket;

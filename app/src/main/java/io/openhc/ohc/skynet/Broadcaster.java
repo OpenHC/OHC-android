@@ -22,6 +22,11 @@ import java.util.logging.Level;
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
+/**
+ * Async Broadcast sender with integrated UI thread synchronisation and transaction handling
+ *
+ * @author Tobias Schramm
+ */
 public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Void, Transaction_generator.Transaction> implements Socket_timeout.Socket_provider
 {
 	private final OHC ohc;

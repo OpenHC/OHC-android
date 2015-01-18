@@ -8,7 +8,14 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 
-//UDP transaction used to make sure that a UDP packet that has been sent has also been received
+/**
+ * Transaction generator for UDP transactions. As this app uses WLAN to communicate with the
+ * physical basestation it's likely that sooner or later a UDP packet will be lost. Thus a
+ * transaction has to be used to prevent packet loss. In a transaction a packet is repeated until
+ * either a maximum retransmit count is reached or a response is received.
+ *
+ * @author Tobias Schramm
+ */
 public class Transaction_generator
 {
 	private final int default_retry_count;
@@ -51,7 +58,7 @@ public class Transaction_generator
 	/**
 	 * Generates a new Transaction overwriting the default retransmit count
 	 *
-	 * @param json Json data
+	 * @param json JSON data
 	 * @param tries Number of retransmits
 	 * @return A new transaction object
 	 */
@@ -71,6 +78,12 @@ public class Transaction_generator
 		return null;
 	}
 
+	/**
+	 * The actual transaction. Contains both the request and a potential response. Responses must
+	 * be validated before passing them back
+	 *
+	 * @author Tobias Schramm
+	 */
 	public class Transaction
 	{
 		public final String UUID_KEY = "transaction_uuid";

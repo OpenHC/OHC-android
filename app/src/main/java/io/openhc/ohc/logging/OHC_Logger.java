@@ -6,7 +6,11 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Level;
 
-//Simple logger class to unify Log output in terms of log tags and verbosity
+/**
+ * Simple logger class to unify Log output in terms of log tags and verbosity
+ *
+ * @author Tobias Schramm
+ */
 public class OHC_Logger
 {
 	private final String tag;

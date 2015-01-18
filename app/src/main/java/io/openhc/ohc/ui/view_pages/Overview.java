@@ -14,7 +14,12 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
 import io.openhc.ohc.R;
 
-//Shows the device overview page
+/**
+ * Device overview page. Shows a ListView containing all devices attached to the connected
+ * basestation
+ *
+ * @author Tobias Schramm
+ */
 public class Overview extends Page implements View.OnClickListener, AdapterView.OnItemClickListener
 {
 	private ListView lv_devices;

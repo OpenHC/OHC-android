@@ -13,8 +13,12 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.device.Field;
 
-/*Serializable description of a Basestation instance; used to reconstruct the basestation
- * on app recreation (e.g. when the android devices orientation is changed)*/
+/**
+ * Serializable description of a Basestation instance; used to reconstruct the basestation
+ * on app recreation (e.g. when the android devices orientation is changed)
+ *
+ * @author Tobias Schramm
+ */
 public class Basestation_state implements Serializable
 {
 	private String ip_addr = null;
