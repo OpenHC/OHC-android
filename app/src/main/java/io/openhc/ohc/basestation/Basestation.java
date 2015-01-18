@@ -20,7 +20,7 @@ import io.openhc.ohc.skynet.Receiver;
 import io.openhc.ohc.skynet.Sender;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
-//TODO Rewrite remote resource management, new handling of responses
+//OOP representation of the Basestation (Gateway, OHC-Node)
 public class Basestation implements Sender.Packet_receiver
 {
 	private Network network;
@@ -32,12 +32,26 @@ public class Basestation implements Sender.Packet_receiver
 
 	private Basestation_state state;
 
+	/**
+	 * Constructor for recreating the basestation from a serialized state object
+	 *
+	 * @param ohc The linked ohc instance
+	 * @param state The basestation state
+	 * @throws IOException
+	 */
 	public Basestation(OHC ohc, Basestation_state state) throws IOException
 	{
 		this(ohc, state.get_remote_socket_address());
 		this.state = state;
 	}
 
+	/**
+	 * Default constructor for constructing a new basestation
+	 *
+	 * @param ohc The linked ohc instance
+	 * @param station_address The address of the basestation
+	 * @throws IOException
+	 */
 	public Basestation(OHC ohc, InetSocketAddress station_address) throws IOException
 	{
 		this.ohc = ohc;
@@ -53,7 +67,13 @@ public class Basestation implements Sender.Packet_receiver
 		this.rx_task = receiver.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); //Run this task in parallel to others
 	}
 
-	//Code being called from Base_rpc
+	//***** Code being called from Base_rpc *****
+
+	/**
+	 * [RPC] Sets a new address for the basestation
+	 *
+	 * @param addr The new address
+	 */
 	public void update_endpoint(InetSocketAddress addr)
 	{
 		this.ohc.get_context().update_network_status(addr != null);
@@ -62,6 +82,12 @@ public class Basestation implements Sender.Packet_receiver
 				addr.getAddress().getHostAddress(), Integer.toString(addr.getPort())));
 	}
 
+	/**
+	 * [RPC] Sets the session token of this device
+	 *
+	 * @param token A new session token
+	 * @param success Login successful
+	 */
 	public void set_session_token(String token, boolean success)
 	{
 		if(success)
@@ -78,6 +104,11 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * [RPC] Sets the number of devices attached to this basestation
+	 *
+	 * @param num_devices Number of devices
+	 */
 	public void set_num_devices(int num_devices)
 	{
 		this.ohc.logger.log(Level.INFO, "Number of attached devices updated: " + num_devices);
@@ -88,6 +119,12 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * [RPC] Sets the internal id of a device based on its index
+	 *
+	 * @param index Index of device in device list
+	 * @param id Internal id
+	 */
 	public void set_device_id(int index, String id)
 	{
 		this.ohc.logger.log(Level.INFO, String.format("Setting id of device [%d]: %s", index, id));
@@ -100,12 +137,24 @@ public class Basestation implements Sender.Packet_receiver
 		this.get_device_name(id);
 	}
 
+	/**
+	 * [RPC] Sets the human readable name of a device based on its internal id
+	 *
+	 * @param device_id Internal device id
+	 * @param name Human readable name
+	 */
 	public void set_device_name(String device_id, String name)
 	{
 		this.state.put_device(device_id, new Device(name, device_id));
 		this.device_get_num_fields(device_id);
 	}
 
+	/**
+	 * [RPC] Sets the number of fields available on the specified device
+	 *
+	 * @param id Internal id of the device
+	 * @param num_fields Number of fields
+	 */
 	public void device_set_num_fields(String id, int num_fields)
 	{
 		Device dev = this.state.get_device(id);
@@ -119,6 +168,13 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * [RPC} Sets a whole field on the specified device
+	 *
+	 * @param id_dev Internal device id
+	 * @param id_field Numeric field id
+	 * @param field The field
+	 */
 	public void device_set_field(String id_dev, int id_field, Field field)
 	{
 		Device dev = this.state.get_device(id_dev);
@@ -131,6 +187,11 @@ public class Basestation implements Sender.Packet_receiver
 	}
 
 	//Dynamic calls to Base_rpc depending on the received JSON data
+	/**
+	 * Handles incoming JSON RPC data
+	 *
+	 * @param packet JSON RPC data
+	 */
 	public void handle_packet(JSONObject packet)
 	{
 		try
@@ -149,6 +210,13 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * Wrapper method handling sending of RPCs. Automatically embeds the session token of
+	 * this device in each RPC
+	 *
+	 * @param json The JSON RPC to be transmitted
+	 * @throws JSONException
+	 */
 	private void make_rpc_call(JSONObject json) throws JSONException
 	{
 		json.put("session_token", this.state.get_session_token());
@@ -157,7 +225,14 @@ public class Basestation implements Sender.Packet_receiver
 		s.execute(transaction);
 	}
 
-	//RPC functions calling methods on the main control unit (OHC-node)
+	//***** RPC functions calling methods on the main control unit (OHC-node) *****
+
+	/**
+	 * Makes a login RPC tho the basestation
+	 *
+	 * @param uname Username
+	 * @param passwd Password
+	 */
 	public void login(String uname, String passwd)
 	{
 		try
@@ -172,6 +247,9 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * Requests the number of attached devices from the basestation
+	 */
 	public void get_num_devices()
 	{
 		try
@@ -186,6 +264,11 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * Gets the internal id of a device by its index
+	 *
+	 * @param index Device index
+	 */
 	public void get_device_id(int index)
 	{
 		try
@@ -200,6 +283,11 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * Gets the human readable name of a device by its internal id
+	 *
+	 * @param id Internal device id
+	 */
 	public void get_device_name(String id)
 	{
 		try
@@ -214,6 +302,11 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * Gets the number of fields of an attached device by its internal id
+	 *
+	 * @param id Internal device id
+	 */
 	public void device_get_num_fields(String id)
 	{
 		try
@@ -228,6 +321,12 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * Get a field of an attached device by the internal device id and the field id
+	 *
+	 * @param id_dev Internal device id
+	 * @param id_field Numeric field id
+	 */
 	public void device_get_field(String id_dev, int id_field)
 	{
 		try
@@ -242,6 +341,13 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * Set the value of a field on an attached device
+	 *
+	 * @param id_dev Internal device id
+	 * @param id_field Numeric field id
+	 * @param value Value of the field
+	 */
 	public void device_set_field_value(String id_dev, int id_field, Object value)
 	{
 		try
@@ -257,11 +363,23 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
+	/**
+	 * Set the human readable name of a device
+	 *
+	 * @param dev Device object
+	 * @param name Human readable device name
+	 */
 	public void device_set_name(Device dev, String name)
 	{
 		this.device_set_name(dev.get_id(), name);
 	}
 
+	/**
+	 * Set the human readable name of a device
+	 *
+	 * @param id Internal device id
+	 * @param name Human readable device name
+	 */
 	public void device_set_name(String id, String name)
 	{
 		try
@@ -276,26 +394,7 @@ public class Basestation implements Sender.Packet_receiver
 		}
 	}
 
-	public List<Device> get_devices()
-	{
-		return this.state.get_devices();
-	}
-
-	public Resources get_resources()
-	{
-		return this.resources;
-	}
-
-	public Device get_device(String id)
-	{
-		return this.state.get_device(id);
-	}
-
-	public Basestation_state get_state()
-	{
-		return this.state;
-	}
-
+	//Callback for transactions
 	@Override
 	public void on_receive_transaction(Transaction_generator.Transaction transaction)
 	{
@@ -308,6 +407,52 @@ public class Basestation implements Sender.Packet_receiver
 		this.ohc.logger.log(Level.WARNING, String.format("Didn't receive response for transaction %s in time", transaction.get_uuid()));
 	}
 
+	//General purpose functions
+
+	/**
+	 * Get a list of all known devices
+	 *
+	 * @return A list of all attached devices
+	 */
+	public List<Device> get_devices()
+	{
+		return this.state.get_devices();
+	}
+
+	/**
+	 * Get resources
+	 *
+	 * @return Resources
+	 */
+	public Resources get_resources()
+	{
+		return this.resources;
+	}
+
+	/**
+	 * Get device by id
+	 *
+	 * @param id Internal device id
+	 * @return Device instance
+	 */
+	public Device get_device(String id)
+	{
+		return this.state.get_device(id);
+	}
+
+	/**
+	 * Get serializable version of this basestation
+	 *
+	 * @return Serializable representation
+	 */
+	public Basestation_state get_state()
+	{
+		return this.state;
+	}
+
+	/**
+	 * Quits all tasks related to this basestation
+	 */
 	public void destroy()
 	{
 		this.rx_task.cancel(true);

@@ -32,12 +32,31 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 
 	private DatagramSocket socket_rx;
 
+	/**
+	 * Default constructor. Initializes timeout with a sensible default value
+	 * Callback is optional and thus may be null
+	 *
+	 * @param ohc OHC instance
+	 * @param broadcast_addr Broadcast address
+	 * @param rport Remote port
+	 * @param receiver Callback
+	 */
 	public Broadcaster(OHC ohc, InetAddress broadcast_addr, int rport, Broadcast_receiver receiver)
 	{
 		//Pretty "low" default timeout but broadcasts will only work inside LANs thus 100ms is an adequate value
 		this(ohc, broadcast_addr, rport, 100, receiver);
 	}
 
+	/**
+	 * Constructor allowing for a manual adjustment of timeout
+	 * Callback is optional and thus may be null
+	 *
+	 * @param ohc OHC instance
+	 * @param broadcast_addr Broadcast address
+	 * @param rport Remote port
+	 * @param timeout Timeout
+	 * @param receiver Callback
+	 */
 	public Broadcaster(OHC ohc, InetAddress broadcast_addr, int rport, int timeout, Broadcast_receiver receiver)
 	{
 		this.ohc = ohc;
@@ -47,6 +66,13 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 		this.timeout = timeout;
 	}
 
+	/**
+	 * Returns the local broadcast address
+	 * Returns null if the broadcast address can't be found
+	 *
+	 * @param ohc OHC instance
+	 * @return The broadcast address
+	 */
 	public static InetAddress get_broadcast_address(OHC ohc)
 	{
 		WifiManager wifi = (WifiManager) ohc.get_context().getSystemService(Context.WIFI_SERVICE);
@@ -72,13 +98,14 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 		}
 	}
 
+	@Override
 	protected Transaction_generator.Transaction doInBackground(Transaction_generator.Transaction... args)
 	{
 		Transaction_generator.Transaction transaction = args[0];
 		try
 		{
 			this.socket_rx = DatagramChannel.open().socket();
-			//Listen on all available interfaces and pick a random, unused port
+			//Listen on all available interfaces and pick a random unused port
 			socket_rx.bind(new InetSocketAddress(Inet4Address.getByName("0.0.0.0"), 0));
 			this.socket_rx.setSoTimeout(this.timeout);
 			JSONObject json_tx = transaction.get_json();
@@ -89,6 +116,7 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 			boolean valid_response_received = false;
 			while(transaction.do_retry() && !valid_response_received)
 			{
+				//Send a packet...
 				if(this.socket_rx.isClosed())
 				{
 					this.socket_rx = DatagramChannel.open().socket();
@@ -109,12 +137,13 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 				{
 					this.ohc.logger.log(Level.WARNING, "Failed to send broadcast: " + ex.toString(), ex);
 				}
+				//... and wait for a response
 				try
 				{
 					byte[] data_rx = new byte[1500]; //1500 bytes = MTU in most LANs
 					/*One more timeout that's slightly longer than the socket timeout itself.
-					* Used to make a socket timeout that does receive a lot of data but not
-					* a valid response to it's transaction*/
+					* Used to make a socket that receives a lot of data but not
+					* a valid response to it's transaction timeout*/
 					Socket_timeout timeout = new Socket_timeout(ohc, this, this.timeout + 1);
 					timeout.start();
 					try
@@ -168,6 +197,7 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 		return transaction;
 	}
 
+	@Override
 	public void onPostExecute(Transaction_generator.Transaction transaction)
 	{
 		if(this.receiver != null)
@@ -180,11 +210,16 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 		return this.socket_rx;
 	}
 
-	/*The name might be a little missleading on this one. This is NOT a receiver as in
+	/*The name might be a little misleading on this one. This is NOT a receiver as in
 	 a socket that receives data but a receiver as an interface a class that wants to
 	 get the synchronized data received as a response to our broadcast must implement*/
 	public interface Broadcast_receiver
 	{
+		/**
+		 * Called when the broadcast finishes
+		 *
+		 * @param transaction Related transaction
+		 */
 		public void on_receive_transaction(Transaction_generator.Transaction transaction);
 	}
 }

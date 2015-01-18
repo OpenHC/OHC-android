@@ -17,7 +17,7 @@ import io.openhc.ohc.ui.view_pages.Overview;
 import io.openhc.ohc.ui.view_pages.Page;
 import io.openhc.ohc.ui.view_pages.Settings;
 
-
+//Main activity, app entry point
 public class OHC_ui extends ActionBarActivity
 {
 	private Login login;
@@ -79,6 +79,13 @@ public class OHC_ui extends ActionBarActivity
 		this.setContentView(id, true);
 	}
 
+	/**
+	 * Custom implementation of DrawItemView allowing user tracking across pages, enabling easy
+	 * navigation via back key
+	 *
+	 * @param id Layout id
+	 * @param by_user Was forward navigation initiated by user
+	 */
 	public void setContentView(int id, boolean by_user)
 	{
 		super.setContentView(id);
@@ -142,56 +149,99 @@ public class OHC_ui extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	public void recalc_bt_connect()
-	{
-		this.login.recalc_bt_connect();
-	}
-
+	/**
+	 * Updates the network status of the login page
+	 *
+	 * @param state Network state (false = offline | true = online)
+	 */
 	public void update_network_status(boolean state)
 	{
 		this.login.update_network_status(state);
 	}
 
+	/**
+	 * Updates the status TextView on the login page
+	 *
+	 * @param str Text to display
+	 */
 	public void set_status(String str)
 	{
 		this.login.set_status(str);
 	}
 
+	/**
+	 * Displays the login failed message on the login page and sets the network status accordingly
+	 */
 	public void login_wrong()
 	{
 		this.login.login_wrong();
 	}
 
+	/**
+	 * Sets the login status of the login page
+	 *
+	 * @param state Network state (false = logged out | true = logging in / logged in)
+	 */
 	public void set_login_status(boolean state)
 	{
 		this.login.set_login_status(state);
 	}
 
+	/**
+	 * Get device ListView from overview page
+	 *
+	 * @return Device ListView
+	 */
 	public ListView get_lv_devices()
 	{
 		return this.overview.get_lv_devices();
 	}
 
+	/**
+	 * Get field ListView from device page
+	 *
+	 * @return Field ListView
+	 */
 	public ListView get_lv_fields()
 	{
 		return this.device.get_lv_fields();
 	}
 
+	/**
+	 * Get EditText from action bar (device page)
+	 *
+	 * @return EditText on action bar
+	 */
 	public EditText get_et_action_bar_name()
 	{
 		return this.device.get_et_action_bar_name();
 	}
 
+	/**
+	 * Returns the login page
+	 *
+	 * @return Login page
+	 */
 	public Login get_page_login()
 	{
 		return this.login;
 	}
 
+	/**
+	 * Returns the overview page
+	 *
+	 * @return Overview page
+	 */
 	public Overview get_page_overview()
 	{
 		return this.overview;
 	}
 
+	/**
+	 * Returns the device page
+	 *
+	 * @return Device page
+	 */
 	public Device get_page_device()
 	{
 		return this.device;

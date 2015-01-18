@@ -9,6 +9,8 @@ import java.util.logging.Level;
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.basestation.device.Field;
 
+/* As a security measure this class is dedicated to RPCs. By only allowing RPCs to functions in
+ * this class a potential attacker is prevented from gaining access to any internal functions*/
 public class Base_rpc
 {
 	private OHC ohc;
@@ -18,6 +20,11 @@ public class Base_rpc
 		this.ohc = ohc;
 	}
 
+	/**
+	 * Sets ip address and port of the Baestation (Gateway / OHC-Node)
+	 *
+	 * @param object The RPC data
+	 */
 	public void set_ip_address(JSONObject object)
 	{
 		try
@@ -33,6 +40,11 @@ public class Base_rpc
 		}
 	}
 
+	/**
+	 * Sets the session token for this user frontend device
+	 *
+	 * @param object The RPC data
+	 */
 	public void set_session_token(JSONObject object)
 	{
 		try
@@ -48,6 +60,11 @@ public class Base_rpc
 		}
 	}
 
+	/**
+	 * Sets the number of devices accessible to this user frontend device
+	 *
+	 * @param object The RPC data
+	 */
 	public void set_num_devices(JSONObject object)
 	{
 		try
@@ -62,6 +79,11 @@ public class Base_rpc
 		}
 	}
 
+	/**
+	 * Sets the id of a device
+	 *
+	 * @param object The RPC data
+	 */
 	public void set_device_id(JSONObject object)
 	{
 		try
@@ -77,6 +99,11 @@ public class Base_rpc
 		}
 	}
 
+	/**
+	 * Sets the name of a device
+	 *
+	 * @param object The RPC data
+	 */
 	public void set_device_name(JSONObject object)
 	{
 		try
@@ -92,6 +119,11 @@ public class Base_rpc
 		}
 	}
 
+	/**
+	 * Sets the number of fields the specified device offers
+	 *
+	 * @param object The RPC data
+	 */
 	public void device_set_num_fields(JSONObject object)
 	{
 		try
@@ -107,6 +139,11 @@ public class Base_rpc
 		}
 	}
 
+	/**
+	 * Sets the field at the given index on the specified device
+	 *
+	 * @param object The RPC data
+	 */
 	public void device_set_field(JSONObject object)
 	{
 		try
@@ -130,6 +167,7 @@ public class Base_rpc
 			{
 				this.ohc.logger.log(Level.WARNING, "Received invalid field configuration: " +
 						ex.getMessage(), ex);
+				//Prevent crashes due to invalid RPC data; create inaccessible field
 				Field field = new Field();
 				field.set_accessible(false);
 				this.ohc.get_basestation().device_set_field(id, field_id, field);

@@ -20,6 +20,7 @@ import io.openhc.ohc.skynet.transaction.Transaction_generator;
 import io.openhc.ohc.ui.Field_adapter;
 import io.openhc.ohc.ui.Ui_state;
 
+//Main control class, contains all initialization logic
 public class OHC implements Broadcaster.Broadcast_receiver
 {
 	public final OHC_Logger logger;
@@ -33,6 +34,11 @@ public class OHC implements Broadcaster.Broadcast_receiver
 
 	private Ui_state ui_state;
 
+	/**
+	 * Default constructor
+	 *
+	 * @param ctx UI context
+	 */
 	public OHC(OHC_ui ctx)
 	{
 		this.context = ctx;
@@ -40,6 +46,13 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		this.ui_state = new Ui_state();
 	}
 
+	/**
+	 * Constructor to restore a saved state
+	 *
+	 * @param ctx UI context
+	 * @param saved_state Saved state
+	 * @throws IOException
+	 */
 	public OHC(OHC_ui ctx, Bundle saved_state) throws IOException
 	{
 		this.context = ctx;
@@ -57,6 +70,11 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		}
 	}
 
+	/**
+	 * Initialize this OHC instance with a device at the given ip address
+	 *
+	 * @param addr Device address
+	 */
 	public void init(InetAddress addr)
 	{
 		int port = this.context.getResources().getInteger(R.integer.ohc_network_b_cast_port);
@@ -75,12 +93,17 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		this.context.set_status(this.context.getString(R.string.status_manual_wrong));
 	}
 
+	/**
+	 * Initialize this OHC instance, find Basestation by broadcast
+	 */
 	public void init()
 	{
 		this.find_basestation_lan();
 	}
 
-	//Retrieve address of basestation via udp broadcast
+	/**
+	 * Retrieve address of basestation via udp broadcast
+	 */
 	public void find_basestation_lan()
 	{
 		int bcast_port = this.context.getResources().getInteger(R.integer.ohc_network_b_cast_port);
@@ -90,6 +113,7 @@ public class OHC implements Broadcaster.Broadcast_receiver
 			this.context.set_status(this.context.getString(R.string.status_fail_network));
 	}
 
+	@Override
 	public void on_receive_transaction(Transaction_generator.Transaction transaction)
 	{
 		JSONObject json = transaction.get_response();
@@ -113,58 +137,103 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		this.context.set_status(this.context.getString(R.string.status_not_found));
 	}
 
+	/**
+	 * Restore state of basestation from save
+	 *
+	 * @param state Saved basestation state
+	 * @throws IOException
+	 */
 	public void restore_basestation(Basestation_state state) throws IOException
 	{
 		state.set_ohc_instance(this);
 		this.station = new Basestation(this, state);
 	}
 
+	/**
+	 * Returns resource id of current layout
+	 *
+	 * @return Layout id
+	 */
 	public int get_current_layout()
 	{
 		return this.ui_state.get_current_layout();
 	}
 
+	/**
+	 * Sets the id of the current layout
+	 *
+	 * @param id Layout id
+	 */
 	public void set_current_layout(int id)
 	{
 		this.ui_state.set_current_layout(id);
 	}
 
+	/**
+	 * Sets the id of the current layout and applies it to the saved UI context
+	 *
+	 * @param id Layout id
+	 */
 	public void set_layout(int id)
 	{
 		this.context.setContentView(id);
 		this.ui_state.set_current_layout(id);
 	}
 
+	/**
+	 * Returns the saved UI context
+	 *
+	 * @return Saved UI context
+	 */
 	public OHC_ui get_context()
 	{
 		return this.context;
 	}
 
+	/**
+	 * Returns the internal id of the currently displayed device page
+	 *
+	 * @return Internal device id
+	 */
 	public String get_current_dev_id()
 	{
 		return this.ui_state.get_current_device_id();
 	}
 
+	/**
+	 * Returns the connected basestation
+	 *
+	 * @return Connected basestation
+	 */
 	public Basestation get_basestation()
 	{
 		return this.station;
 	}
 
+	/**
+	 * Returns the saved state of the UI
+	 *
+	 * @return Saved UI state
+	 */
 	public Ui_state get_ui_state()
 	{
 		return this.ui_state;
 	}
 
+	/**
+	 * Connects to the basestation
+	 *
+	 * @param uname Username
+	 * @param passwd Password
+	 */
 	public void connect(String uname, String passwd)
 	{
 		this.station.login(uname, passwd);
 	}
 
-	public void draw_login_page()
-	{
-		this.set_layout(R.layout.activity_login);
-	}
-
+	/**
+	 * Shows a ListView containing all devices connected to the basestation
+	 */
 	public void draw_device_overview()
 	{
 		if(this.get_current_layout() != R.layout.activity_overview)
@@ -174,12 +243,22 @@ public class OHC implements Broadcaster.Broadcast_receiver
 		this.context.get_lv_devices().setAdapter(this.device_adapter);
 	}
 
+	/**
+	 * Displays the device page for the Device at the specified position
+	 *
+	 * @param position List index in overview
+	 */
 	public void device_show_details(int position)
 	{
 		this.ui_state.set_current_device_id(this.device_adapter.getItem(position).get_id());
 		this.set_layout(R.layout.activity_device);
 	}
 
+	/**
+	 * Draws the device page for the given internal device id
+	 *
+	 * @param dev_id Internal device id
+	 */
 	public void draw_device_view(String dev_id)
 	{
 		Device dev = station.get_device(dev_id);

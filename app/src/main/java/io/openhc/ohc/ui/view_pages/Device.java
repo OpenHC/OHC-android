@@ -13,6 +13,7 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
 import io.openhc.ohc.R;
 
+//Defines the UI of a Device page
 public class Device extends Page implements View.OnClickListener, TextWatcher
 {
 	private ListView lv_fields;
@@ -21,11 +22,18 @@ public class Device extends Page implements View.OnClickListener, TextWatcher
 	private EditText et_header_name;
 	private ImageView iv_header_settings;
 
+	/**
+	 * Default constructor
+	 *
+	 * @param ctx Instance of main activity
+	 * @param ohc OHC instance
+	 */
 	public Device(OHC_ui ctx, OHC ohc)
 	{
 		super(ctx, ohc);
 	}
 
+	@Override
 	public void init()
 	{
 		this.lv_fields = (ListView)this.ctx.findViewById(R.id.lv_fields);
@@ -78,11 +86,21 @@ public class Device extends Page implements View.OnClickListener, TextWatcher
 		return R.layout.activity_device;
 	}
 
+	/**
+	 * Get the view containing the device fields
+	 *
+	 * @return The view containing the devices fields
+	 */
 	public ListView get_lv_fields()
 	{
 		return this.lv_fields;
 	}
 
+	/**
+	 * Get the EditText of the action bar
+	 *
+	 * @return The EditText field embedded in the action bar
+	 */
 	public EditText get_et_action_bar_name()
 	{
 		return this.et_header_name;

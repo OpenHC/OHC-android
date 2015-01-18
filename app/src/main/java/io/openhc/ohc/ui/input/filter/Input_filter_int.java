@@ -5,10 +5,16 @@ import android.text.Spanned;
 
 import io.openhc.ohc.basestation.device.Field;
 
+//Filters an EditText for any non int values
 public class Input_filter_int implements InputFilter
 {
 	private Field field;
 
+	/**
+	 * Default constructor
+	 *
+	 * @param field Field to filter
+	 */
 	public Input_filter_int(Field field)
 	{
 		this.field = field;

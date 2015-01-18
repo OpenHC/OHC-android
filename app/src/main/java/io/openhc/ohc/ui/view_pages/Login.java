@@ -14,6 +14,7 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
 import io.openhc.ohc.R;
 
+//Shows the login page
 public class Login extends Page implements View.OnClickListener, TextWatcher
 {
 	private TextView t_status;
@@ -31,12 +32,20 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 
 	private Settings settings;
 
+	/**
+	 * Default constructor.
+	 *
+	 * @param ctx Instance of main activity
+	 * @param ohc Instance of OHC
+	 * @param settings Settings page
+	 */
 	public Login(OHC_ui ctx, OHC ohc, Settings settings)
 	{
 		super(ctx, ohc);
 		this.settings = settings;
 	}
 
+	@Override
 	public void init()
 	{
 		this.t_status = (TextView)this.ctx.findViewById(R.id.t_status);
@@ -66,6 +75,9 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 		this.iv_header_settings.setOnClickListener(this);
 	}
 
+	/**
+	 * Initialize OHC
+	 */
 	public void init_ohc()
 	{
 		if(this.ohc.get_basestation() != null)
@@ -76,22 +88,38 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 			this.ohc.init();
 	}
 
+	/**
+	 * Calculate visibility of connect button
+	 */
 	public void recalc_bt_connect()
 	{
 		this.bt_connect.setEnabled(this.nw_status && this.lc_status && !this.lg_status);
 	}
 
+	/**
+	 * Set network status and update login button
+	 *
+	 * @param state State (true = online / false = offline)
+	 */
 	public void update_network_status(boolean state)
 	{
-		this.nw_status = state;
+		this.set_nw_status(state);
 		this.recalc_bt_connect();
 	}
 
+	/**
+	 * Set content of status field
+	 *
+	 * @param str Text to display
+	 */
 	public void set_status(String str)
 	{
 		this.t_status.setText(str);
 	}
 
+	/**
+	 * Display login failed message and set login status
+	 */
 	public void login_wrong()
 	{
 		this.lg_status = false;
@@ -99,6 +127,11 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 		this.recalc_bt_connect();
 	}
 
+	/**
+	 * Set login status
+	 *
+	 * @param state State (true = logging in / false = not connected)
+	 */
 	public void set_login_status(boolean state)
 	{
 		this.lg_status = state;
@@ -160,6 +193,11 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 		return R.layout.activity_login;
 	}
 
+	/**
+	 * Set network status but don't update login button
+	 *
+	 * @param state State (true = online / false = offline)
+	 */
 	public void set_nw_status(boolean state)
 	{
 		this.nw_status = state;

@@ -26,6 +26,12 @@ public class Network
 	private Receiver receiver;
 	private int port_b_cast;
 
+	/**
+	 * Default constructor. Constructs a new Network interface class from basestation
+	 *
+	 * @param bs Basestation
+	 * @throws IOException
+	 */
 	public Network(Basestation bs) throws IOException
 	{
 		Resources resources = bs.get_resources();
@@ -46,6 +52,14 @@ public class Network
 		}
 	}
 
+	/**
+	 * Sends a broadcast packet to discover a basestation on the LAN
+	 *
+	 * @param ohc OHC instance
+	 * @param port Broadcast port
+	 * @param receiver Callback
+	 * @return Could the broadcast be sent
+	 */
 	public static boolean find_basestation_lan(OHC ohc, int port, Broadcaster.Broadcast_receiver receiver)
 	{
 		Transaction_generator gen = new Transaction_generator(ohc);
@@ -70,6 +84,11 @@ public class Network
 		return false;
 	}
 
+	/**
+	 * Initialize a new RPC Receiver
+	 *
+	 * @return A new RPC receiver
+	 */
 	public Receiver setup_receiver()
 	{
 		this.receiver = new Receiver(this.socket, this.station);

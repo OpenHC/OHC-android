@@ -22,6 +22,7 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
 import io.openhc.ohc.R;
 
+//Shows the settings page
 public class Settings extends Page implements View.OnClickListener, DialogInterface.OnClickListener,
 		DialogInterface.OnCancelListener, DialogInterface.OnDismissListener
 {
@@ -40,6 +41,12 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 
 	private final String ET_IP_ADDR_STR = "settings_et_ip_addr";
 
+	/**
+	 * Default constructor
+	 *
+	 * @param ctx Instance of main activity
+	 * @param ohc Instance of OHC
+	 */
 	public Settings(OHC_ui ctx, OHC ohc)
 	{
 		super(ctx, ohc);
@@ -86,7 +93,10 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		this.update_view();
 	}
 
-	public void update_view()
+	/**
+	 * Update function to display new UI state on config change
+	 */
+	private void update_view()
 	{
 		boolean manual = this.preferences.getBoolean(this.ctx.getString(R.string.ohc_ip_lan_manual), false);
 		this.cb_ip_lan_manual.setChecked(manual);
@@ -113,6 +123,9 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		}
 	}
 
+	/**
+	 * Shows a custom dialog to manually enter a IP for the basestation address
+	 */
 	private void show_ip_addr_dialog()
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(this.ctx);
@@ -161,11 +174,22 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		return R.layout.activity_settings;
 	}
 
+	/**
+	 * Returns true if the option for manually setting an ip address is enabled
+	 *
+	 * @return Is the option for manually setting an ip address enabled
+	 */
 	public boolean is_ip_manually_set()
 	{
 		return this.preferences.getBoolean(this.ctx.getString(R.string.ohc_ip_lan_manual), false);
 	}
 
+	/**
+	 * Returns the manually set ip address
+	 * Returns null if the ip address can't be parsed
+	 *
+	 * @return The mnually set ip address
+	 */
 	public InetAddress get_ip_address()
 	{
 		try

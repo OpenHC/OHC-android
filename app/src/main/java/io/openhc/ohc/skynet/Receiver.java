@@ -17,12 +17,19 @@ public class Receiver extends AsyncTask<Void, JSONObject, Void>
 	private DatagramSocket socket;
 	private Basestation basestation;
 
+	/**
+	 * Default constructor.
+	 *
+	 * @param socket Receiving socket, must be open
+	 * @param base Basestation, for callbacks
+	 */
 	public Receiver(DatagramSocket socket, Basestation base)
 	{
 		this.socket = socket;
 		this.basestation = base;
 	}
 
+	@Override
 	public Void doInBackground(Void... args)
 	{
 		while(true)
@@ -54,6 +61,11 @@ public class Receiver extends AsyncTask<Void, JSONObject, Void>
 		this.basestation.handle_packet(args[0]);
 	}
 
+	/**
+	 * Returns the listening port of this receiver
+	 *
+	 * @return Local receiving port
+	 */
 	public int get_port()
 	{
 		return this.socket.getLocalPort();

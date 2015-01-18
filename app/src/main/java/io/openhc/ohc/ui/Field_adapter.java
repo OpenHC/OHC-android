@@ -23,25 +23,41 @@ import io.openhc.ohc.ui.input.filter.Input_filter_float;
 import io.openhc.ohc.ui.input.filter.Input_filter_int;
 import io.openhc.ohc.ui.input.filter.Input_filter_string;
 
+//Translates a set of Fields for a given device into a set of views
 public class Field_adapter extends ArrayAdapter<Field>
 {
 	private List<Field> fields;
 
+	/**
+	 * Deafult constructo
+	 *
+	 * @param ctx UI context
+	 * @param resource Resource id
+	 * @param fields List of fields to display
+	 */
 	public Field_adapter(Context ctx, int resource, List<Field> fields)
 	{
 		super(ctx, resource, fields);
 		this.fields = fields;
 	}
 
+	/**
+	 * Simple conversion method to convert from pixes to density independent pixels
+	 *
+	 * @param dip Size in density independent pixels
+	 * @return Size in pixels
+	 */
 	private int dip_to_px(double dip)
 	{
 		float scale = getContext().getResources().getDisplayMetrics().density;
 		return (int)(dip * scale + 0.5F);
 	}
 
+	//Called for each field to translate it into a view element
 	@Override
 	public View getView(int position, View view, ViewGroup parent)
 	{
+		//Load layout to display [ key | value ]
 		LayoutInflater inflater = (LayoutInflater)this.getContext()
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		ViewGroup group = (ViewGroup)inflater.inflate(R.layout.list_view_group, parent, false);
@@ -55,6 +71,7 @@ public class Field_adapter extends ArrayAdapter<Field>
 		tv_key.setGravity(Gravity.CENTER_VERTICAL);
 		tv_key.setLayoutParams(layout);
 		View v_value;
+		//Fill v_value with different ui controls depending on the fields type
 		switch(field.get_type())
 		{
 			case INT:
@@ -103,6 +120,7 @@ public class Field_adapter extends ArrayAdapter<Field>
 			default:
 				v_value = null;
 		}
+		//Visually disable UI input if field can't be written
 		v_value.setEnabled(field.is_writable());
 		v_value.setLayoutParams(layout);
 		group.addView(v_value);

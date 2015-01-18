@@ -29,14 +29,31 @@ public class Sender extends AsyncTask<Transaction_generator.Transaction, Void,
 
 	private DatagramSocket socket_rx;
 
+	/**
+	 * Default constructor. Initializes timeout with a sensible default value
+	 * Callback is optional and thus may be null
+	 *
+	 * @param ohc OHC instance
+	 * @param endpoint Endpoint address
+	 * @param receiver Callback
+	 */
 	public Sender(OHC ohc, SocketAddress endpoint, Packet_receiver receiver)
 	{
 		/*UDP control turns out to be pretty unresponsive with more latency
 		* should rather use JSON via HTTP with gzip compression and larger
-		* control data chunks*/
+		* control data chunks then*/
 		this(ohc, endpoint, 300, receiver);
 	}
 
+	/**
+	 * Constructor allowing for a manual adjustment of timeout
+	 * Callback is optional and thus may be null
+	 *
+	 * @param ohc OHC instance
+	 * @param endpoint Endpoint address
+	 * @param timeout Timeout
+	 * @param receiver Callback
+	 */
 	public Sender(OHC ohc, SocketAddress endpoint, int timeout, Packet_receiver receiver)
 	{
 		this.ohc = ohc;

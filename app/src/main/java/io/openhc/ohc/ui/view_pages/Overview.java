@@ -14,6 +14,7 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
 import io.openhc.ohc.R;
 
+//Shows the device overview page
 public class Overview extends Page implements View.OnClickListener, AdapterView.OnItemClickListener
 {
 	private ListView lv_devices;
@@ -27,6 +28,7 @@ public class Overview extends Page implements View.OnClickListener, AdapterView.
 		super(ctx, ohc);
 	}
 
+	@Override
 	public void init()
 	{
 		this.lv_devices = (ListView)this.ctx.findViewById(R.id.lv_devices);
