@@ -27,7 +27,7 @@ import io.openhc.ohc.skynet.transaction.Transaction_generator;
  *
  * @author Tobias Schramm
  */
-public class Basestation implements Sender.Packet_receiver
+public class Basestation implements io.openhc.ohc.skynet.udp.Sender.Packet_receiver
 {
 	private Network network;
 	public final OHC ohc;
@@ -47,7 +47,7 @@ public class Basestation implements Sender.Packet_receiver
 	 */
 	public Basestation(OHC ohc, Basestation_state state) throws IOException
 	{
-		this(ohc, state.get_remote_socket_address());
+		this(ohc, state.get_remote_socket_address(), state.get_protocol());
 		this.state = state;
 	}
 
@@ -56,9 +56,10 @@ public class Basestation implements Sender.Packet_receiver
 	 *
 	 * @param ohc The linked ohc instance
 	 * @param station_address The address of the basestation
+	 * @param protocol The network protocol used to connect to physical basestation
 	 * @throws IOException
 	 */
-	public Basestation(OHC ohc, InetSocketAddress station_address) throws IOException
+	public Basestation(OHC ohc, InetSocketAddress station_address, Network.Protocol protocol) throws IOException
 	{
 		this.ohc = ohc;
 		this.resources = ohc.get_context().getResources();
@@ -67,6 +68,7 @@ public class Basestation implements Sender.Packet_receiver
 		this.transaction_gen = new Transaction_generator(ohc);
 		this.state = new Basestation_state();
 		this.state.set_remote_socket_addr(station_address);
+		this.state.set_protocol(protocol);
 
 		//Receiver for state updates initiated by the basestation
 		Receiver receiver = network.setup_receiver();
@@ -226,7 +228,7 @@ public class Basestation implements Sender.Packet_receiver
 	private void make_rpc_call(JSONObject json) throws JSONException
 	{
 		json.put("session_token", this.state.get_session_token());
-		Sender s = new Sender(this.ohc, this.state.get_remote_socket_address(), this);
+		Sender s = new io.openhc.ohc.skynet.udp.Sender(this.ohc, this.state.get_remote_socket_address(), this);
 		Transaction_generator.Transaction transaction = this.transaction_gen.generate_transaction(json);
 		s.execute(transaction);
 	}
@@ -454,6 +456,16 @@ public class Basestation implements Sender.Packet_receiver
 	public Basestation_state get_state()
 	{
 		return this.state;
+	}
+
+	/**
+	 * Returns the protocol being used
+	 *
+	 * @return Current protocol
+	 */
+	public Network.Protocol get_protocol()
+	{
+		return this.state.get_protocol();
 	}
 
 	/**

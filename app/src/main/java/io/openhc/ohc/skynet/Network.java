@@ -16,6 +16,7 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
+import io.openhc.ohc.skynet.udp.Broadcaster;
 
 public class Network
 {
@@ -95,4 +96,9 @@ public class Network
 		return this.receiver;
 	}
 
+	public enum Protocol
+	{
+		UDP,
+		HTTP
+	}
 }

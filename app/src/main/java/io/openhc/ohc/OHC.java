@@ -14,7 +14,7 @@ import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.Basestation_state;
 import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.logging.OHC_Logger;
-import io.openhc.ohc.skynet.Broadcaster;
+import io.openhc.ohc.skynet.udp.Broadcaster;
 import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 import io.openhc.ohc.ui.Field_adapter;

@@ -12,6 +12,7 @@ import java.util.Map;
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.device.Field;
+import io.openhc.ohc.skynet.Network;
 
 /**
  * Serializable description of a Basestation instance; used to reconstruct the basestation
@@ -26,6 +27,7 @@ public class Basestation_state implements Serializable
 	private int num_devices = -1;
 	private String session_token = null;
 	private HashMap<String, Device> devices = new HashMap<>();
+	private Network.Protocol protocol;
 
 	public InetAddress get_remote_ip_address()
 	{
@@ -89,6 +91,11 @@ public class Basestation_state implements Serializable
 		return this.devices.get(id);
 	}
 
+	public Network.Protocol get_protocol()
+	{
+		return this.protocol;
+	}
+
 	public void put_device(String id, Device dev)
 	{
 		this.devices.put(id, dev);
@@ -130,5 +137,10 @@ public class Basestation_state implements Serializable
 		for(Device dev : this.get_devices())
 			for(Field field : dev.get_fields())
 				field.set_ohc_instance(ohc);
+	}
+
+	public void set_protocol(Network.Protocol protocol)
+	{
+		this.protocol = protocol;
 	}
 }
