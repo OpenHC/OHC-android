@@ -21,6 +21,8 @@
     <string name="ip_manual">IP-Adresse manuell setzen</string>
     <string name="set_ip">IP-Adresse setzen</string>
     <string name="ip_address">IP-Adresse</string>
+    <string name="set_protocol">Netzwerkprotokoll setzen</string>
+    <string name="protocol">Protokoll</string>
     <string name="enter_ip">IP-Adresse eingeben</string>
     <string name="ok">OK</string>
     <string name="cancel">Abbrechen</string>

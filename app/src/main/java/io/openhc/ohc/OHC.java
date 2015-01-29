@@ -79,12 +79,12 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	 *
 	 * @param addr Device address
 	 */
-	public void init(InetAddress addr)
+	public void init(InetAddress addr, Network.Protocol protocol)
 	{
 		int port = this.context.getResources().getInteger(R.integer.ohc_network_b_cast_port);
 		try
 		{
-			this.station = new Basestation(this, new InetSocketAddress(addr, port));
+			this.station = new Basestation(this, new InetSocketAddress(addr, port), protocol);
 			this.context.update_network_status(true);
 			this.context.set_status(this.context.getString(R.string.status_manual) + addr.getHostAddress());
 			return;
@@ -127,7 +127,7 @@ public class OHC implements Broadcaster.Broadcast_receiver
 			{
 				InetAddress addr = InetAddress.getByName(json.getString("ip_address"));
 				int port = json.getInt("port");
-				this.station = new Basestation(this, new InetSocketAddress(addr, port));
+				this.station = new Basestation(this, new InetSocketAddress(addr, port), Network.Protocol.UDP);
 				this.context.update_network_status(true);
 				this.context.set_status(this.context.getString(R.string.status_found) + addr.getHostAddress());
 				return;

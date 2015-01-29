@@ -18,9 +18,11 @@
     <string name="devices">Devices</string>
     <string name="ohc">OHC</string>
     <string name="settings">Settings</string>
-    <string name="ip_manual">Set LAN IP address manually</string>
-    <string name="set_ip">Set LAN IP address</string>
+    <string name="ip_manual">Set IP address manually</string>
+    <string name="set_ip">Set IP address</string>
     <string name="ip_address">IP address</string>
+    <string name="set_protocol">Set connection protocol</string>
+    <string name="protocol">Protocol</string>
     <string name="enter_ip">Enter IP address</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>

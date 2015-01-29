@@ -96,9 +96,29 @@ public class Network
 		return this.receiver;
 	}
 
+	/**
+	 * Supported network protocols
+	 */
 	public enum Protocol
 	{
-		UDP,
-		HTTP
+		UDP("UDP"),
+		HTTP("HTTP");
+
+		private String name;
+
+		/**
+		 * Default constructor
+		 *
+		 * @param human_readable_name Human readable protocol name
+		 */
+		private Protocol(String human_readable_name)
+		{
+			this.name = human_readable_name;
+		}
+
+		public String get_human_readable_name()
+		{
+			return this.name;
+		}
 	}
 }

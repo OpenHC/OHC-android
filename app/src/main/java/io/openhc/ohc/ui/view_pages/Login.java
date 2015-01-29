@@ -87,7 +87,7 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 		if(this.ohc.get_basestation() != null)
 			this.ohc.get_basestation().destroy();
 		if(this.settings.is_ip_manually_set())
-			this.ohc.init(this.settings.get_ip_address());
+			this.ohc.init(this.settings.get_ip_address(), this.settings.get_protocol());
 		else
 			this.ohc.init();
 	}

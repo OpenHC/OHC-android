@@ -36,6 +36,7 @@
         android:layout_height="80dp"
         android:id="@+id/st_set_ip_lan"
         android:clickable="true"
+        android:background="@drawable/l_item_border"
         android:layout_below="@id/bl_ip_lan_manual">
         <LinearLayout
             android:layout_width="match_parent"
@@ -61,6 +62,41 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@drawable/tv_disabled"
                 android:layout_below="@id/tv_set_ip_lan"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:id="@+id/st_set_protocol"
+        android:clickable="true"
+        android:layout_below="@id/st_set_ip_lan">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:clickable="false"
+            android:orientation="vertical"
+            android:layout_centerVertical="true">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/set_protocol"
+                android:id="@+id/tv_set_protocol"
+                android:textColor="@drawable/tv_disabled"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_protocol"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@drawable/tv_disabled"
+                android:layout_below="@id/tv_set_protocol"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"/>
         </LinearLayout>
