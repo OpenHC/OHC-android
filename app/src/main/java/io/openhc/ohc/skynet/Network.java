@@ -17,6 +17,7 @@ import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 import io.openhc.ohc.skynet.udp.Broadcaster;
+import io.openhc.ohc.skynet.udp.Receiver;
 
 /**
  * Networking class
