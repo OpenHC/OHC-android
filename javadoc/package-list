@@ -4,6 +4,7 @@ io.openhc.ohc.basestation.device
 io.openhc.ohc.basestation.rpc
 io.openhc.ohc.logging
 io.openhc.ohc.skynet
+io.openhc.ohc.skynet.http
 io.openhc.ohc.skynet.transaction
 io.openhc.ohc.skynet.udp
 io.openhc.ohc.ui
