@@ -40,24 +40,12 @@ public class Network
 	 * @param bs Basestation
 	 * @throws IOException
 	 */
-	public Network(Basestation bs) throws IOException
+	public Network(Basestation bs)
 	{
 		Resources resources = bs.get_resources();
 		this.port_b_cast = resources.getInteger(R.integer.ohc_network_b_cast_port);
 		bs.ohc.logger.log(Level.INFO, "Broadcast port is " + port_b_cast);
-		try
-		{
-			DatagramChannel channel = DatagramChannel.open();
-			this.socket = channel.socket();
-			//Neat trick: Setting port to 0 makes the socket pick a random unused port
-			this.socket.bind(new InetSocketAddress(InetAddress.getByName("0.0.0.0"), 0));
-			bs.ohc.logger.log(Level.INFO, "Listening on port " + this.socket.getLocalPort());
-		}
-		catch(IOException ex)
-		{
-			bs.ohc.logger.log(Level.SEVERE, "Couldn't create comm socket: " + ex.getMessage(), ex);
-			throw ex;
-		}
+		this.station = bs;
 	}
 
 	/**
@@ -92,13 +80,32 @@ public class Network
 		return false;
 	}
 
+	public void setup_rx_socket() throws IOException
+	{
+		try
+		{
+			DatagramChannel channel = DatagramChannel.open();
+			this.socket = channel.socket();
+			//Neat trick: Setting port to 0 makes the socket pick a random unused port
+			this.socket.bind(new InetSocketAddress(InetAddress.getByName("0.0.0.0"), 0));
+			this.station.ohc.logger.log(Level.INFO, "Listening on port " + this.socket.getLocalPort());
+		}
+		catch(IOException ex)
+		{
+			this.station.ohc.logger.log(Level.SEVERE, "Couldn't create comm socket: " + ex.getMessage(), ex);
+			throw ex;
+		}
+	}
+
 	/**
 	 * Initialize a new RPC Receiver
 	 *
 	 * @return A new RPC receiver
 	 */
-	public Receiver setup_receiver()
+	public Receiver setup_receiver() throws IOException
 	{
+		if(this.socket == null || this.socket.isClosed())
+			this.setup_rx_socket();
 		this.receiver = new Receiver(this.socket, this.station);
 		return this.receiver;
 	}

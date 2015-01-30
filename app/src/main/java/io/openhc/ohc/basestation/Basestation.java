@@ -1,7 +1,6 @@
 package io.openhc.ohc.basestation;
 
 import android.content.res.Resources;
-import android.os.AsyncTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +33,7 @@ public class Basestation implements io.openhc.ohc.skynet.udp.Sender.Packet_recei
 	private Base_rpc rpc_interface;
 	private Resources resources;
 	private Transaction_generator transaction_gen;
-	private AsyncTask rx_task;
+	private Receiver rx_thread;
 
 	private Basestation_state state;
 
@@ -71,8 +70,8 @@ public class Basestation implements io.openhc.ohc.skynet.udp.Sender.Packet_recei
 		this.state.set_protocol(protocol);
 
 		//Receiver for state updates initiated by the basestation
-		Receiver receiver = network.setup_receiver();
-		this.rx_task = receiver.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR); //Run this task in parallel to others
+		this.rx_thread = network.setup_receiver();
+		this.rx_thread.start();
 	}
 
 	//***** Code being called from Base_rpc *****
@@ -473,6 +472,7 @@ public class Basestation implements io.openhc.ohc.skynet.udp.Sender.Packet_recei
 	 */
 	public void destroy()
 	{
-		this.rx_task.cancel(true);
+		if(this.rx_thread != null)
+			this.rx_thread.kill();
 	}
 }

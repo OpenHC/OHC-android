@@ -21,6 +21,7 @@ import io.openhc.ohc.R;
  */
 public class Login extends Page implements View.OnClickListener, TextWatcher
 {
+	private String status = "";
 	private TextView t_status;
 	private Button bt_connect;
 	private EditText e_uname;
@@ -62,6 +63,7 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 		this.t_status.setOnClickListener(this);
 		this.lc_status = this.e_passwd.length() > 0 && this.e_uname.length() > 0;
 		this.recalc_bt_connect();
+		this.set_status(this.status);
 		if(this.ohc.get_basestation() == null)
 			this.init_ohc();
 		ViewGroup layout = (ViewGroup)this.ctx.getLayoutInflater().inflate(R.layout.action_bar_login, null);
@@ -97,7 +99,8 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 	 */
 	public void recalc_bt_connect()
 	{
-		this.bt_connect.setEnabled(this.nw_status && this.lc_status && !this.lg_status);
+		if(this.bt_connect != null)
+			this.bt_connect.setEnabled(this.nw_status && this.lc_status && !this.lg_status);
 	}
 
 	/**
@@ -118,7 +121,9 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 	 */
 	public void set_status(String str)
 	{
-		this.t_status.setText(str);
+		if(this.t_status != null)
+			this.t_status.setText(str);
+		this.status = str;
 	}
 
 	/**
@@ -139,8 +144,7 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 	public void set_login_status(boolean state)
 	{
 		this.lg_status = state;
-		if(this.bt_connect != null)
-			this.recalc_bt_connect();
+		this.recalc_bt_connect();
 	}
 
 	@Override

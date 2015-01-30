@@ -102,6 +102,7 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	 */
 	public void init()
 	{
+		this.context.update_network_status(false);
 		this.find_basestation_lan();
 	}
 

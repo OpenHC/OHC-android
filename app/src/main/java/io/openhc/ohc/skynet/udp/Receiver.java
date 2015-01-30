@@ -2,6 +2,7 @@ package io.openhc.ohc.skynet.udp;
 
 import android.os.AsyncTask;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.DatagramPacket;
@@ -16,7 +17,7 @@ import io.openhc.ohc.basestation.Basestation;
  *
  * @author Tobias Schramm
  */
-public class Receiver extends AsyncTask<Void, JSONObject, Void>
+public class Receiver extends Thread
 {
 	private DatagramSocket socket;
 	private Basestation basestation;
@@ -34,9 +35,9 @@ public class Receiver extends AsyncTask<Void, JSONObject, Void>
 	}
 
 	@Override
-	public Void doInBackground(Void... args)
+	public void run()
 	{
-		while(true)
+		while(!this.socket.isClosed())
 		{
 			byte[] data = new byte[1024];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
@@ -45,9 +46,21 @@ public class Receiver extends AsyncTask<Void, JSONObject, Void>
 				this.socket.receive(packet);
 				String jsonStr = new String(packet.getData(), "UTF-8");
 				this.basestation.ohc.logger.log(Level.INFO, "Packet received: " + jsonStr);
-				JSONObject json = new JSONObject(jsonStr);
-				//Publish received data to UI thread via progress notification
-				this.publishProgress(json);
+				final JSONObject json = new JSONObject(jsonStr);
+				final Basestation basestation = this.basestation;
+				//Publish received data to UI thread via synchronized method call
+				this.basestation.ohc.get_context().runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						basestation.handle_packet(json);
+					}
+				});
+			}
+			catch(JSONException ex)
+			{
+				this.basestation.ohc.logger.log(Level.INFO, "Received invalid JSON object");
 			}
 			catch(Exception ex)
 			{
@@ -55,14 +68,11 @@ public class Receiver extends AsyncTask<Void, JSONObject, Void>
 				break;
 			}
 		}
-		return null;
 	}
 
-	//This function is synchronized to the UI thread
-	@Override
-	public void onProgressUpdate(JSONObject... args)
+	public synchronized void kill()
 	{
-		this.basestation.handle_packet(args[0]);
+		this.socket.close();
 	}
 
 	/**

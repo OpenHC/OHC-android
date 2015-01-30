@@ -103,6 +103,8 @@ public class OHC_ui extends ActionBarActivity
 		{
 			case R.layout.activity_login:
 				this.login.init();
+				if(!by_user)
+					this.login.init_ohc();
 				this.current_view = this.login;
 				break;
 			case R.layout.activity_settings:
