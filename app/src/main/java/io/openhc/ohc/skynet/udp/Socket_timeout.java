@@ -1,4 +1,4 @@
-package io.openhc.ohc.skynet;
+package io.openhc.ohc.skynet.udp;
 
 import java.net.DatagramSocket;
 import java.util.Timer;
