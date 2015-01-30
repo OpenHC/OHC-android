@@ -191,6 +191,9 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		dialog.show();
 	}
 
+	/**
+	 * Shows a custom dialog to set the network communication protocol
+	 */
 	private void show_protocol_dialog()
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(this.ctx);
@@ -296,6 +299,11 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		}
 	}
 
+	/**
+	 * Returns the network protocol that will be used for new connections
+	 *
+	 * @return The network protocol
+	 */
 	public Network.Protocol get_protocol()
 	{
 		return Network.Protocol.valueOf(this.preferences.getString(this.ctx.getString(

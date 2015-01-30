@@ -18,6 +18,12 @@ import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 import io.openhc.ohc.skynet.udp.Broadcaster;
 
+/**
+ * Networking class
+ * Handles most low level network stuff
+ *
+ * @author Tobias Schramm
+ */
 public class Network
 {
 	protected DatagramSocket socket;

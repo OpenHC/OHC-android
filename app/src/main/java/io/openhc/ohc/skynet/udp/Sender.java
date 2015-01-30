@@ -20,6 +20,11 @@ import io.openhc.ohc.OHC;
 import io.openhc.ohc.skynet.Socket_timeout;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
+/**
+ * Async UDP datagram sender
+ *
+ * @author Tobias Schramm
+ */
 public class Sender extends io.openhc.ohc.skynet.Sender implements Socket_timeout.Socket_provider
 {
 	SocketAddress endpoint_address;
