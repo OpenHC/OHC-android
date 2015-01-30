@@ -84,8 +84,14 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		if(this.et_ip_addr != null)
 			save_state.putString(ET_IP_ADDR_STR, this.et_ip_addr.getText().toString());
 		if(this.rg_protocols != null)
-			save_state.putString(LV_PROTOCOL_STR, this.protocols.get(this.rg_protocols.
-					getCheckedRadioButtonId()).toString());
+		{
+			Network.Protocol proto = this.protocol_by_id.get(this.rg_protocols.
+					getCheckedRadioButtonId());
+			if(proto != null)
+			{
+				save_state.putString(LV_PROTOCOL_STR, proto.toString());
+			}
+		}
 	}
 
 	@Override
@@ -102,7 +108,7 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		{
 			Network.Protocol proto = Network.Protocol.valueOf(lv_proto);
 			this.show_protocol_dialog();
-			this.rg_protocols.check(this.protocols.indexOf(proto));
+			this.rg_protocols.check(this.id_by_protocol.get(proto));
 		}
 	}
 
