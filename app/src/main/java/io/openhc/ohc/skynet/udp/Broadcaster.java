@@ -136,7 +136,7 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 					DatagramPacket packet = new DatagramPacket(data_tx, data_tx.length,
 							this.broadcast_addr, this.rport);
 					socket.send(packet);
-					this.ohc.logger.log(Level.INFO, "Broadcast packet send.");
+					this.ohc.logger.log(Level.INFO, "Broadcast packet sent");
 				}
 				catch(Exception ex)
 				{
