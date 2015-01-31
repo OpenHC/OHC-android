@@ -24,9 +24,9 @@ import io.openhc.ohc.skynet.transaction.Transaction_generator;
  */
 public class Sender extends io.openhc.ohc.skynet.Sender implements Socket_timeout.Socket_provider
 {
-	SocketAddress endpoint_address;
+	private SocketAddress endpoint_address;
 	private final int timeout;
-	private final Packet_receiver receiver;
+	private final Transaction_receiver receiver;
 	private final OHC ohc;
 
 	private DatagramSocket socket_rx;
@@ -39,7 +39,7 @@ public class Sender extends io.openhc.ohc.skynet.Sender implements Socket_timeou
 	 * @param endpoint Endpoint address
 	 * @param receiver Callback
 	 */
-	public Sender(OHC ohc, SocketAddress endpoint, Packet_receiver receiver)
+	public Sender(OHC ohc, SocketAddress endpoint, Transaction_receiver receiver)
 	{
 		/*UDP control turns out to be pretty unresponsive with more latency
 		* should rather use JSON via HTTP with gzip compression and larger
@@ -56,7 +56,7 @@ public class Sender extends io.openhc.ohc.skynet.Sender implements Socket_timeou
 	 * @param timeout Timeout
 	 * @param receiver Callback
 	 */
-	public Sender(OHC ohc, SocketAddress endpoint, int timeout, Packet_receiver receiver)
+	public Sender(OHC ohc, SocketAddress endpoint, int timeout, Transaction_receiver receiver)
 	{
 		this.ohc = ohc;
 		this.receiver = receiver;
@@ -168,10 +168,5 @@ public class Sender extends io.openhc.ohc.skynet.Sender implements Socket_timeou
 	public DatagramSocket get_socket()
 	{
 		return this.socket_rx;
-	}
-
-	public interface Packet_receiver
-	{
-		public void on_receive_transaction(Transaction_generator.Transaction transaction);
 	}
 }

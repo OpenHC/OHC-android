@@ -26,7 +26,7 @@ import io.openhc.ohc.skynet.transaction.Transaction_generator;
  *
  * @author Tobias Schramm
  */
-public class Basestation implements io.openhc.ohc.skynet.udp.Sender.Packet_receiver
+public class Basestation implements Sender.Transaction_receiver
 {
 	private Network network;
 	public final OHC ohc;
