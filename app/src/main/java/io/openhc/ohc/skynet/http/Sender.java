@@ -81,13 +81,14 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 		this.timeout = timeout;
 	}
 
+	@Override
 	public Transaction_generator.Transaction doInBackground(Transaction_generator.Transaction... args)
 	{
 		Transaction_generator.Transaction transaction = args[0];
 		try
 		{
 			List<NameValuePair> form_data = new ArrayList<>();
-			String key = this.ohc.get_context().getString(R.string.ohc_network_key_rpc);
+			String key = this.ohc.get_context().getString(R.string.ohc_rpc_request_key);
 			String json_str = transaction.get_json().toString();
 			form_data.add(new BasicNameValuePair(key, json_str));
 			HttpPost post_request = new HttpPost();
@@ -115,7 +116,7 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 			catch(Exception ex)
 			{
 				this.ohc.logger.log(Level.SEVERE, "Encountered an unexpected exception whilst " +
-						"processing response data", ex);
+						"processing response", ex);
 			}
 		}
 		catch(UnsupportedEncodingException ex)

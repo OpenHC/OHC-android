@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
+import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.device.Field;
 import io.openhc.ohc.basestation.rpc.Base_rpc;
@@ -36,6 +37,9 @@ public class Basestation implements Sender.Transaction_receiver
 	private Receiver rx_thread;
 
 	private Basestation_state state;
+
+	private final String RPC_ATTRIBUTE_METHOD;
+	private final String RPC_ATTRIBUTE_SESSION_TOKEN;
 
 	/**
 	 * Constructor for recreating the basestation from a serialized state object
@@ -72,6 +76,10 @@ public class Basestation implements Sender.Transaction_receiver
 		//Receiver for state updates initiated by the basestation
 		this.rx_thread = network.setup_receiver();
 		this.rx_thread.start();
+
+		this.RPC_ATTRIBUTE_METHOD = this.resources.getString(R.string.ohc_rpc_attribute_method);
+		this.RPC_ATTRIBUTE_SESSION_TOKEN = this.resources.getString(
+				R.string.ohc_rpc_attribute_session_token);
 	}
 
 	//***** Code being called from Base_rpc *****
@@ -203,7 +211,7 @@ public class Basestation implements Sender.Transaction_receiver
 	{
 		try
 		{
-			String method = packet.getString("method");
+			String method = packet.getString(this.RPC_ATTRIBUTE_METHOD);
 			this.ohc.logger.log(Level.INFO, "Received RPC: " + method);
 			/*Dynamically reflecting into the local instance of Base_rpc to dynamically call functions inside
 			* Base_rpc depending on the method supplied by the main control unit / basestation (OHC-node)*/
@@ -226,7 +234,7 @@ public class Basestation implements Sender.Transaction_receiver
 	 */
 	private void make_rpc_call(JSONObject json) throws JSONException
 	{
-		json.put("session_token", this.state.get_session_token());
+		json.put(this.RPC_ATTRIBUTE_SESSION_TOKEN, this.state.get_session_token());
 		Sender s = new io.openhc.ohc.skynet.udp.Sender(this.ohc, this.state.get_remote_socket_address(), this);
 		Transaction_generator.Transaction transaction = this.transaction_gen.generate_transaction(json);
 		s.execute(transaction);
@@ -245,7 +253,7 @@ public class Basestation implements Sender.Transaction_receiver
 		try
 		{
 			JSONObject json = new JSONObject();
-			json.put("method", "login").put("uname", uname).put("passwd", passwd);
+			json.put(this.RPC_ATTRIBUTE_METHOD, "login").put("uname", uname).put("passwd", passwd);
 			this.make_rpc_call(json);
 		}
 		catch(Exception ex)
@@ -262,7 +270,7 @@ public class Basestation implements Sender.Transaction_receiver
 		try
 		{
 			JSONObject json = new JSONObject();
-			json.put("method", "get_num_devices");
+			json.put(this.RPC_ATTRIBUTE_METHOD, "get_num_devices");
 			this.make_rpc_call(json);
 		}
 		catch(Exception ex)
@@ -281,7 +289,7 @@ public class Basestation implements Sender.Transaction_receiver
 		try
 		{
 			JSONObject json = new JSONObject();
-			json.put("method", "get_device_id").put("index", index);
+			json.put(this.RPC_ATTRIBUTE_METHOD, "get_device_id").put("index", index);
 			this.make_rpc_call(json);
 		}
 		catch(Exception ex)
@@ -300,7 +308,7 @@ public class Basestation implements Sender.Transaction_receiver
 		try
 		{
 			JSONObject json = new JSONObject();
-			json.put("method", "get_device_name").put("id", id);
+			json.put(this.RPC_ATTRIBUTE_METHOD, "get_device_name").put("id", id);
 			this.make_rpc_call(json);
 		}
 		catch(Exception ex)
@@ -319,7 +327,7 @@ public class Basestation implements Sender.Transaction_receiver
 		try
 		{
 			JSONObject json = new JSONObject();
-			json.put("method", "device_get_num_fields").put("id", id);
+			json.put(this.RPC_ATTRIBUTE_METHOD, "device_get_num_fields").put("id", id);
 			this.make_rpc_call(json);
 		}
 		catch(Exception ex)
@@ -339,7 +347,8 @@ public class Basestation implements Sender.Transaction_receiver
 		try
 		{
 			JSONObject json = new JSONObject();
-			json.put("method", "device_get_field").put("device_id", id_dev).put("field_id", id_field);
+			json.put(this.RPC_ATTRIBUTE_METHOD, "device_get_field").put("device_id", id_dev)
+					.put("field_id", id_field);
 			this.make_rpc_call(json);
 		}
 		catch(Exception ex)
@@ -360,7 +369,7 @@ public class Basestation implements Sender.Transaction_receiver
 		try
 		{
 			JSONObject json = new JSONObject();
-			json.put("method", "device_set_field_value").put("device_id", id_dev)
+			json.put(this.RPC_ATTRIBUTE_METHOD, "device_set_field_value").put("device_id", id_dev)
 					.put("field_id", id_field).put("value", value);
 			this.make_rpc_call(json);
 		}
@@ -392,7 +401,7 @@ public class Basestation implements Sender.Transaction_receiver
 		try
 		{
 			JSONObject json = new JSONObject();
-			json.put("method", "set_device_name").put("id", id).put("name", name);
+			json.put(this.RPC_ATTRIBUTE_METHOD, "set_device_name").put("id", id).put("name", name);
 			this.make_rpc_call(json);
 		}
 		catch(Exception ex)

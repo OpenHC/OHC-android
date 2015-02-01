@@ -3,6 +3,8 @@ package io.openhc.ohc.skynet.transaction;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -93,6 +95,7 @@ public class Transaction_generator
 		private UUID uuid;
 		private int retry_counter;
 		private int max_retry_num;
+		private List<Transaction> sub_transactions = new ArrayList<>();
 
 		/**
 		 * Default Transaction constructor.
@@ -214,6 +217,26 @@ public class Transaction_generator
 			this.uuid = UUID.randomUUID();
 			this.retry_counter = 0;
 			this.json_response = null;
+		}
+
+		/**
+		 * Adds an enclosed transaction to this transaction
+		 *
+		 * @param trans Transaction
+		 */
+		public void add_transaction(Transaction trans)
+		{
+			this.sub_transactions.add(trans);
+		}
+
+		/**
+		 * Returns all enclosed transactions
+		 *
+		 * @return Enclosed transactions
+		 */
+		public List<Transaction> get_transactions()
+		{
+			return this.sub_transactions;
 		}
 	}
 }

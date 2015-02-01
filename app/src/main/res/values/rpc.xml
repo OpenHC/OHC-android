@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ohc_rpc_attribute_method">method</string>
+    <string name="ohc_rpc_attribute_session_token">session_token</string>
+    <string name="ohc_rpc_request_key">rpcs</string>
+    <string name="ohc_rpc_response_key">resp</string>
+</resources>
