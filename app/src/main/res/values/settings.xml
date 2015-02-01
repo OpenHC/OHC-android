@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ohc_setting_ip_lan_manual">ohc_ip_lan_manual</string>
+    <string name="ohc_setting_ip_lan">ohc_ip_lan</string>
+    <string name="ohc_setting_protocol">ohc_protocol</string>
+</resources>

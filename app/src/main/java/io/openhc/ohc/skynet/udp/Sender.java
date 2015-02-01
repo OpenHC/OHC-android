@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
+import io.openhc.ohc.R;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 /**
@@ -44,7 +45,9 @@ public class Sender extends io.openhc.ohc.skynet.Sender implements Socket_timeou
 		/*UDP control turns out to be pretty unresponsive with more latency
 		* should rather use JSON via HTTP with gzip compression and larger
 		* control data chunks then*/
-		this(ohc, endpoint, 300, receiver);
+		this(ohc, endpoint,
+				ohc.get_context().getResources().getInteger(R.integer.ohc_network_timeout_udp),
+				receiver);
 	}
 
 	/**

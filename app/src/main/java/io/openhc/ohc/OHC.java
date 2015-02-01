@@ -61,11 +61,11 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	{
 		this.context = ctx;
 		this.logger = new OHC_Logger(ctx.getString(R.string.log_tag));
-		this.ui_state = (Ui_state)saved_state.getSerializable(ctx.getString(R.string.save_id_ohc));
+		this.ui_state = (Ui_state)saved_state.getSerializable(ctx.getString(R.string.ohc_save_state_ohc));
 		try
 		{
 			this.restore_basestation((Basestation_state)saved_state.getSerializable(
-					ctx.getString(R.string.save_id_basestation)));
+					ctx.getString(R.string.ohc_save_state_basestation)));
 		}
 		catch(IOException ex)
 		{

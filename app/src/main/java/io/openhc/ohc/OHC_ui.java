@@ -68,11 +68,11 @@ public class OHC_ui extends ActionBarActivity
 		super.onSaveInstanceState(savedInstaceState);
 		if(this.ohc != null)
 		{
-			savedInstaceState.putSerializable(this.getString(R.string.save_id_ohc),
+			savedInstaceState.putSerializable(this.getString(R.string.ohc_save_state_ohc),
 					this.ohc.get_ui_state());
 			if(this.ohc.get_basestation() != null)
 			{
-				savedInstaceState.putSerializable(this.getString(R.string.save_id_basestation),
+				savedInstaceState.putSerializable(this.getString(R.string.ohc_save_state_basestation),
 						this.ohc.get_basestation().get_state());
 			}
 		}

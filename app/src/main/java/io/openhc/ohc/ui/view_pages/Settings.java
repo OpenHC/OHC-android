@@ -22,7 +22,6 @@ import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.OHC_ui;
@@ -143,17 +142,17 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 	 */
 	private void update_view()
 	{
-		boolean manual = this.preferences.getBoolean(this.ctx.getString(R.string.ohc_ip_lan_manual), false);
+		boolean manual = this.preferences.getBoolean(this.ctx.getString(R.string.ohc_setting_ip_lan_manual), false);
 		this.cb_ip_lan_manual.setChecked(manual);
 		this.tv_set_ip_lan.setEnabled(manual);
 		this.tv_ip_addr_lan.setEnabled(manual);
 		this.st_set_ip_lan.setClickable(manual);
-		String ip_addr = this.preferences.getString(this.ctx.getString(R.string.ohc_ip_lan), "");
+		String ip_addr = this.preferences.getString(this.ctx.getString(R.string.ohc_setting_ip_lan), "");
 		this.tv_ip_addr_lan.setText(ip_addr);
 		this.tv_set_protocol.setEnabled(manual);
 		this.tv_protocol.setEnabled(manual);
 		this.st_set_protocol.setClickable(manual);
-		String proto_name = this.preferences.getString(this.ctx.getString(R.string.ohc_protocol),
+		String proto_name = this.preferences.getString(this.ctx.getString(R.string.ohc_setting_protocol),
 				Network.Protocol.UDP.toString());
 		this.protocol = Network.Protocol.valueOf(proto_name);
 		this.tv_protocol.setText(this.protocol.get_human_readable_name());
@@ -164,7 +163,7 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 	{
 		if(view == this.bl_ip_lan_manual)
 		{
-			this.preferences.edit().putBoolean(this.ctx.getString(R.string.ohc_ip_lan_manual),
+			this.preferences.edit().putBoolean(this.ctx.getString(R.string.ohc_setting_ip_lan_manual),
 					!this.cb_ip_lan_manual.isChecked()).commit();
 			this.update_view();
 			this.ctx.get_page_login().init_ohc();
@@ -188,7 +187,7 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		LayoutInflater inflater = this.ctx.getLayoutInflater();
 		RelativeLayout layout = (RelativeLayout)inflater.inflate(R.layout.dialog_ip_address, null);
 		this.et_ip_addr = (EditText)layout.findViewById(R.id.et_ip_addr);
-		this.et_ip_addr.setText(this.preferences.getString(this.ctx.getString(R.string.ohc_ip_lan), ""));
+		this.et_ip_addr.setText(this.preferences.getString(this.ctx.getString(R.string.ohc_setting_ip_lan), ""));
 		AlertDialog dialog = builder.create();
 		dialog.setCanceledOnTouchOutside(true);
 		dialog.setOnCancelListener(this);
@@ -234,13 +233,13 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		{
 			if(iface == this.dialog_set_ip)
 			{
-				this.preferences.edit().putString(this.ctx.getString(R.string.ohc_ip_lan),
+				this.preferences.edit().putString(this.ctx.getString(R.string.ohc_setting_ip_lan),
 						this.et_ip_addr.getText().toString()).commit();
 				this.update_view();
 			}
 			if(iface == this.dialog_set_protocol)
 			{
-				this.preferences.edit().putString(this.ctx.getString(R.string.ohc_protocol),
+				this.preferences.edit().putString(this.ctx.getString(R.string.ohc_setting_protocol),
 						this.protocol_by_id.get(this.rg_protocols.getCheckedRadioButtonId()).toString()).
 						commit();
 				this.update_view();
@@ -283,7 +282,7 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 	 */
 	public boolean is_ip_manually_set()
 	{
-		return this.preferences.getBoolean(this.ctx.getString(R.string.ohc_ip_lan_manual), false);
+		return this.preferences.getBoolean(this.ctx.getString(R.string.ohc_setting_ip_lan_manual), false);
 	}
 
 	/**
@@ -297,7 +296,7 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 		try
 		{
 			return InetAddress.getByName(this.preferences.getString(
-					this.ctx.getString(R.string.ohc_ip_lan), ""));
+					this.ctx.getString(R.string.ohc_setting_ip_lan), ""));
 		}
 		catch(Exception ex)
 		{
@@ -313,6 +312,6 @@ public class Settings extends Page implements View.OnClickListener, DialogInterf
 	public Network.Protocol get_protocol()
 	{
 		return Network.Protocol.valueOf(this.preferences.getString(this.ctx.getString(
-				R.string.ohc_protocol), Network.Protocol.UDP.toString()));
+				R.string.ohc_setting_protocol), Network.Protocol.UDP.toString()));
 	}
 }

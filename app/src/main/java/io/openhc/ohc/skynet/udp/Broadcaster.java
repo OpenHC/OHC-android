@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
+import io.openhc.ohc.R;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 /**
@@ -48,8 +49,10 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 	 */
 	public Broadcaster(OHC ohc, InetAddress broadcast_addr, int rport, Broadcast_receiver receiver)
 	{
-		//Pretty "low" default timeout but broadcasts will only work inside LANs thus 100ms is an adequate value
-		this(ohc, broadcast_addr, rport, 100, receiver);
+		//Pretty "low" default timeout but since broadcasts will only work inside LANs 100ms are enough
+		this(ohc, broadcast_addr, rport,
+				ohc.get_context().getResources().getInteger(R.integer.ohc_network_timeout_bcast),
+				receiver);
 	}
 
 	/**
