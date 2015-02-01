@@ -6,6 +6,7 @@
     <integer name="ohc_network_timeout_udp">300</integer>
     <integer name="ohc_network_timeout_http">10000</integer>
     <string name="ohc_network_key_rpc">rpc</string>
+    <string name="ohc_network_key_response">resp</string>
     <string name="ohc_network_http_scheme_default">http</string>
     <string name="ohc_network_http_scheme_secure">https</string>
     <string name="ohc_network_http_format" formatted="false">%s://%s:%d</string>

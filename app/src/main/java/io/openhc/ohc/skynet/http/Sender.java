@@ -104,9 +104,9 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 			{
 				JSONObject json = new JSONObject(body);
 				if(transaction.is_valid_response(json))
-				{
 					transaction.set_response(json);
-				}
+				else
+					this.ohc.logger.log(Level.INFO, "Received invalid transaction uuid");
 			}
 			catch(JSONException ex)
 			{
