@@ -1,13 +1,20 @@
 package io.openhc.ohc.skynet.http;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.URI;
@@ -91,7 +98,25 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 			String uri_format = this.ohc.get_context().getString(R.string.ohc_network_http_format);
 			post_request.setURI(URI.create(String.format(uri_format, uri_scheme,
 					this.endpoint.getHostString(), this.endpoint.getPort())));
-			this.client.execute(post_request);
+			HttpResponse response = this.client.execute(post_request);
+			String body = EntityUtils.toString(response.getEntity());
+			try
+			{
+				JSONObject json = new JSONObject(body);
+				if(transaction.is_valid_response(json))
+				{
+					transaction.set_response(json);
+				}
+			}
+			catch(JSONException ex)
+			{
+				this.ohc.logger.log(Level.WARNING, "Response contains invalid json", ex);
+			}
+			catch(Exception ex)
+			{
+				this.ohc.logger.log(Level.SEVERE, "Encountered an unexpected exception whilst " +
+						"processing response data", ex);
+			}
 		}
 		catch(UnsupportedEncodingException ex)
 		{
