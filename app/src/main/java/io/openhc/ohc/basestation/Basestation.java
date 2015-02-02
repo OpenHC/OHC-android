@@ -19,9 +19,9 @@ import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.device.Field;
 import io.openhc.ohc.basestation.rpc.Base_rpc;
 import io.openhc.ohc.skynet.Network;
-import io.openhc.ohc.skynet.udp.Receiver;
 import io.openhc.ohc.skynet.Sender;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
+import io.openhc.ohc.skynet.udp.Receiver;
 
 /**
  * OOP representation of the Basestation (Gateway, OHC-Node)

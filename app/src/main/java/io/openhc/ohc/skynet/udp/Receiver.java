@@ -1,7 +1,5 @@
 package io.openhc.ohc.skynet.udp;
 
-import android.os.AsyncTask;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
