@@ -7,22 +7,22 @@ import java.util.logging.Level;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
 
-public class Rpc_get_device_id extends Rpc
+public class Rpc_device_get_field extends Rpc
 {
-	private int index;
+	private String id;
 
-	public final String RPC_METHOD = "get_device_id";
-	public final String RPC_ATTRIBUTE_INDEX = "index";
+	public final String RPC_METHOD = "device_get_field";
+	public final String RPC_ATTRIBUTE_ID = "device_id";
 
-	public Rpc_get_device_id(Basestation bs, Rpc_group group)
+	public Rpc_device_get_field(Basestation bs, Rpc_group group)
 	{
-		this(bs, group, -1);
+		this(bs, group, null);
 	}
 
-	public Rpc_get_device_id(Basestation bs, Rpc_group group, int index)
+	public Rpc_device_get_field(Basestation bs, Rpc_group group, String id)
 	{
 		super(bs, group);
-		this.index = index;
+		this.id = id;
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class Rpc_get_device_id extends Rpc
 		try
 		{
 			json.put(this.RPC_ATTRIBUTE_METHOD, this.RPC_METHOD)
-					.put(RPC_ATTRIBUTE_INDEX, this.index);
+					.put(RPC_ATTRIBUTE_ID, this.id);
 		}
 		catch(Exception ex)
 		{
@@ -41,8 +41,8 @@ public class Rpc_get_device_id extends Rpc
 		return json;
 	}
 
-	public void set_index(int index)
+	public void set_id(String id)
 	{
-		this.index = index;
+		this.id = id;
 	}
 }
