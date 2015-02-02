@@ -18,6 +18,7 @@ import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.device.Field;
 import io.openhc.ohc.basestation.rpc.Base_rpc;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc;
 import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.Sender;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
@@ -270,7 +271,7 @@ public class Basestation implements Sender.Transaction_receiver
 	 * @param json The JSON RPC to be transmitted
 	 * @throws JSONException
 	 */
-	private void make_rpc_call(JSONObject json) throws JSONException
+	private void make_rpc_call(Rpc rpc) throws JSONException
 	{
 		json.put(this.RPC_ATTRIBUTE_SESSION_TOKEN, this.state.get_session_token());
 		switch(this.get_protocol())
