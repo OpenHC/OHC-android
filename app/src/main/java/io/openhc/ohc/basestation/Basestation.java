@@ -1,7 +1,10 @@
 package io.openhc.ohc.basestation;
 
 import android.content.res.Resources;
+import android.net.http.AndroidHttpClient;
 
+import org.apache.http.client.HttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,11 +38,14 @@ public class Basestation implements Sender.Transaction_receiver
 	private Resources resources;
 	private Transaction_generator transaction_gen;
 	private Receiver rx_thread;
+	private HttpClient http_client;
 
 	private Basestation_state state;
 
 	private final String RPC_ATTRIBUTE_METHOD;
 	private final String RPC_ATTRIBUTE_SESSION_TOKEN;
+	private final String RPC_REQUEST_KEY;
+	private final String RPC_RESPONSE_KEY;
 
 	/**
 	 * Constructor for recreating the basestation from a serialized state object
@@ -73,13 +79,24 @@ public class Basestation implements Sender.Transaction_receiver
 		this.state.set_remote_socket_addr(station_address);
 		this.state.set_protocol(protocol);
 
-		//Receiver for state updates initiated by the basestation
-		this.rx_thread = network.setup_receiver();
-		this.rx_thread.start();
+		switch(protocol)
+		{
+			case UDP:
+				//Receiver for state updates initiated by the basestation
+				this.rx_thread = network.setup_receiver();
+				this.rx_thread.start();
+				break;
+			case HTTP:
+				this.http_client = AndroidHttpClient.newInstance(this.resources.getString(
+						R.string.ohc_network_http_user_agent));
+				this.state.set_remote_port(this.resources.getInteger(R.integer.ohc_network_http_port));
+		}
 
 		this.RPC_ATTRIBUTE_METHOD = this.resources.getString(R.string.ohc_rpc_attribute_method);
 		this.RPC_ATTRIBUTE_SESSION_TOKEN = this.resources.getString(
 				R.string.ohc_rpc_attribute_session_token);
+		this.RPC_REQUEST_KEY = this.resources.getString(R.string.ohc_rpc_request_key);
+		this.RPC_RESPONSE_KEY = this.resources.getString(R.string.ohc_rpc_response_key);
 	}
 
 	//***** Code being called from Base_rpc *****
@@ -205,23 +222,44 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * Handles incoming JSON RPC data
 	 *
-	 * @param packet JSON RPC data
+	 * @param rpc JSON RPC data
 	 */
-	public void handle_packet(JSONObject packet)
+	private void call_rpc(JSONObject rpc)
 	{
 		try
 		{
-			String method = packet.getString(this.RPC_ATTRIBUTE_METHOD);
+			String method = rpc.getString(this.RPC_ATTRIBUTE_METHOD);
 			this.ohc.logger.log(Level.INFO, "Received RPC: " + method);
 			/*Dynamically reflecting into the local instance of Base_rpc to dynamically call functions inside
 			* Base_rpc depending on the method supplied by the main control unit / basestation (OHC-node)*/
 			this.rpc_interface.getClass().getMethod(method,
-					JSONObject.class).invoke(this.rpc_interface, packet);
+					JSONObject.class).invoke(this.rpc_interface, rpc);
 		}
 		catch(Exception ex)
 		{
 			this.ohc.logger.log(Level.SEVERE, "JSON encoded data is missing valid rpc data: " +
 					ex.getMessage());
+		}
+	}
+
+	public void handle_rpc(JSONObject data)
+	{
+		switch(this.get_protocol())
+		{
+			case UDP:
+				this.call_rpc(data);
+				break;
+			case HTTP:
+				try
+				{
+					JSONArray array = data.getJSONArray(this.RPC_RESPONSE_KEY);
+					for(int i = 0; i < array.length(); i++)
+						this.call_rpc(array.getJSONObject(i));
+				}
+				catch(Exception ex)
+				{
+					this.ohc.logger.log(Level.WARNING, "Failed to parse HTTP multipart JSON rpc", ex);
+				}
 		}
 	}
 
@@ -235,9 +273,28 @@ public class Basestation implements Sender.Transaction_receiver
 	private void make_rpc_call(JSONObject json) throws JSONException
 	{
 		json.put(this.RPC_ATTRIBUTE_SESSION_TOKEN, this.state.get_session_token());
-		Sender s = new io.openhc.ohc.skynet.udp.Sender(this.ohc, this.state.get_remote_socket_address(), this);
-		Transaction_generator.Transaction transaction = this.transaction_gen.generate_transaction(json);
-		s.execute(transaction);
+		switch(this.get_protocol())
+		{
+			case UDP:
+				Sender s_udp = new io.openhc.ohc.skynet.udp.Sender(this.ohc,
+						this.state.get_remote_socket_address(), this);
+				Transaction_generator.Transaction transaction_udp = this.transaction_gen
+						.generate_transaction(json);
+				s_udp.execute(transaction_udp);
+				break;
+			case HTTP:
+				InetSocketAddress endpoint = new InetSocketAddress(this.state.get_remote_ip_address(),
+						this.state.get_remote_port());
+				Sender s_tcp = new io.openhc.ohc.skynet.http.Sender(this.ohc, this.http_client,
+						endpoint, this);
+				JSONArray rpcs = new JSONArray();
+				rpcs.put(json);
+				JSONObject obj = new JSONObject();
+				obj.put(this.RPC_REQUEST_KEY, rpcs);
+				Transaction_generator.Transaction transaction_tcp = this.transaction_gen
+						.generate_transaction(obj);
+				s_tcp.execute(transaction_tcp);
+		}
 	}
 
 	//***** RPC functions calling methods on the main control unit (OHC-node) *****
@@ -414,10 +471,11 @@ public class Basestation implements Sender.Transaction_receiver
 	@Override
 	public void on_receive_transaction(Transaction_generator.Transaction transaction)
 	{
+		this.ohc.logger.log(Level.INFO, "Got rpc");
 		JSONObject json = transaction.get_response();
 		if(json != null)
 		{
-			this.handle_packet(json);
+			this.handle_rpc(json);
 			return;
 		}
 		this.ohc.logger.log(Level.WARNING, String.format("Didn't receive response for transaction %s in time", transaction.get_uuid()));

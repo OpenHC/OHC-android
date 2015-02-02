@@ -54,7 +54,7 @@ public class Receiver extends Thread
 					@Override
 					public void run()
 					{
-						basestation.handle_packet(json);
+						basestation.handle_rpc(json);
 					}
 				});
 			}

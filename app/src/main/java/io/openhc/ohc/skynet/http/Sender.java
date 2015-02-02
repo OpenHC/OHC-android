@@ -90,6 +90,7 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 			List<NameValuePair> form_data = new ArrayList<>();
 			String key = this.ohc.get_context().getString(R.string.ohc_rpc_request_key);
 			String json_str = transaction.get_json().toString();
+			this.ohc.logger.log(Level.INFO, json_str);
 			form_data.add(new BasicNameValuePair(key, json_str));
 			HttpPost post_request = new HttpPost();
 			post_request.setEntity(new UrlEncodedFormEntity(form_data));
@@ -101,6 +102,7 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 					this.endpoint.getHostString(), this.endpoint.getPort())));
 			HttpResponse response = this.client.execute(post_request);
 			String body = EntityUtils.toString(response.getEntity());
+			this.ohc.logger.log(Level.INFO, body);
 			try
 			{
 				JSONObject json = new JSONObject(body);
@@ -132,5 +134,12 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 			this.ohc.logger.log(Level.SEVERE, "Failed to send post request", ex);
 		}
 		return transaction;
+	}
+
+	@Override
+	public void onPostExecute(Transaction_generator.Transaction transaction)
+	{
+		if(this.receiver != null)
+			this.receiver.on_receive_transaction(transaction);
 	}
 }
