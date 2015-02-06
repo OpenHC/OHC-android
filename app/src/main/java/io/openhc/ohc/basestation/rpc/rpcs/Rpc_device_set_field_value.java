@@ -14,7 +14,7 @@ public class Rpc_device_set_field_value extends Rpc
 	private int field_id;
 	private Object value;
 
-	public final String RPC_METHOD = "device_get_field";
+	public final String RPC_METHOD = "device_set_field_value";
 	public final String RPC_ATTRIBUTE_ID = "device_id";
 	public final String RPC_ATTRIBUTE_FIELD_ID = "field_id";
 	public final String RPC_ATTRIBUTE_VALUE = "value";
