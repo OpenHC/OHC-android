@@ -7,6 +7,12 @@ import java.util.logging.Level;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
 
+/**
+ * This RPC requests information about a field from the basestation. The basestation returns
+ * all information required to construct an instance of Field.class
+ *
+ * @author Tobias Schramm
+ */
 public class Rpc_device_get_field extends Rpc
 {
 	private String id;
@@ -45,6 +51,11 @@ public class Rpc_device_get_field extends Rpc
 		return json;
 	}
 
+	/**
+	 *
+	 *
+	 * @param id
+	 */
 	public void set_id(String id)
 	{
 		this.id = id;

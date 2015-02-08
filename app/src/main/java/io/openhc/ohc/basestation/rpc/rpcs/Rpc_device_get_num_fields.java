@@ -7,6 +7,11 @@ import java.util.logging.Level;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
 
+/**
+ * This RPC returns the number of fields on a device
+ *
+ * @author Tobias Schramm
+ */
 public class Rpc_device_get_num_fields extends Rpc
 {
 	private String id;

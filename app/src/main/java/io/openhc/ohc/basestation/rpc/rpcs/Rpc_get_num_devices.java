@@ -7,6 +7,11 @@ import java.util.logging.Level;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
 
+/**
+ * This RPC returns the number of devices attached to a basestation
+ *
+ * @author Tobias Schramm
+ */
 public class Rpc_get_num_devices extends Rpc
 {
 	public final String RPC_METHOD = "get_num_devices";

@@ -7,6 +7,11 @@ import java.util.logging.Level;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
 
+/**
+ * This RPC returns a login token if the login credentials are valid.
+ *
+ * @author Tobias Schramm
+ */
 public class Rpc_login extends Rpc
 {
 	private String uname;

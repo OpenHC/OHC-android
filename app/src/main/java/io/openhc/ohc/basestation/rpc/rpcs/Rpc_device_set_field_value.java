@@ -8,6 +8,11 @@ import java.util.logging.Level;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
 
+/**
+ * This RPC sets the value of a remote field on the basestation.
+ *
+ * @author Tobias Schramm
+ */
 public class Rpc_device_set_field_value extends Rpc
 {
 	private String id;

@@ -7,6 +7,11 @@ import java.util.logging.Level;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
 
+/**
+ * This RPC returns the human readable name of a device
+ *
+ * @author Tobias Schramm
+ */
 public class Rpc_get_device_name extends Rpc
 {
 	private String id;

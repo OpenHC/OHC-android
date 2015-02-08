@@ -6,6 +6,11 @@ import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
 
+/**
+ * Abstract parent for RPCs allowing for easy implementation of new RPCs
+ *
+ * @author Tobias Schramm
+ */
 public abstract class Rpc
 {
 	protected boolean finished;
@@ -17,6 +22,13 @@ public abstract class Rpc
 	public final String RPC_REQUEST_KEY;
 	public final String RPC_RESPONSE_KEY;
 
+	/**
+	 * Default constructor. The rpc group defines an action to perform when the execution of the rpc
+	 * finishes
+	 *
+	 * @param bs Linked basestation instance
+	 * @param group Rpc group for callback handling
+	 */
 	public Rpc(Basestation bs, Rpc_group group)
 	{
 		this.station = bs;
@@ -28,10 +40,20 @@ public abstract class Rpc
 		this.RPC_RESPONSE_KEY = bs.get_resources().getString(R.string.ohc_rpc_response_key);
 	}
 
+	/**
+	 * Indicates if this rpc finished
+	 *
+	 * @return Has the rpc finished
+	 */
 	public boolean has_finished()
 	{
 		return this.finished;
 	}
 
+	/**
+	 * Returns a JSON representation of the rpc data
+	 *
+	 * @return A JSON representation of the rpc data
+	 */
 	public abstract JSONObject get_json();
 }
