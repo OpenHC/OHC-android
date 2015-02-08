@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
+import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 /**
  * This RPC sets the value of a remote field on the basestation.
@@ -68,5 +69,11 @@ public class Rpc_device_set_field_value extends Rpc
 	public void set_field_id(Object value)
 	{
 		this.value = value;
+	}
+
+	@Override
+	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	{
+
 	}
 }

@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
+import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 /**
  * This RPC returns the internal alphanumerical id of a device
@@ -49,5 +50,11 @@ public class Rpc_get_device_id extends Rpc
 	public void set_index(int index)
 	{
 		this.index = index;
+	}
+
+	@Override
+	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	{
+
 	}
 }

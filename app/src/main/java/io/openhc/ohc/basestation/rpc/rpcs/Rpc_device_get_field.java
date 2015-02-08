@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
+import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 /**
  * This RPC requests information about a field from the basestation. The basestation returns
@@ -62,5 +63,11 @@ public class Rpc_device_get_field extends Rpc
 	public void set_field_id(int field_id)
 	{
 		this.field_id = field_id;
+	}
+
+	@Override
+	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	{
+
 	}
 }

@@ -18,6 +18,7 @@ import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.device.Device;
 import io.openhc.ohc.basestation.device.Field;
 import io.openhc.ohc.basestation.rpc.Base_rpc;
+import io.openhc.ohc.basestation.rpc.Rpc_group;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc;
 import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.Sender;
@@ -31,7 +32,7 @@ import io.openhc.ohc.skynet.udp.Receiver;
  *
  * @author Tobias Schramm
  */
-public class Basestation implements Sender.Transaction_receiver
+public class Basestation implements Sender.Transaction_receiver, Rpc_group.Rpc_group_callback
 {
 	private Network network;
 	public final OHC ohc;
@@ -481,6 +482,12 @@ public class Basestation implements Sender.Transaction_receiver
 			return;
 		}
 		this.ohc.logger.log(Level.WARNING, String.format("Didn't receive response for transaction %s in time", transaction.get_uuid()));
+	}
+
+	@Override
+	public void on_group_finish(Rpc_group group)
+	{
+
 	}
 
 	//General purpose functions

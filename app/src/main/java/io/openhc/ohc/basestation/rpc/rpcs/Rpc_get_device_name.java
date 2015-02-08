@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
+import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 /**
  * This RPC returns the human readable name of a device
@@ -49,5 +50,11 @@ public class Rpc_get_device_name extends Rpc
 	public void set_id(String id)
 	{
 		this.id = id;
+	}
+
+	@Override
+	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	{
+
 	}
 }

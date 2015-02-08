@@ -5,17 +5,19 @@ import org.json.JSONObject;
 import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
+import io.openhc.ohc.skynet.Sender;
 
 /**
  * Abstract parent for RPCs allowing for easy implementation of new RPCs
  *
  * @author Tobias Schramm
  */
-public abstract class Rpc
+public abstract class Rpc implements Sender.Transaction_receiver
 {
 	protected boolean finished;
 	protected final Basestation station;
 	protected final Rpc_group group;
+	protected String session_token;
 
 	public final String RPC_ATTRIBUTE_METHOD;
 	public final String RPC_ATTRIBUTE_SESSION_TOKEN;
@@ -48,6 +50,16 @@ public abstract class Rpc
 	public boolean has_finished()
 	{
 		return this.finished;
+	}
+
+	/**
+	 * Sets the current session token
+	 *
+	 * @param session_token The current session token
+	 */
+	public void set_session_token(String session_token)
+	{
+		this.session_token = session_token;
 	}
 
 	/**

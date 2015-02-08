@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
+import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 /**
  * This RPC returns the number of devices attached to a basestation
@@ -34,5 +35,11 @@ public class Rpc_get_num_devices extends Rpc
 			this.station.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
 		}
 		return json;
+	}
+
+	@Override
+	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	{
+
 	}
 }

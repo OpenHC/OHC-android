@@ -106,4 +106,17 @@ public class Rpc_group
 		ALL,
 		ANY;
 	}
+
+	/**
+	 * Interface for callbacks
+	 */
+	public interface Rpc_group_callback
+	{
+		/**
+		 * Callback function
+		 *
+		 * @param group The RPC group that finished execution
+		 */
+		public void on_group_finish(Rpc_group group);
+	}
 }
