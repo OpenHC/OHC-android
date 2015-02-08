@@ -21,9 +21,9 @@ public class Socket_timeout extends TimerTask
 	/**
 	 * Default constructor
 	 *
-	 * @param ohc OHC instance
+	 * @param ohc      OHC instance
 	 * @param supplier A socket supplier
-	 * @param timeout The timeout in ms
+	 * @param timeout  The timeout in ms
 	 */
 	public Socket_timeout(OHC ohc, Socket_provider supplier, long timeout)
 	{

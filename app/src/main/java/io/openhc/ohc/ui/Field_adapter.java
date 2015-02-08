@@ -36,9 +36,9 @@ public class Field_adapter extends ArrayAdapter<Field>
 	/**
 	 * Default constructor
 	 *
-	 * @param ctx UI context
+	 * @param ctx      UI context
 	 * @param resource Resource id
-	 * @param fields List of fields to display
+	 * @param fields   List of fields to display
 	 */
 	public Field_adapter(Context ctx, int resource, List<Field> fields)
 	{

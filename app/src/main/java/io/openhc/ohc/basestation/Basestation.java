@@ -51,7 +51,7 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * Constructor for recreating the basestation from a serialized state object
 	 *
-	 * @param ohc The linked ohc instance
+	 * @param ohc   The linked ohc instance
 	 * @param state The basestation state
 	 * @throws IOException
 	 */
@@ -64,9 +64,9 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * Default constructor for constructing a new basestation
 	 *
-	 * @param ohc The linked ohc instance
+	 * @param ohc             The linked ohc instance
 	 * @param station_address The address of the basestation
-	 * @param protocol The network protocol used to connect to physical basestation
+	 * @param protocol        The network protocol used to connect to physical basestation
 	 * @throws IOException
 	 */
 	public Basestation(OHC ohc, InetSocketAddress station_address, Network.Protocol protocol) throws IOException
@@ -118,7 +118,7 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * [RPC] Sets the session token of this device
 	 *
-	 * @param token A new session token
+	 * @param token   A new session token
 	 * @param success Login successful
 	 */
 	public void set_session_token(String token, boolean success)
@@ -156,7 +156,7 @@ public class Basestation implements Sender.Transaction_receiver
 	 * [RPC] Sets the internal id of a device based on its index
 	 *
 	 * @param index Index of device in device list
-	 * @param id Internal id
+	 * @param id    Internal id
 	 */
 	public void set_device_id(int index, String id)
 	{
@@ -174,7 +174,7 @@ public class Basestation implements Sender.Transaction_receiver
 	 * [RPC] Sets the human readable name of a device based on its internal id
 	 *
 	 * @param device_id Internal device id
-	 * @param name Human readable name
+	 * @param name      Human readable name
 	 */
 	public void set_device_name(String device_id, String name)
 	{
@@ -185,7 +185,7 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * [RPC] Sets the number of fields available on the specified device
 	 *
-	 * @param id Internal id of the device
+	 * @param id         Internal id of the device
 	 * @param num_fields Number of fields
 	 */
 	public void device_set_num_fields(String id, int num_fields)
@@ -204,9 +204,9 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * [RPC} Sets a whole field on the specified device
 	 *
-	 * @param id_dev Internal device id
+	 * @param id_dev   Internal device id
 	 * @param id_field Numeric field id
-	 * @param field The field
+	 * @param field    The field
 	 */
 	public void device_set_field(String id_dev, int id_field, Field field)
 	{
@@ -220,6 +220,7 @@ public class Basestation implements Sender.Transaction_receiver
 	}
 
 	//Dynamic calls to Base_rpc depending on the received JSON data
+
 	/**
 	 * Handles incoming JSON RPC data
 	 *
@@ -303,7 +304,7 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * Makes a login RPC tho the basestation
 	 *
-	 * @param uname Username
+	 * @param uname  Username
 	 * @param passwd Password
 	 */
 	public void login(String uname, String passwd)
@@ -397,7 +398,7 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * Get a field of an attached device by the internal device id and the field id
 	 *
-	 * @param id_dev Internal device id
+	 * @param id_dev   Internal device id
 	 * @param id_field Numeric field id
 	 */
 	public void device_get_field(String id_dev, int id_field)
@@ -418,9 +419,9 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * Set the value of a field on an attached device
 	 *
-	 * @param id_dev Internal device id
+	 * @param id_dev   Internal device id
 	 * @param id_field Numeric field id
-	 * @param value Value of the field
+	 * @param value    Value of the field
 	 */
 	public void device_set_field_value(String id_dev, int id_field, Object value)
 	{
@@ -440,7 +441,7 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * Set the human readable name of a device
 	 *
-	 * @param dev Device object
+	 * @param dev  Device object
 	 * @param name Human readable device name
 	 */
 	public void device_set_name(Device dev, String name)
@@ -451,7 +452,7 @@ public class Basestation implements Sender.Transaction_receiver
 	/**
 	 * Set the human readable name of a device
 	 *
-	 * @param id Internal device id
+	 * @param id   Internal device id
 	 * @param name Human readable device name
 	 */
 	public void device_set_name(String id, String name)

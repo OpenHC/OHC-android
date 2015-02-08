@@ -56,7 +56,7 @@ public class Overview extends Page implements View.OnClickListener, AdapterView.
 	@Override
 	public void onClick(View v)
 	{
-		 if(v == this.iv_header_settings)
+		if(v == this.iv_header_settings)
 		{
 
 		}

@@ -24,7 +24,7 @@ public class Receiver extends Thread
 	 * Default constructor.
 	 *
 	 * @param socket Receiving socket, must be open
-	 * @param base Basestation, for callbacks
+	 * @param base   Basestation, for callbacks
 	 */
 	public Receiver(DatagramSocket socket, Basestation base)
 	{

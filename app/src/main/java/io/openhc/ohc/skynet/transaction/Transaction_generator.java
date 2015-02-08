@@ -37,7 +37,7 @@ public class Transaction_generator
 	 * Constructs a new transaction generator specifying the default count of retransmits for
 	 * UDP transactions
 	 *
-	 * @param ohc Related ohc instance
+	 * @param ohc         Related ohc instance
 	 * @param retry_count Default number of retransmits
 	 */
 	public Transaction_generator(OHC ohc, int retry_count)
@@ -60,7 +60,7 @@ public class Transaction_generator
 	/**
 	 * Generates a new Transaction overwriting the default retransmit count
 	 *
-	 * @param json JSON data
+	 * @param json  JSON data
 	 * @param tries Number of retransmits
 	 * @return A new transaction object
 	 */
@@ -100,9 +100,9 @@ public class Transaction_generator
 		/**
 		 * Default Transaction constructor.
 		 *
-		 * @param ohc Related ohc instance
-		 * @param json Json data
-		 * @param uuid A unique identifier
+		 * @param ohc       Related ohc instance
+		 * @param json      Json data
+		 * @param uuid      A unique identifier
 		 * @param max_retry Maximum number of retransmits
 		 * @throws JSONException
 		 */

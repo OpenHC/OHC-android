@@ -29,7 +29,7 @@ public class OHC_Logger
 	 * Prints out a simple log message
 	 *
 	 * @param level Severity of the message
-	 * @param str The log message
+	 * @param str   The log message
 	 */
 	public void log(Level level, String str)
 	{
@@ -51,7 +51,7 @@ public class OHC_Logger
 	 * Prints out a stacktrace
 	 *
 	 * @param level Severity
-	 * @param ex Exception
+	 * @param ex    Exception
 	 */
 	public void log(Level level, Exception ex)
 	{
@@ -65,8 +65,8 @@ public class OHC_Logger
 	 * Prints out a log message together with a stacktrace
 	 *
 	 * @param level Severity
-	 * @param str Message
-	 * @param ex Exception
+	 * @param str   Message
+	 * @param ex    Exception
 	 */
 	public void log(Level level, String str, Exception ex)
 	{

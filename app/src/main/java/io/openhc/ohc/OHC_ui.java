@@ -90,7 +90,7 @@ public class OHC_ui extends ActionBarActivity
 	 * Custom implementation of DrawItemView allowing user tracking across pages, enabling easy
 	 * navigation via back key
 	 *
-	 * @param id Layout id
+	 * @param id      Layout id
 	 * @param by_user Was forward navigation initiated by user
 	 */
 	public void setContentView(int id, boolean by_user)

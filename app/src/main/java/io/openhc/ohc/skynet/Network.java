@@ -51,8 +51,8 @@ public class Network
 	/**
 	 * Sends a broadcast packet to discover a basestation on the LAN
 	 *
-	 * @param ohc OHC instance
-	 * @param port Broadcast port
+	 * @param ohc      OHC instance
+	 * @param port     Broadcast port
 	 * @param receiver Callback
 	 * @return Could the broadcast be sent
 	 */

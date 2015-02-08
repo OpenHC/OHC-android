@@ -45,7 +45,7 @@ public class Basestation_state implements Serializable
 	{
 		try
 		{
-			return new InetSocketAddress(this.ip_addr,this.rport);
+			return new InetSocketAddress(this.ip_addr, this.rport);
 		}
 		catch(Exception ex)
 		{

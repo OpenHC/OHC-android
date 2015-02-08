@@ -52,8 +52,6 @@ public class Rpc_device_get_field extends Rpc
 	}
 
 	/**
-	 *
-	 *
 	 * @param id
 	 */
 	public void set_id(String id)

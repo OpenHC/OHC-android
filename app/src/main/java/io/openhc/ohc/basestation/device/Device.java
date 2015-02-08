@@ -38,7 +38,7 @@ public class Device implements Serializable
 	 * Default constructor
 	 *
 	 * @param name The devices human readable device name
-	 * @param id The internal device id
+	 * @param id   The internal device id
 	 */
 	public Device(String name, String id)
 	{
@@ -59,7 +59,7 @@ public class Device implements Serializable
 	/**
 	 * Adds a field to the device
 	 *
-	 * @param id The numeric ID of the field
+	 * @param id    The numeric ID of the field
 	 * @param field The field
 	 */
 	public void add_field(int id, Field field)
@@ -80,7 +80,7 @@ public class Device implements Serializable
 	/**
 	 * Replaces an old field by a new one
 	 *
-	 * @param id The numeric ID of the field
+	 * @param id    The numeric ID of the field
 	 * @param field The field
 	 */
 	public void set_field(int id, Field field)

@@ -2,7 +2,6 @@ package io.openhc.ohc.basestation.rpc.rpcs;
 
 import org.json.JSONObject;
 
-import java.util.Objects;
 import java.util.logging.Level;
 
 import io.openhc.ohc.basestation.Basestation;

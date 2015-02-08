@@ -26,7 +26,7 @@ public abstract class Rpc
 	 * Default constructor. The rpc group defines an action to perform when the execution of the rpc
 	 * finishes
 	 *
-	 * @param bs Linked basestation instance
+	 * @param bs    Linked basestation instance
 	 * @param group Rpc group for callback handling
 	 */
 	public Rpc(Basestation bs, Rpc_group group)

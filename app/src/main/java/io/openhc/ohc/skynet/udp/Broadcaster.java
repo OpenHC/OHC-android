@@ -42,10 +42,10 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 	 * Default constructor. Initializes timeout with a sensible default value
 	 * Callback is optional and thus may be null
 	 *
-	 * @param ohc OHC instance
+	 * @param ohc            OHC instance
 	 * @param broadcast_addr Broadcast address
-	 * @param rport Remote port
-	 * @param receiver Callback
+	 * @param rport          Remote port
+	 * @param receiver       Callback
 	 */
 	public Broadcaster(OHC ohc, InetAddress broadcast_addr, int rport, Broadcast_receiver receiver)
 	{
@@ -59,11 +59,11 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 	 * Constructor allowing for a manual adjustment of timeout
 	 * Callback is optional and thus may be null
 	 *
-	 * @param ohc OHC instance
+	 * @param ohc            OHC instance
 	 * @param broadcast_addr Broadcast address
-	 * @param rport Remote port
-	 * @param timeout Timeout
-	 * @param receiver Callback
+	 * @param rport          Remote port
+	 * @param timeout        Timeout
+	 * @param receiver       Callback
 	 */
 	public Broadcaster(OHC ohc, InetAddress broadcast_addr, int rport, int timeout, Broadcast_receiver receiver)
 	{
@@ -83,7 +83,7 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 	 */
 	public static InetAddress get_broadcast_address(OHC ohc)
 	{
-		WifiManager wifi = (WifiManager) ohc.get_context().getSystemService(Context.WIFI_SERVICE);
+		WifiManager wifi = (WifiManager)ohc.get_context().getSystemService(Context.WIFI_SERVICE);
 		DhcpInfo dhcp = wifi.getDhcpInfo();
 		if(dhcp == null)
 		{
@@ -94,7 +94,7 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 		int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask; //Unseparated broadcast address
 		byte[] quads = new byte[4];
 		for(int k = 0; k < 4; k++)
-			quads[k] = (byte) ((broadcast >> k * 8) & 0xFF); //Shift one byte out
+			quads[k] = (byte)((broadcast >> k * 8) & 0xFF); //Shift one byte out
 		try //Might return an invalid address if dhcp settings are garbage
 		{
 			return InetAddress.getByAddress(quads);

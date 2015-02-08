@@ -36,7 +36,7 @@ public class Sender extends io.openhc.ohc.skynet.Sender implements Socket_timeou
 	 * Default constructor. Initializes timeout with a sensible default value
 	 * Callback is optional and thus may be null
 	 *
-	 * @param ohc OHC instance
+	 * @param ohc      OHC instance
 	 * @param endpoint Endpoint address
 	 * @param receiver Callback
 	 */
@@ -54,9 +54,9 @@ public class Sender extends io.openhc.ohc.skynet.Sender implements Socket_timeou
 	 * Constructor allowing for a manual adjustment of timeout
 	 * Callback is optional and may be null
 	 *
-	 * @param ohc OHC instance
+	 * @param ohc      OHC instance
 	 * @param endpoint Endpoint address
-	 * @param timeout Timeout
+	 * @param timeout  Timeout
 	 * @param receiver Callback
 	 */
 	public Sender(OHC ohc, SocketAddress endpoint, int timeout, Transaction_receiver receiver)

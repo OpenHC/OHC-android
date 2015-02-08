@@ -32,7 +32,7 @@ public class Rpc_group
 	/**
 	 * Specifies a list of RPCs to call on execution
 	 *
-	 * @param ohc OHC instnace
+	 * @param ohc  OHC instnace
 	 * @param rpcs List of RPCs
 	 */
 	public Rpc_group(OHC ohc, List<Rpc> rpcs)
@@ -44,7 +44,7 @@ public class Rpc_group
 	 * Specifies a list of RPCs to call on execution and a group mode to determine which condition
 	 * must be met for the group to be finished
 	 *
-	 * @param ohc OHC instance
+	 * @param ohc  OHC instance
 	 * @param rpcs List of RPCs
 	 * @param mode Execution mode
 	 */
@@ -58,7 +58,7 @@ public class Rpc_group
 	 * must be met for the group to be finished. Also defines the next group of RPCs to be called
 	 * this one
 	 *
-	 * @param ohc OHC instance
+	 * @param ohc  OHC instance
 	 * @param rpcs List of RPCs
 	 * @param mode Execution mode
 	 * @param next Next group to be executed

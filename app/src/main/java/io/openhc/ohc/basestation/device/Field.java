@@ -45,14 +45,14 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 	 * The default constructor. Does not take an initial value for the field but constructs
 	 * a default value from the given minimum value
 	 *
-	 * @param ohc The ohc instance containing the device this field is associated with
-	 * @param devie_id The internal id of the associated device
-	 * @param field_id The numeric id of this field
-	 * @param type The type of data stored in this field
-	 * @param name The human readable name of this field
+	 * @param ohc       The ohc instance containing the device this field is associated with
+	 * @param devie_id  The internal id of the associated device
+	 * @param field_id  The numeric id of this field
+	 * @param type      The type of data stored in this field
+	 * @param name      The human readable name of this field
 	 * @param min_value The minimum value this field can have
 	 * @param max_value The maximum value this field can have
-	 * @param writable Is this field writable
+	 * @param writable  Is this field writable
 	 */
 	public Field(OHC ohc, String devie_id, int field_id, Type type, String name, double min_value, double max_value, boolean writable)
 	{
@@ -82,15 +82,15 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 	 * Almost the same as the default constructor but does take an extra argument for the field
 	 * value.
 	 *
-	 * @param ohc The ohc instance containing the device this field is associated with
-	 * @param devie_id The internal id of the associated device
-	 * @param field_id The numeric id of this field
-	 * @param type The type of data stored in this field
-	 * @param name The human readable name of this field
+	 * @param ohc       The ohc instance containing the device this field is associated with
+	 * @param devie_id  The internal id of the associated device
+	 * @param field_id  The numeric id of this field
+	 * @param type      The type of data stored in this field
+	 * @param name      The human readable name of this field
 	 * @param min_value The minimum value this field can have
 	 * @param max_value The maximum value this field can have
-	 * @param writable Is this field writable
-	 * @param value Initial value of this field
+	 * @param writable  Is this field writable
+	 * @param value     Initial value of this field
 	 */
 	public Field(OHC ohc, String devie_id, int field_id, Type type, String name, double min_value, double max_value, boolean writable, Object value)
 	{
@@ -109,7 +109,7 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 	 * Sets and commits a new value for this field. Throws a ClassCastException if the type of
 	 * value and the field type don't match
 	 *
-	 * @param value The new value
+	 * @param value     The new value
 	 * @param from_user Has this change in field value been initiated by the user
 	 * @throws ClassCastException
 	 */
@@ -278,7 +278,7 @@ public class Field implements TextWatcher, CompoundButton.OnCheckedChangeListene
 		/**
 		 * Field type default constructor
 		 *
-		 * @param c Class of data type
+		 * @param c        Class of data type
 		 * @param text_rep Textual representation of the field data type
 		 */
 		Type(Class c, String text_rep)

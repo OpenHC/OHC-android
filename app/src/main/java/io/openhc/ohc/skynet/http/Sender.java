@@ -41,8 +41,8 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 	 * Default constructor. Initializes timeout with a sensible default value
 	 * Callback is optional and thus may be null
 	 *
-	 * @param ohc OHC instance
-	 * @param client HTTP client
+	 * @param ohc      OHC instance
+	 * @param client   HTTP client
 	 * @param endpoint Address and port of basestation
 	 * @param receiver Callback
 	 */
@@ -60,11 +60,11 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 	 * Constructor allowing for a manual adjustment of timeout
 	 * Callback is optional and may be null
 	 *
-	 * @param ohc OHC instance
-	 * @param client HTTP client
+	 * @param ohc      OHC instance
+	 * @param client   HTTP client
 	 * @param endpoint Address and port of basestation
-	 * @param secure Establish a secure connection if set
-	 * @param timeout Timeout
+	 * @param secure   Establish a secure connection if set
+	 * @param timeout  Timeout
 	 * @param receiver Callback
 	 */
 	public Sender(OHC ohc, HttpClient client, InetSocketAddress endpoint, boolean secure,

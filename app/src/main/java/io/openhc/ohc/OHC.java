@@ -53,7 +53,7 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	/**
 	 * Constructor to restore a saved state
 	 *
-	 * @param ctx UI context
+	 * @param ctx         UI context
 	 * @param saved_state Saved state
 	 * @throws IOException
 	 */
@@ -228,7 +228,7 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	/**
 	 * Connects to the basestation
 	 *
-	 * @param uname Username
+	 * @param uname  Username
 	 * @param passwd Password
 	 */
 	public void connect(String uname, String passwd)

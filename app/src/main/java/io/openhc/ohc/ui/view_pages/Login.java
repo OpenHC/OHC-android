@@ -40,8 +40,8 @@ public class Login extends Page implements View.OnClickListener, TextWatcher
 	/**
 	 * Default constructor.
 	 *
-	 * @param ctx Instance of main activity
-	 * @param ohc Instance of OHC
+	 * @param ctx      Instance of main activity
+	 * @param ohc      Instance of OHC
 	 * @param settings Settings page
 	 */
 	public Login(OHC_ui ctx, OHC ohc, Settings settings)
