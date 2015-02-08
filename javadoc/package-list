@@ -2,6 +2,7 @@ io.openhc.ohc
 io.openhc.ohc.basestation
 io.openhc.ohc.basestation.device
 io.openhc.ohc.basestation.rpc
+io.openhc.ohc.basestation.rpc.rpcs
 io.openhc.ohc.logging
 io.openhc.ohc.skynet
 io.openhc.ohc.skynet.http
