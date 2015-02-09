@@ -54,7 +54,7 @@ public class Transaction_generator
 	 */
 	public Transaction generate_transaction(JSONObject json)
 	{
-		return generate_transaction(json, this.default_retry_count);
+		return this.generate_transaction(json, this.default_retry_count);
 	}
 
 	/**
@@ -66,10 +66,34 @@ public class Transaction_generator
 	 */
 	public Transaction generate_transaction(JSONObject json, int tries)
 	{
+		return this.generate_transaction(json, null, tries);
+	}
+
+	/**
+	 * Generates a new Transaction overwriting the default retransmit count
+	 *
+	 * @param json  JSON data
+	 * @param callback Callback for finished transactions
+	 * @return A new transaction object
+	 */
+	public Transaction generate_transaction(JSONObject json, Transaction_receiver callback)
+	{
+		return this.generate_transaction(json, callback, this.default_retry_count);
+	}
+
+	/**
+	 * Generates a new Transaction overwriting the default retransmit count
+	 *
+	 * @param json  JSON data
+	 * @param tries Number of retransmits
+	 * @return A new transaction object
+	 */
+	public Transaction generate_transaction(JSONObject json, Transaction_receiver callback, int tries)
+	{
 		UUID uuid = UUID.randomUUID();
 		try
 		{
-			return new Transaction(this.ohc, json, uuid, tries);
+			return new Transaction(this.ohc, json, uuid, callback, tries);
 		}
 		catch(JSONException ex)
 		{
@@ -96,6 +120,7 @@ public class Transaction_generator
 		private int retry_counter;
 		private int max_retry_num;
 		private List<Transaction> sub_transactions = new ArrayList<>();
+		private Transaction_receiver callback;
 
 		/**
 		 * Default Transaction constructor.
@@ -103,10 +128,11 @@ public class Transaction_generator
 		 * @param ohc       Related ohc instance
 		 * @param json      Json data
 		 * @param uuid      A unique identifier
+		 * @param callback  Callback for finished transactions
 		 * @param max_retry Maximum number of retransmits
 		 * @throws JSONException
 		 */
-		protected Transaction(OHC ohc, JSONObject json, UUID uuid, int max_retry) throws JSONException
+		protected Transaction(OHC ohc, JSONObject json, UUID uuid, Transaction_receiver callback, int max_retry) throws JSONException
 		{
 			this.json_request = json;
 			this.uuid = uuid;
@@ -238,5 +264,10 @@ public class Transaction_generator
 		{
 			return this.sub_transactions;
 		}
+	}
+
+	public interface Transaction_receiver
+	{
+		public void on_receive_transaction(Transaction_generator.Transaction transaction);
 	}
 }

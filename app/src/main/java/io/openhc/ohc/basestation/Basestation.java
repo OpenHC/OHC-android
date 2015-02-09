@@ -32,7 +32,7 @@ import io.openhc.ohc.skynet.udp.Receiver;
  *
  * @author Tobias Schramm
  */
-public class Basestation implements Sender.Transaction_receiver, Rpc_group.Rpc_group_callback
+public class Basestation implements Rpc_group.Rpc_group_callback
 {
 	private Network network;
 	public final OHC ohc;
@@ -270,19 +270,19 @@ public class Basestation implements Sender.Transaction_receiver, Rpc_group.Rpc_g
 	 * Wrapper method handling sending of RPCs. Automatically embeds the session token of
 	 * this device in each RPC
 	 *
-	 * @param json The JSON RPC to be transmitted
+	 * @param group RPC to be called
 	 * @throws JSONException
 	 */
-	private void make_rpc_call(Rpc rpc) throws JSONException
+	private void make_rpc_call(Rpc_group group) throws JSONException
 	{
-		json.put(this.RPC_ATTRIBUTE_SESSION_TOKEN, this.state.get_session_token());
+		group.set_session_token(this.state.get_session_token());
 		switch(this.get_protocol())
 		{
 			case UDP:
 				Sender s_udp = new io.openhc.ohc.skynet.udp.Sender(this.ohc,
-						this.state.get_remote_socket_address(), this);
+						this.state.get_remote_socket_address(), group);
 				Transaction_generator.Transaction transaction_udp = this.transaction_gen
-						.generate_transaction(json);
+						.generate_transaction(rpc.get_json());
 				s_udp.execute(transaction_udp);
 				break;
 			case HTTP:
@@ -291,7 +291,7 @@ public class Basestation implements Sender.Transaction_receiver, Rpc_group.Rpc_g
 				Sender s_tcp = new io.openhc.ohc.skynet.http.Sender(this.ohc, this.http_client,
 						endpoint, this);
 				JSONArray rpcs = new JSONArray();
-				rpcs.put(json);
+
 				JSONObject obj = new JSONObject();
 				obj.put(this.RPC_REQUEST_KEY, rpcs);
 				Transaction_generator.Transaction transaction_tcp = this.transaction_gen

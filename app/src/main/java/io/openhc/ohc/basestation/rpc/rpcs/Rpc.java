@@ -6,13 +6,14 @@ import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
 import io.openhc.ohc.skynet.Sender;
+import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
 /**
  * Abstract parent for RPCs allowing for easy implementation of new RPCs
  *
  * @author Tobias Schramm
  */
-public abstract class Rpc implements Sender.Transaction_receiver
+public abstract class Rpc implements Transaction_generator.Transaction_receiver
 {
 	protected boolean finished;
 	protected final Basestation station;

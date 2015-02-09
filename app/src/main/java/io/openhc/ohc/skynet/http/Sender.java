@@ -33,7 +33,7 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 	private HttpClient client;
 	private final int timeout;
 	private final InetSocketAddress endpoint;
-	private final Transaction_receiver receiver;
+	private final Transaction_generator.Transaction_receiver receiver;
 	private final boolean secure;
 	private final OHC ohc;
 
@@ -47,7 +47,7 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 	 * @param receiver Callback
 	 */
 	public Sender(OHC ohc, HttpClient client, InetSocketAddress endpoint,
-	              Transaction_receiver receiver)
+	              Transaction_generator.Transaction_receiver receiver)
 	{
 		//Pretty long timeout for bad mobile broadband connections
 		this(ohc, client, endpoint,
@@ -68,7 +68,7 @@ public class Sender extends io.openhc.ohc.skynet.Sender
 	 * @param receiver Callback
 	 */
 	public Sender(OHC ohc, HttpClient client, InetSocketAddress endpoint, boolean secure,
-	              int timeout, Transaction_receiver receiver)
+	              int timeout, Transaction_generator.Transaction_receiver receiver)
 	{
 		this.ohc = ohc;
 		this.receiver = receiver;
