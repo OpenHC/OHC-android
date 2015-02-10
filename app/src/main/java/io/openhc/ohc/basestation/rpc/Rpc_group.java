@@ -60,27 +60,13 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 	/**
 	 * Determines if this group has finished based on the group mode
 	 *
-	 * @return Has this group finished
+	 * @return Has this group finished execution
 	 */
 	public boolean has_finished()
 	{
 		boolean finished = true;
-		switch(this.mode)
-		{
-			case ALL:
-				for(Rpc rpc : this.rpcs)
-					finished = finished && rpc.has_finished();
-				break;
-			case ANY:
-				finished = this.rpcs.size() == 0;
-				for(Rpc rpc : this.rpcs)
-				{
-					finished = finished || rpc.has_finished();
-					if(finished)
-						break;
-				}
-				break;
-		}
+		for(Rpc rpc : this.rpcs)
+			finished = finished && rpc.has_finished();
 		return finished;
 	}
 
@@ -106,8 +92,8 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 	 */
 	public enum RPC_GROUP_MODE
 	{
-		ALL,
-		ANY;
+		SERIAL,
+		PARALLEL;
 	}
 
 	/**
