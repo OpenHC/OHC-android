@@ -19,6 +19,7 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 	protected final Basestation station;
 	protected final Rpc_group group;
 	protected String session_token;
+	private String uuid = "";
 
 	public final String RPC_ATTRIBUTE_METHOD;
 	public final String RPC_ATTRIBUTE_SESSION_TOKEN;
@@ -68,5 +69,13 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 	 *
 	 * @return A JSON representation of the rpc data
 	 */
-	public abstract JSONObject get_json();
+	protected abstract JSONObject get_json();
+
+	public Transaction_generator.Transaction get_transaction()
+	{
+		Transaction_generator.Transaction transaction = this.station.transaction_gen
+				.generate_transaction(this.get_json());
+		this.uuid = transaction.get_uuid();
+		return transaction;
+	}
 }

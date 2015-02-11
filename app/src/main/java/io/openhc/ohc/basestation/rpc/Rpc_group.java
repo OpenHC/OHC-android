@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import io.openhc.ohc.OHC;
+import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
@@ -16,44 +17,59 @@ import io.openhc.ohc.skynet.transaction.Transaction_generator;
  */
 public class Rpc_group implements Transaction_generator.Transaction_receiver
 {
-	private final OHC ohc;
+	private final Basestation station;
 	private List<Rpc> rpcs;
 	private Iterator<Rpc> rpc_iterator;
 	private RPC_GROUP_MODE mode;
+	private Rpc_group_callback callback;
 
 	/**
 	 * Default constructor.
 	 *
-	 * @param ohc OHC instance
+	 * @param station Basestation instance
 	 */
-	public Rpc_group(OHC ohc)
+	public Rpc_group(Basestation station)
 	{
-		this(ohc, new ArrayList<Rpc>());
+		this(station, new ArrayList<Rpc>());
 	}
 
 	/**
 	 * Specifies a list of RPCs to call on execution
 	 *
-	 * @param ohc  OHC instnace
+	 * @param station Basestation instnace
 	 * @param rpcs List of RPCs
 	 */
-	public Rpc_group(OHC ohc, List<Rpc> rpcs)
+	public Rpc_group(Basestation station, List<Rpc> rpcs)
 	{
-		this(ohc, rpcs, RPC_GROUP_MODE.ALL);
+		this(station, rpcs, RPC_GROUP_MODE.SERIAL, null);
 	}
 
 	/**
 	 * Specifies a list of RPCs to call on execution and a group mode to determine which condition
 	 * must be met for the group to be finished
 	 *
-	 * @param ohc  OHC instance
+	 * @param station Basestation instance
+	 * @param rpcs List of RPCs
+	 */
+	public Rpc_group(Basestation station, List<Rpc> rpcs, Rpc_group_callback callback)
+	{
+		this(station, rpcs, RPC_GROUP_MODE.SERIAL, callback);
+	}
+
+	/**
+	 * Specifies a list of RPCs to call on execution and a group mode to determine which condition
+	 * must be met for the group to be finished
+	 *
+	 * @param station Basestation instance
 	 * @param rpcs List of RPCs
 	 * @param mode Execution mode
+	 * @param callback Callback
 	 */
-	public Rpc_group(OHC ohc, List<Rpc> rpcs, RPC_GROUP_MODE mode)
+	public Rpc_group(Basestation station, List<Rpc> rpcs, RPC_GROUP_MODE mode, Rpc_group_callback callback)
 	{
-		this.ohc = ohc;
+		this.station = station;
 		this.rpcs = rpcs;
+		this.callback = callback;
 		this.mode = mode;
 	}
 
@@ -81,10 +97,29 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 			rpc.set_session_token(token);
 	}
 
+	/**
+	 * Executes all stored RPCs
+	 */
+	public void run()
+	{
+		this.rpc_iterator = this.rpcs.iterator();
+		if(this.rpc_iterator.hasNext())
+			this.send_rpc(this.rpc_iterator.next());
+	}
+
+	protected void send_rpc(Rpc rpc)
+	{
+		Transaction_generator.Transaction transaction = rpc.get_transaction();
+	}
+
 	@Override
 	public void on_receive_transaction(Transaction_generator.Transaction transaction)
 	{
-
+		if(this.has_finished() && this.callback != null)
+			this.callback.on_group_finish(this);
+		else
+			if(this.mode == RPC_GROUP_MODE.SERIAL && this.rpc_iterator.hasNext())
+				this.send_rpc(this.rpc_iterator.next());
 	}
 
 	/**

@@ -23,7 +23,7 @@ public class Rpc_get_num_devices extends Rpc
 	}
 
 	@Override
-	public JSONObject get_json()
+	protected JSONObject get_json()
 	{
 		JSONObject json = new JSONObject();
 		try

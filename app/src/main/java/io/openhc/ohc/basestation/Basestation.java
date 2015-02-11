@@ -36,9 +36,9 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 {
 	private Network network;
 	public final OHC ohc;
+	public final Transaction_generator transaction_gen;
 	private Base_rpc rpc_interface;
 	private Resources resources;
-	private Transaction_generator transaction_gen;
 	private Receiver rx_thread;
 	private HttpClient http_client;
 

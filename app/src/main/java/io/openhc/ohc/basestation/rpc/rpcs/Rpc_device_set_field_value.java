@@ -39,7 +39,7 @@ public class Rpc_device_set_field_value extends Rpc
 	}
 
 	@Override
-	public JSONObject get_json()
+	protected JSONObject get_json()
 	{
 		JSONObject json = new JSONObject();
 		try
