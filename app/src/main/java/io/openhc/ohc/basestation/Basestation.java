@@ -45,7 +45,6 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	private Basestation_state state;
 
 	private final String RPC_ATTRIBUTE_METHOD;
-	private final String RPC_ATTRIBUTE_SESSION_TOKEN;
 	private final String RPC_REQUEST_KEY;
 	private final String RPC_RESPONSE_KEY;
 
@@ -95,8 +94,6 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		}
 
 		this.RPC_ATTRIBUTE_METHOD = this.resources.getString(R.string.ohc_rpc_attribute_method);
-		this.RPC_ATTRIBUTE_SESSION_TOKEN = this.resources.getString(
-				R.string.ohc_rpc_attribute_session_token);
 		this.RPC_REQUEST_KEY = this.resources.getString(R.string.ohc_rpc_request_key);
 		this.RPC_RESPONSE_KEY = this.resources.getString(R.string.ohc_rpc_response_key);
 	}
@@ -270,28 +267,26 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 * Wrapper method handling sending of RPCs. Automatically embeds the session token of
 	 * this device in each RPC
 	 *
-	 * @param group RPC to be called
+	 * @param rpc RPC to be called
 	 * @throws JSONException
 	 */
-	private void make_rpc_call(Rpc_group group) throws JSONException
+	private void make_rpc_call(Rpc rpc) throws JSONException
 	{
-		group.set_session_token(this.state.get_session_token());
+		rpc.set_session_token(this.state.get_session_token());
 		switch(this.get_protocol())
 		{
 			case UDP:
 				Sender s_udp = new io.openhc.ohc.skynet.udp.Sender(this.ohc,
-						this.state.get_remote_socket_address(), group);
-				Transaction_generator.Transaction transaction_udp = this.transaction_gen
-						.generate_transaction(rpc.get_json());
+						this.state.get_remote_socket_address(), rpc);
+				Transaction_generator.Transaction transaction_udp = rpc.get_transaction();
 				s_udp.execute(transaction_udp);
 				break;
 			case HTTP:
 				InetSocketAddress endpoint = new InetSocketAddress(this.state.get_remote_ip_address(),
 						this.state.get_remote_port());
 				Sender s_tcp = new io.openhc.ohc.skynet.http.Sender(this.ohc, this.http_client,
-						endpoint, this);
+						endpoint, rpc);
 				JSONArray rpcs = new JSONArray();
-
 				JSONObject obj = new JSONObject();
 				obj.put(this.RPC_REQUEST_KEY, rpcs);
 				Transaction_generator.Transaction transaction_tcp = this.transaction_gen
