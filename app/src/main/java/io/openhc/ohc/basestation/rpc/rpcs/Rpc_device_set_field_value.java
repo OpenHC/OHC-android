@@ -1,5 +1,6 @@
 package io.openhc.ohc.basestation.rpc.rpcs;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.logging.Level;
@@ -72,7 +73,7 @@ public class Rpc_device_set_field_value extends Rpc
 	}
 
 	@Override
-	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	protected void process_response(JSONObject response) throws JSONException
 	{
 
 	}

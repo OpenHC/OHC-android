@@ -1,5 +1,6 @@
 package io.openhc.ohc.basestation.rpc.rpcs;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.logging.Level;
@@ -62,8 +63,10 @@ public class Rpc_login extends Rpc
 	}
 
 	@Override
-	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	protected void process_response(JSONObject response) throws Exception
 	{
-
+		String token = response.getString("session_token");
+		boolean success = response.getBoolean("success");
+		this.station.set_session_token(token, success);
 	}
 }

@@ -1,5 +1,6 @@
 package io.openhc.ohc.basestation.rpc.rpcs;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.logging.Level;
@@ -19,6 +20,7 @@ public class Rpc_get_device_name extends Rpc
 
 	public final String RPC_METHOD = "get_device_name";
 	public final String RPC_ATTRIBUTE_ID = "id";
+	public final String RPC_ATTRIBUTE_NAME = "name";
 
 	public Rpc_get_device_name(Basestation bs, Rpc_group group)
 	{
@@ -53,8 +55,10 @@ public class Rpc_get_device_name extends Rpc
 	}
 
 	@Override
-	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	protected void process_response(JSONObject response) throws JSONException
 	{
-
+		String id = response.getString(RPC_ATTRIBUTE_ID);
+		String name = response.getString(RPC_ATTRIBUTE_NAME);
+		this.station.set_device_name(id, name);
 	}
 }

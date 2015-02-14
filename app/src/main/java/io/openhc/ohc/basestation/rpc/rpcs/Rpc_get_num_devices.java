@@ -1,5 +1,6 @@
 package io.openhc.ohc.basestation.rpc.rpcs;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.logging.Level;
@@ -16,6 +17,7 @@ import io.openhc.ohc.skynet.transaction.Transaction_generator;
 public class Rpc_get_num_devices extends Rpc
 {
 	public final String RPC_METHOD = "get_num_devices";
+	public final String RPC_ATTRIBUTE_NUM_DEVICES = "num_devices";
 
 	public Rpc_get_num_devices(Basestation bs, Rpc_group group)
 	{
@@ -38,8 +40,9 @@ public class Rpc_get_num_devices extends Rpc
 	}
 
 	@Override
-	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	protected void process_response(JSONObject response) throws JSONException
 	{
-
+		int num_devices = response.getInt(RPC_ATTRIBUTE_NUM_DEVICES);
+		this.station.set_num_devices(num_devices);
 	}
 }

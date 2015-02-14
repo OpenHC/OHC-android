@@ -1,6 +1,9 @@
 package io.openhc.ohc.basestation.rpc.rpcs;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.logging.Level;
 
 import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.Basestation;
@@ -71,11 +74,39 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 	 */
 	protected abstract JSONObject get_json();
 
+	/**
+	 *
+	 *
+	 * @return
+	 */
+	protected void process_response(JSONObject response) throws Exception
+	{
+
+	}
+
 	public Transaction_generator.Transaction get_transaction()
 	{
 		Transaction_generator.Transaction transaction = this.station.transaction_gen
 				.generate_transaction(this.get_json());
 		this.uuid = transaction.get_uuid();
 		return transaction;
+	}
+
+	@Override
+	public void on_receive_transaction(Transaction_generator.Transaction transaction)
+	{
+		JSONObject response = transaction.get_response();
+		if(response != null)
+		{
+			try
+			{
+				this.process_response(response);
+			}
+			catch(Exception ex)
+			{
+				this.station.ohc.logger.log(Level.WARNING,
+						"Received invalid JSON response from basestation", ex);
+			}
+		}
 	}
 }
