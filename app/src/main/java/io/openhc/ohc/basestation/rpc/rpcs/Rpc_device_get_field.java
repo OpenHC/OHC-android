@@ -62,13 +62,20 @@ public class Rpc_device_get_field extends Rpc
 	}
 
 	/**
-	 * @param id
+	 * Sets the internal device id
+	 *
+	 * @param id Internal device id
 	 */
 	public void set_id(String id)
 	{
 		this.id = id;
 	}
 
+	/**
+	 * Sets the numerical field id
+	 *
+	 * @param field_id Numeric field id
+	 */
 	public void set_field_id(int field_id)
 	{
 		this.field_id = field_id;

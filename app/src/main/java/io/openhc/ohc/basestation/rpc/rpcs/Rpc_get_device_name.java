@@ -49,6 +49,11 @@ public class Rpc_get_device_name extends Rpc
 		return json;
 	}
 
+	/**
+	 * Sets the internal device id
+	 *
+	 * @param id Internal device id
+	 */
 	public void set_id(String id)
 	{
 		this.id = id;

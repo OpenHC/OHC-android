@@ -57,17 +57,32 @@ public class Rpc_device_set_field_value extends Rpc
 		return json;
 	}
 
+	/**
+	 * Sets the internal device id
+	 *
+	 * @param id Internal device id
+	 */
 	public void set_id(String id)
 	{
 		this.id = id;
 	}
 
+	/**
+	 * Sets the numerical field id
+	 *
+	 * @param field_id Numeric field id
+	 */
 	public void set_field_id(int field_id)
 	{
 		this.field_id = field_id;
 	}
 
-	public void set_field_id(Object value)
+	/**
+	 * Sets the value of the field
+	 *
+	 * @param value Field value
+	 */
+	public void set_field_value(Object value)
 	{
 		this.value = value;
 	}

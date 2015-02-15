@@ -35,11 +35,21 @@ public class Rpc_login extends Rpc
 		this.passwd = passwd;
 	}
 
+	/**
+	 * Sets the username
+	 *
+	 * @param uname Username
+	 */
 	public void set_uname(String uname)
 	{
 		this.uname = uname;
 	}
 
+	/**
+	 * Sets the password
+	 *
+	 * @param passwd Password
+	 */
 	public void set_passwd(String passwd)
 	{
 		this.passwd = passwd;

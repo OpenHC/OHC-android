@@ -49,6 +49,11 @@ public class Rpc_get_device_id extends Rpc
 		return json;
 	}
 
+	/**
+	 * Sets the index of the device
+	 *
+	 * @param index Device index
+	 */
 	public void set_index(int index)
 	{
 		this.index = index;
