@@ -1,8 +1,10 @@
 package io.openhc.ohc.basestation.rpc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
 import io.openhc.ohc.basestation.Basestation;
@@ -98,6 +100,26 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 	}
 
 	/**
+	 * Adds one or more RPCs
+	 *
+	 * @param rpcs Rpcs
+	 */
+	public void add_rpcs(Rpc ... rpcs)
+	{
+		this.rpcs.addAll(Arrays.asList(rpcs));
+	}
+
+	/**
+	 * Adds one or more RPCs
+	 *
+	 * @param rpcs Rpcs
+	 */
+	public void add_rpcs(List<Rpc> rpcs)
+	{
+		this.rpcs.addAll(rpcs);
+	}
+
+	/**
 	 * Executes all stored RPCs
 	 */
 	public void run()
@@ -109,7 +131,15 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 
 	protected void send_rpc(Rpc rpc)
 	{
-		Transaction_generator.Transaction transaction = rpc.get_transaction();
+		try
+		{
+			this.station.make_rpc_call(rpc);
+		}
+		catch(Exception ex)
+		{
+			this.station.ohc.logger.log(Level.SEVERE,
+					"Failed to assemble RPC request: ", ex);
+		}
 	}
 
 	@Override

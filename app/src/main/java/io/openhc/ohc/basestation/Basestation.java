@@ -20,6 +20,14 @@ import io.openhc.ohc.basestation.device.Field;
 import io.openhc.ohc.basestation.rpc.Base_rpc;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc_device_get_field;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc_device_get_num_fields;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc_device_set_field_value;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc_get_device_id;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc_get_device_name;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc_get_num_devices;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc_login;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc_set_device_name;
 import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.Sender;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
@@ -270,7 +278,7 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 * @param rpc RPC to be called
 	 * @throws JSONException
 	 */
-	private void make_rpc_call(Rpc rpc) throws JSONException
+	public void make_rpc_call(Rpc rpc) throws JSONException
 	{
 		rpc.set_session_token(this.state.get_session_token());
 		switch(this.get_protocol())
@@ -305,16 +313,12 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 */
 	public void login(String uname, String passwd)
 	{
-		try
-		{
-			JSONObject json = new JSONObject();
-			json.put(this.RPC_ATTRIBUTE_METHOD, "login").put("uname", uname).put("passwd", passwd);
-			this.make_rpc_call(json);
-		}
-		catch(Exception ex)
-		{
-			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
-		}
+		Rpc_group group = new Rpc_group(this);
+		Rpc_login rpc = new Rpc_login(this, group);
+		rpc.set_uname(uname);
+		rpc.set_passwd(passwd);
+		group.add_rpcs(rpc);
+		group.run();
 	}
 
 	/**
@@ -322,16 +326,10 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 */
 	public void get_num_devices()
 	{
-		try
-		{
-			JSONObject json = new JSONObject();
-			json.put(this.RPC_ATTRIBUTE_METHOD, "get_num_devices");
-			this.make_rpc_call(json);
-		}
-		catch(Exception ex)
-		{
-			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
-		}
+		Rpc_group group = new Rpc_group(this);
+		Rpc_get_num_devices rpc = new Rpc_get_num_devices(this, group);
+		group.add_rpcs(rpc);
+		group.run();
 	}
 
 	/**
@@ -341,16 +339,11 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 */
 	public void get_device_id(int index)
 	{
-		try
-		{
-			JSONObject json = new JSONObject();
-			json.put(this.RPC_ATTRIBUTE_METHOD, "get_device_id").put("index", index);
-			this.make_rpc_call(json);
-		}
-		catch(Exception ex)
-		{
-			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
-		}
+		Rpc_group group = new Rpc_group(this);
+		Rpc_get_device_id rpc = new Rpc_get_device_id(this, group);
+		rpc.set_index(index);
+		group.add_rpcs(rpc);
+		group.run();
 	}
 
 	/**
@@ -360,16 +353,11 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 */
 	public void get_device_name(String id)
 	{
-		try
-		{
-			JSONObject json = new JSONObject();
-			json.put(this.RPC_ATTRIBUTE_METHOD, "get_device_name").put("id", id);
-			this.make_rpc_call(json);
-		}
-		catch(Exception ex)
-		{
-			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
-		}
+		Rpc_group group = new Rpc_group(this);
+		Rpc_get_device_name rpc = new Rpc_get_device_name(this, group);
+		rpc.set_id(id);
+		group.add_rpcs(rpc);
+		group.run();
 	}
 
 	/**
@@ -379,16 +367,11 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 */
 	public void device_get_num_fields(String id)
 	{
-		try
-		{
-			JSONObject json = new JSONObject();
-			json.put(this.RPC_ATTRIBUTE_METHOD, "device_get_num_fields").put("id", id);
-			this.make_rpc_call(json);
-		}
-		catch(Exception ex)
-		{
-			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
-		}
+		Rpc_group group = new Rpc_group(this);
+		Rpc_device_get_num_fields rpc = new Rpc_device_get_num_fields(this, group);
+		rpc.set_id(id);
+		group.add_rpcs(rpc);
+		group.run();
 	}
 
 	/**
@@ -399,17 +382,12 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 */
 	public void device_get_field(String id_dev, int id_field)
 	{
-		try
-		{
-			JSONObject json = new JSONObject();
-			json.put(this.RPC_ATTRIBUTE_METHOD, "device_get_field").put("device_id", id_dev)
-					.put("field_id", id_field);
-			this.make_rpc_call(json);
-		}
-		catch(Exception ex)
-		{
-			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
-		}
+		Rpc_group group = new Rpc_group(this);
+		Rpc_device_get_field rpc = new Rpc_device_get_field(this, group);
+		rpc.set_id(id_dev);
+		rpc.set_field_id(id_field);
+		group.add_rpcs(rpc);
+		group.run();
 	}
 
 	/**
@@ -421,17 +399,12 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 */
 	public void device_set_field_value(String id_dev, int id_field, Object value)
 	{
-		try
-		{
-			JSONObject json = new JSONObject();
-			json.put(this.RPC_ATTRIBUTE_METHOD, "device_set_field_value").put("device_id", id_dev)
-					.put("field_id", id_field).put("value", value);
-			this.make_rpc_call(json);
-		}
-		catch(Exception ex)
-		{
-			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
-		}
+		Rpc_group group = new Rpc_group(this);
+		Rpc_device_set_field_value rpc = new Rpc_device_set_field_value(this, group);
+		rpc.set_id(id_dev);
+		rpc.set_field_id(id_field);
+		group.add_rpcs(rpc);
+		group.run();
 	}
 
 	/**
@@ -453,30 +426,12 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 */
 	public void device_set_name(String id, String name)
 	{
-		try
-		{
-			JSONObject json = new JSONObject();
-			json.put(this.RPC_ATTRIBUTE_METHOD, "set_device_name").put("id", id).put("name", name);
-			this.make_rpc_call(json);
-		}
-		catch(Exception ex)
-		{
-			this.ohc.logger.log(Level.SEVERE, "Failed to compose JSON: " + ex.getMessage(), ex);
-		}
-	}
-
-	//Callback for transactions
-	@Override
-	public void on_receive_transaction(Transaction_generator.Transaction transaction)
-	{
-		this.ohc.logger.log(Level.INFO, "Got rpc");
-		JSONObject json = transaction.get_response();
-		if(json != null)
-		{
-			this.handle_rpc(json);
-			return;
-		}
-		this.ohc.logger.log(Level.WARNING, String.format("Didn't receive response for transaction %s in time", transaction.get_uuid()));
+		Rpc_group group = new Rpc_group(this);
+		Rpc_set_device_name rpc = new Rpc_set_device_name(this, group);
+		rpc.set_id(id);
+		rpc.set_name(name);
+		group.add_rpcs(rpc);
+		group.run();
 	}
 
 	@Override
