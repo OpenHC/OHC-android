@@ -75,15 +75,20 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 	protected abstract JSONObject get_json();
 
 	/**
+	 * Method stub. Subclases can use this to handle responses
 	 *
-	 *
-	 * @return
+	 * @throws Exception
 	 */
 	protected void process_response(JSONObject response) throws Exception
 	{
 
 	}
 
+	/**
+	 * Generates a transaction containing the json rpc represented by this class
+	 *
+	 * @return TX-Ready transaction
+	 */
 	public Transaction_generator.Transaction get_transaction()
 	{
 		Transaction_generator.Transaction transaction = this.station.transaction_gen
