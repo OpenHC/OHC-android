@@ -30,7 +30,8 @@ public class Rpc_get_num_devices extends Rpc
 		JSONObject json = new JSONObject();
 		try
 		{
-			json.put(this.RPC_ATTRIBUTE_METHOD, this.RPC_METHOD);
+			json.put(this.RPC_ATTRIBUTE_SESSION_TOKEN, this.session_token)
+					.put(this.RPC_ATTRIBUTE_METHOD, this.RPC_METHOD);
 		}
 		catch(Exception ex)
 		{

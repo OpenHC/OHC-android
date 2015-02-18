@@ -50,7 +50,8 @@ public class Rpc_device_get_field extends Rpc
 		JSONObject json = new JSONObject();
 		try
 		{
-			json.put(this.RPC_ATTRIBUTE_METHOD, this.RPC_METHOD)
+			json.put(this.RPC_ATTRIBUTE_SESSION_TOKEN, this.session_token)
+					.put(this.RPC_ATTRIBUTE_METHOD, this.RPC_METHOD)
 					.put(RPC_ATTRIBUTE_DEVICE_ID, this.id)
 					.put(RPC_ATTRIBUTE_FIELD_ID, this.field_id);
 		}
