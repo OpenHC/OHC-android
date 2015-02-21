@@ -280,7 +280,6 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	 */
 	public void make_rpc_call(Rpc rpc) throws JSONException
 	{
-		rpc.set_session_token(this.state.get_session_token());
 		switch(this.get_protocol())
 		{
 			case UDP:
@@ -329,6 +328,7 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		Rpc_group group = new Rpc_group(this);
 		Rpc_get_num_devices rpc = new Rpc_get_num_devices(this, group);
 		group.add_rpcs(rpc);
+		group.set_session_token(this.state.get_session_token());
 		group.run();
 	}
 
@@ -343,6 +343,7 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		Rpc_get_device_id rpc = new Rpc_get_device_id(this, group);
 		rpc.set_index(index);
 		group.add_rpcs(rpc);
+		group.set_session_token(this.state.get_session_token());
 		group.run();
 	}
 
@@ -357,6 +358,7 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		Rpc_get_device_name rpc = new Rpc_get_device_name(this, group);
 		rpc.set_id(id);
 		group.add_rpcs(rpc);
+		group.set_session_token(this.state.get_session_token());
 		group.run();
 	}
 
@@ -371,6 +373,7 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		Rpc_device_get_num_fields rpc = new Rpc_device_get_num_fields(this, group);
 		rpc.set_id(id);
 		group.add_rpcs(rpc);
+		group.set_session_token(this.state.get_session_token());
 		group.run();
 	}
 
@@ -387,6 +390,7 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		rpc.set_id(id_dev);
 		rpc.set_field_id(id_field);
 		group.add_rpcs(rpc);
+		group.set_session_token(this.state.get_session_token());
 		group.run();
 	}
 
@@ -403,7 +407,9 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		Rpc_device_set_field_value rpc = new Rpc_device_set_field_value(this, group);
 		rpc.set_id(id_dev);
 		rpc.set_field_id(id_field);
+		rpc.set_field_value(value);
 		group.add_rpcs(rpc);
+		group.set_session_token(this.state.get_session_token());
 		group.run();
 	}
 
@@ -431,6 +437,7 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		rpc.set_id(id);
 		rpc.set_name(name);
 		group.add_rpcs(rpc);
+		group.set_session_token(this.state.get_session_token());
 		group.run();
 	}
 
