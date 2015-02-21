@@ -294,6 +294,7 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 				Sender s_tcp = new io.openhc.ohc.skynet.http.Sender(this.ohc, this.http_client,
 						endpoint, rpc);
 				JSONArray rpcs = new JSONArray();
+				rpcs.put(rpc.get_transaction().get_json());
 				JSONObject obj = new JSONObject();
 				obj.put(this.RPC_REQUEST_KEY, rpcs);
 				Transaction_generator.Transaction transaction_tcp = this.transaction_gen
