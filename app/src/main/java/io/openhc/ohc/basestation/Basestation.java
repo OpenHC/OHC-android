@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ProtocolException;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -225,6 +226,26 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		}
 	}
 
+	/**
+	 * [RPC] Sets all device ids
+	 *
+	 * @param ids List of all device ids
+	 */
+	public void set_device_ids(List<String> ids)
+	{
+		this.state.set_device_ids(ids);
+	}
+
+	/**
+	 * [RPC] Adds a device
+	 *
+	 * @param dev Device
+	 */
+	public void add_device(Device dev)
+	{
+		this.state.put_device(dev.get_id(), dev);
+	}
+
 	//Dynamic calls to Base_rpc depending on the received JSON data
 
 	/**
@@ -268,6 +289,38 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 				{
 					this.ohc.logger.log(Level.WARNING, "Failed to parse HTTP multipart JSON rpc", ex);
 				}
+		}
+	}
+
+	/**
+	 * Wrapper method handling sending of RPCs. Automatically embeds the session token of
+	 * this device in each RPC
+	 *
+	 * @param group Group containing all RPCs to be called
+	 * @throws JSONException
+	 */
+	public void make_rpc_call(Rpc_group group) throws JSONException, ProtocolException
+	{
+		switch(this.get_protocol())
+		{
+			case UDP:
+				throw new ProtocolException("UDP doesn't support direct sending of RPC groups");
+			case HTTP:
+				group.set_session_token(this.state.get_session_token());
+				InetSocketAddress endpoint = new InetSocketAddress(this.state.get_remote_ip_address(),
+						this.state.get_remote_port());
+				Sender s_http = new io.openhc.ohc.skynet.http.Sender(this.ohc, this.http_client,
+						endpoint, group);
+				JSONArray rpcs = new JSONArray();
+				for(Rpc rpc : group.get_rpcs())
+				{
+					rpcs.put(rpc.get_transaction().get_json());
+				}
+				JSONObject obj = new JSONObject();
+				obj.put(this.RPC_REQUEST_KEY, rpcs);
+				Transaction_generator.Transaction transaction_tcp = this.transaction_gen
+						.generate_transaction(obj);
+				s_http.execute(transaction_tcp);
 		}
 	}
 
@@ -499,6 +552,16 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	public Network.Protocol get_protocol()
 	{
 		return this.state.get_protocol();
+	}
+
+	/**
+	 * Returns whether requests to the basestation should be bundled together or not
+	 *
+	 * @return Bundle requests
+	 */
+	public boolean do_bundle_requests()
+	{
+		return this.state.get_protocol() == Network.Protocol.HTTP;
 	}
 
 	/**

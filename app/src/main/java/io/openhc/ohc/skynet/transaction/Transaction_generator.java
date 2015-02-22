@@ -66,11 +66,11 @@ public class Transaction_generator
 	 */
 	public Transaction generate_transaction(JSONObject json, int tries)
 	{
-		return this.generate_transaction(json, null, tries);
+		return this.generate_transaction(json, null, null, tries);
 	}
 
 	/**
-	 * Generates a new Transaction overwriting the default retransmit count
+	 * Generates a new Transaction with a callback
 	 *
 	 * @param json  JSON data
 	 * @param callback Callback for finished transactions
@@ -78,19 +78,33 @@ public class Transaction_generator
 	 */
 	public Transaction generate_transaction(JSONObject json, Transaction_receiver callback)
 	{
-		return this.generate_transaction(json, callback, this.default_retry_count);
+		return this.generate_transaction(json, callback, null);
 	}
 
 	/**
-	 * Generates a new Transaction overwriting the default retransmit count
+	 * Generates a new Transaction overwriting the default uuid
+	 *
+	 * @param json  JSON data
+	 * @param callback Callback for finished transactions
+	 * @param uuid A specific uuid
+	 * @return A new transaction object
+	 */
+	public Transaction generate_transaction(JSONObject json, Transaction_receiver callback, UUID uuid)
+	{
+		return this.generate_transaction(json, callback, uuid, this.default_retry_count);
+	}
+
+	/**
+	 * Generates a new Transaction overwriting the default retransmit count and specifying a uuid
 	 *
 	 * @param json  JSON data
 	 * @param tries Number of retransmits
 	 * @return A new transaction object
 	 */
-	public Transaction generate_transaction(JSONObject json, Transaction_receiver callback, int tries)
+	public Transaction generate_transaction(JSONObject json, Transaction_receiver callback, UUID uuid, int tries)
 	{
-		UUID uuid = UUID.randomUUID();
+		if(uuid == null)
+			uuid = UUID.randomUUID();
 		try
 		{
 			return new Transaction(this.ohc, json, uuid, callback, tries);
@@ -137,9 +151,19 @@ public class Transaction_generator
 			this.json_request = json;
 			this.uuid = uuid;
 			this.max_retry_num = max_retry;
+			this.store_uuid();
+		}
+
+		/**
+		 * Stores the transaction uuid in the JSON payload
+		 *
+		 * @throws JSONException
+		 */
+		private void store_uuid() throws JSONException
+		{
 			try
 			{
-				json.put(UUID_KEY, this.get_uuid());
+				this.json_request.put(UUID_KEY, this.get_uuid());
 			}
 			catch(JSONException ex)
 			{
@@ -156,6 +180,17 @@ public class Transaction_generator
 		public String get_uuid()
 		{
 			return this.uuid.toString();
+		}
+
+		/**
+		 * Returns the enclosed JSON object
+		 *
+		 * @return JSON tx data
+		 */
+		public void set_json(JSONObject json) throws JSONException
+		{
+			this.json_request = json;
+			this.store_uuid();
 		}
 
 		/**

@@ -1,12 +1,19 @@
 package io.openhc.ohc.basestation.rpc;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.ProtocolException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
 import io.openhc.ohc.OHC;
+import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
@@ -24,6 +31,10 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 	private Iterator<Rpc> rpc_iterator;
 	private RPC_GROUP_MODE mode;
 	private Rpc_group_callback callback;
+	private boolean bundle_requests;
+	private HashMap<String, Rpc> uuid_map;
+
+	private final String RPC_RESPONSE_KEY;
 
 	/**
 	 * Default constructor.
@@ -73,6 +84,8 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 		this.rpcs = rpcs;
 		this.callback = callback;
 		this.mode = mode;
+		this.bundle_requests = this.station.do_bundle_requests();
+		this.RPC_RESPONSE_KEY = this.station.get_resources().getString(R.string.ohc_rpc_response_key);
 	}
 
 	/**
@@ -100,6 +113,16 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 	}
 
 	/**
+	 * Returns all associated RPCs
+	 *
+	 * @return RPCs
+	 */
+	public List<Rpc> get_rpcs()
+	{
+		return this.rpcs;
+	}
+
+	/**
 	 * Adds one or more RPCs
 	 *
 	 * @param rpcs Rpcs
@@ -120,15 +143,52 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 	}
 
 	/**
+	 * Maps all transaction UUIDs to their respective transaction
+	 */
+	private void create_uuid_map()
+	{
+		this.uuid_map = new HashMap<>();
+		for(Rpc rpc : this.rpcs)
+		{
+			this.uuid_map.put(rpc.get_transaction_uuid(), rpc);
+		}
+	}
+
+	/**
 	 * Executes all stored RPCs
 	 */
 	public void run()
 	{
-		this.rpc_iterator = this.rpcs.iterator();
-		if(this.rpc_iterator.hasNext())
-			this.send_rpc(this.rpc_iterator.next());
+		if(this.bundle_requests)
+		{
+			this.create_uuid_map();
+			try
+			{
+				this.station.make_rpc_call(this);
+			}
+			catch(ProtocolException ex)
+			{
+				this.station.ohc.logger.log(Level.SEVERE, "Internal state exception", ex);
+			}
+			catch(JSONException ex)
+			{
+				this.station.ohc.logger.log(Level.SEVERE, "Internal exception. Malformed JSON " +
+						"in bundled request", ex);
+			}
+		}
+		else
+		{
+			this.rpc_iterator = this.rpcs.iterator();
+			if(this.rpc_iterator.hasNext())
+				this.send_rpc(this.rpc_iterator.next());
+		}
 	}
 
+	/**
+	 * Sends a single RPC via the basestation Sender interface
+	 *
+	 * @param rpc The RPC
+	 */
 	protected void send_rpc(Rpc rpc)
 	{
 		try
@@ -145,11 +205,40 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 	@Override
 	public void on_receive_transaction(Transaction_generator.Transaction transaction)
 	{
-		if(this.has_finished() && this.callback != null)
-			this.callback.on_group_finish(this);
+		if(this.bundle_requests)
+		{
+			try
+			{
+				JSONObject response = transaction.get_response();
+				JSONArray responses = response.getJSONArray(RPC_RESPONSE_KEY);
+				for(int i = 0; i < responses.length(); i++)
+				{
+					JSONObject json = responses.getJSONObject(i);
+					String uuid = json.getString(transaction.UUID_KEY);
+					Rpc rpc = this.uuid_map.get(uuid);
+					if(rpc == null)
+					{
+						this.station.ohc.logger.log(Level.WARNING, String.format(
+								"No RPC for UUID '%s' found", uuid));
+						continue;
+					}
+					rpc.get_transaction().set_response(json);
+					rpc.on_receive_transaction(rpc.get_transaction());
+				}
+			}
+			catch(Exception ex)
+			{
+				this.station.ohc.logger.log(Level.WARNING,
+						"Failed to parse bundled response",ex);
+			}
+		}
 		else
-			if(this.mode == RPC_GROUP_MODE.SERIAL && this.rpc_iterator.hasNext())
+		{
+			if(this.has_finished() && this.callback != null)
+				this.callback.on_group_finish(this);
+			else if(this.mode == RPC_GROUP_MODE.SERIAL && this.rpc_iterator.hasNext())
 				this.send_rpc(this.rpc_iterator.next());
+		}
 	}
 
 	/**

@@ -22,7 +22,7 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 	protected final Basestation station;
 	protected final Rpc_group group;
 	protected String session_token;
-	private String uuid = "";
+	private Transaction_generator.Transaction transaction;
 
 	public final String RPC_ATTRIBUTE_METHOD;
 	public final String RPC_ATTRIBUTE_SESSION_TOKEN;
@@ -45,6 +45,8 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 				R.string.ohc_rpc_attribute_session_token);
 		this.RPC_REQUEST_KEY = bs.get_resources().getString(R.string.ohc_rpc_request_key);
 		this.RPC_RESPONSE_KEY = bs.get_resources().getString(R.string.ohc_rpc_response_key);
+		this.transaction = this.station.transaction_gen
+				.generate_transaction(new JSONObject());
 	}
 
 	/**
@@ -75,6 +77,16 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 	protected abstract JSONObject get_json();
 
 	/**
+	 * Returns the transaction UUID
+	 *
+	 * @return Transaction UUID
+	 */
+	public String get_transaction_uuid()
+	{
+		return this.transaction.get_uuid();
+	}
+
+	/**
 	 * Method stub. Subclases can use this to handle responses
 	 *
 	 * @throws Exception
@@ -89,11 +101,9 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 	 *
 	 * @return TX-Ready transaction
 	 */
-	public Transaction_generator.Transaction get_transaction()
+	public Transaction_generator.Transaction get_transaction() throws JSONException
 	{
-		Transaction_generator.Transaction transaction = this.station.transaction_gen
-				.generate_transaction(this.get_json());
-		this.uuid = transaction.get_uuid();
+		this.transaction.set_json(this.get_json());
 		return transaction;
 	}
 
