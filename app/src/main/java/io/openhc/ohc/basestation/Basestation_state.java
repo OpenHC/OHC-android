@@ -25,6 +25,7 @@ public class Basestation_state implements Serializable
 	private String ip_addr = null;
 	private int rport = -1;
 	private int num_devices = -1;
+	private List<String> device_ids = null;
 	private String session_token = null;
 	private HashMap<String, Device> devices = new HashMap<>();
 	private Network.Protocol protocol;
@@ -70,6 +71,8 @@ public class Basestation_state implements Serializable
 
 	public List<String> get_device_ids()
 	{
+		if(this.device_ids != null)
+			return this.device_ids;
 		ArrayList<String> ids = new ArrayList<>();
 		Iterator it = this.devices.entrySet().iterator();
 		while(it.hasNext())
@@ -142,5 +145,10 @@ public class Basestation_state implements Serializable
 	public void set_protocol(Network.Protocol protocol)
 	{
 		this.protocol = protocol;
+	}
+
+	public void set_device_ids(List<String> ids)
+	{
+		this.device_ids = ids;
 	}
 }
