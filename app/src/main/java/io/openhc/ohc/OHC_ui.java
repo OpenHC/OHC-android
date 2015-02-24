@@ -158,6 +158,13 @@ public class OHC_ui extends ActionBarActivity
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	public void onDestroy()
+	{
+		if(this.ohc != null && this.ohc.get_basestation() != null)
+			this.ohc.get_basestation().destroy();
+	}
+
 	/**
 	 * Updates the network status of the login page
 	 *

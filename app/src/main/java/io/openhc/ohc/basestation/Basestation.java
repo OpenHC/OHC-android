@@ -51,7 +51,7 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	private Base_rpc rpc_interface;
 	private Resources resources;
 	private Receiver rx_thread;
-	private HttpClient http_client;
+	private AndroidHttpClient http_client;
 
 	private Basestation_state state;
 
@@ -605,5 +605,7 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	{
 		if(this.rx_thread != null)
 			this.rx_thread.kill();
+		if(this.http_client != null)
+			this.http_client.close();
 	}
 }
