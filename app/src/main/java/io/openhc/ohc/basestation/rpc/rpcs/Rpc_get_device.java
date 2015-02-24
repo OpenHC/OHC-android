@@ -27,8 +27,8 @@ public class Rpc_get_device extends Rpc
 	public final String RPC_ATTRIBUTE_NUM_FIELDS = "num_fields";
 	public final String RPC_ATTRIBUTE_NAME = "name";
 	public final String RPC_ATTRIBUTE_FIELDS = "fields";
-	public final String RPC_ATTRIBUTE_FIELD_ID = "field_id";
-	public final String RPC_ATTRIBUTE_FIELD = "field";
+	public final String RPC_ATTRIBUTE_FIELD_ID = "id";
+	public final String RPC_ATTRIBUTE_DEVICE = "device";
 	public final String RPC_ATTRIBUTE_TYPE = "type";
 	public final String RPC_ATTRIBUTE_VALUE = "value";
 	public final String RPC_ATTRIBUTE_MAX_VALUE = "max_value";
@@ -76,16 +76,16 @@ public class Rpc_get_device extends Rpc
 	@Override
 	protected void process_response(JSONObject response) throws JSONException
 	{
-		Device dev = new Device(response.getString(RPC_ATTRIBUTE_NAME), this.id);
-		int num_fields = response.getInt(RPC_ATTRIBUTE_NUM_FIELDS);
-		JSONArray fields_json = response.getJSONArray(RPC_ATTRIBUTE_FIELDS);
-		List<Field> fields = new ArrayList<>();
+		JSONObject dev_json = response.getJSONObject(RPC_ATTRIBUTE_DEVICE);
+		Device dev = new Device(dev_json.getString(RPC_ATTRIBUTE_NAME), this.id);
+		int num_fields = dev_json.getInt(RPC_ATTRIBUTE_NUM_FIELDS);
+		JSONArray fields_json = dev_json.getJSONArray(RPC_ATTRIBUTE_FIELDS);
 		for(int i = 0; i < fields_json.length(); i++)
 		{
 			JSONObject field_json = fields_json.getJSONObject(i);
+			int field_id = field_json.getInt(RPC_ATTRIBUTE_FIELD_ID);
 			try
 			{
-				int field_id = field_json.getInt(RPC_ATTRIBUTE_FIELD_ID);
 				String name = field_json.getString(RPC_ATTRIBUTE_NAME);
 				String type = field_json.getString(RPC_ATTRIBUTE_TYPE);
 				Object value = field_json.get(RPC_ATTRIBUTE_VALUE);
@@ -93,7 +93,7 @@ public class Rpc_get_device extends Rpc
 				double min_value = field_json.getDouble(RPC_ATTRIBUTE_MIN_VALUE);
 				boolean writable = field_json.getBoolean(RPC_ATTRIBUTE_WRITABLE);
 				Field.Type data_type = Field.Type.valueOf(type.toUpperCase());
-				fields.add(new Field(this.station.ohc, id, field_id, data_type, name, min_value, max_value, writable, value));
+				dev.add_field(field_id, new Field(this.station.ohc, id, field_id, data_type, name, min_value, max_value, writable, value));
 			}
 			catch(Exception ex)
 			{
@@ -102,7 +102,7 @@ public class Rpc_get_device extends Rpc
 				//Prevent crashes due to invalid RPC data; create inaccessible field
 				Field field = new Field();
 				field.set_accessible(false);
-				fields.add(field);
+				dev.add_field(field_id, field);
 			}
 		}
 		this.station.add_device(dev);

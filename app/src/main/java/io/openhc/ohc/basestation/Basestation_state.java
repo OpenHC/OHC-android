@@ -66,6 +66,8 @@ public class Basestation_state implements Serializable
 
 	public int get_num_devices()
 	{
+		if(this.device_ids != null)
+			return this.device_ids.size();
 		return this.num_devices;
 	}
 

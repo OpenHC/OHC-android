@@ -123,6 +123,7 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 						"Received invalid JSON response from basestation", ex);
 			}
 		}
-		this.group.on_receive_transaction(transaction);
+		if(!this.group.do_bundle_requests())
+			this.group.on_receive_transaction(transaction);
 	}
 }

@@ -24,7 +24,9 @@ import io.openhc.ohc.basestation.rpc.rpcs.Rpc;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc_device_get_field;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc_device_get_num_fields;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc_device_set_field_value;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc_get_device;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc_get_device_id;
+import io.openhc.ohc.basestation.rpc.rpcs.Rpc_get_device_ids;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc_get_device_name;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc_get_num_devices;
 import io.openhc.ohc.basestation.rpc.rpcs.Rpc_login;
@@ -134,7 +136,10 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		{
 			this.ohc.logger.log(Level.INFO, "Session token updated");
 			this.state.set_session_token(token);
-			this.get_num_devices();
+			if(this.get_protocol() == Network.Protocol.HTTP)
+				this.get_device_ids();
+			else
+				this.get_num_devices();
 			this.ohc.get_context().set_login_status(false);
 		}
 		else
@@ -234,6 +239,8 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	public void set_device_ids(List<String> ids)
 	{
 		this.state.set_device_ids(ids);
+		for(String id : ids)
+			this.rpc_get_device(id);
 	}
 
 	/**
@@ -244,6 +251,8 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	public void add_device(Device dev)
 	{
 		this.state.put_device(dev.get_id(), dev);
+		if(this.state.get_device_ids().indexOf(dev.get_id()) == this.state.get_num_devices() - 1)
+			ohc.draw_device_overview();
 	}
 
 	//Dynamic calls to Base_rpc depending on the received JSON data
@@ -490,6 +499,31 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		Rpc_set_device_name rpc = new Rpc_set_device_name(this, group);
 		rpc.set_id(id);
 		rpc.set_name(name);
+		group.add_rpcs(rpc);
+		group.set_session_token(this.state.get_session_token());
+		group.run();
+	}
+
+	/**
+	 * Requests all device ids from the basestation
+	 */
+	public void get_device_ids()
+	{
+		Rpc_group group = new Rpc_group(this);
+		Rpc_get_device_ids rpc = new Rpc_get_device_ids(this, group);
+		group.add_rpcs(rpc);
+		group.set_session_token(this.state.get_session_token());
+		group.run();
+	}
+
+	/**
+	 * Queries a device object from the basestation
+	 */
+	public void rpc_get_device(String id)
+	{
+		Rpc_group group = new Rpc_group(this);
+		Rpc_get_device rpc = new Rpc_get_device(this, group);
+		rpc.set_id(id);
 		group.add_rpcs(rpc);
 		group.set_session_token(this.state.get_session_token());
 		group.run();

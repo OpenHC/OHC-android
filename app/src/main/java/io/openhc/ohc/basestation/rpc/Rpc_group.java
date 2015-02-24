@@ -202,6 +202,16 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 		}
 	}
 
+	/**
+	 * Returns whether requests should be bundled in single network transmissions
+	 *
+	 * @return Bundle requests
+	 */
+	public boolean do_bundle_requests()
+	{
+		return this.bundle_requests;
+	}
+
 	@Override
 	public void on_receive_transaction(Transaction_generator.Transaction transaction)
 	{
@@ -229,7 +239,7 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 			catch(Exception ex)
 			{
 				this.station.ohc.logger.log(Level.WARNING,
-						"Failed to parse bundled response",ex);
+						"Failed to parse bundled response: " + transaction.get_response().toString(), ex);
 			}
 		}
 		else
