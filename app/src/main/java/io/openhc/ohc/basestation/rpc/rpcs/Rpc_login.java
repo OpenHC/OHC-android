@@ -23,6 +23,11 @@ public class Rpc_login extends Rpc
 	public final String RPC_ATTRIBUTE_UNAME = "uname";
 	public final String RPC_ATTRIBUTE_PASSWD = "passwd";
 
+	public Rpc_login(Basestation bs)
+	{
+		this(bs, null);
+	}
+
 	public Rpc_login(Basestation bs, Rpc_group group)
 	{
 		this(bs, group, null, null);

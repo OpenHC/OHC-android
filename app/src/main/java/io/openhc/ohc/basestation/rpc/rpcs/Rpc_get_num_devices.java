@@ -19,6 +19,11 @@ public class Rpc_get_num_devices extends Rpc
 	public final String RPC_METHOD = "get_num_devices";
 	public final String RPC_ATTRIBUTE_NUM_DEVICES = "num_devices";
 
+	public Rpc_get_num_devices(Basestation bs)
+	{
+		super(bs, null);
+	}
+
 	public Rpc_get_num_devices(Basestation bs, Rpc_group group)
 	{
 		super(bs, group);

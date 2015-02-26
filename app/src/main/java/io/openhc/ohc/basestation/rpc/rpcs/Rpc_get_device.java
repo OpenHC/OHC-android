@@ -35,6 +35,11 @@ public class Rpc_get_device extends Rpc
 	public final String RPC_ATTRIBUTE_MIN_VALUE = "min_value";
 	public final String RPC_ATTRIBUTE_WRITABLE = "writable";
 
+	public Rpc_get_device(Basestation bs)
+	{
+		this(bs, null);
+	}
+
 	public Rpc_get_device(Basestation bs, Rpc_group group)
 	{
 		this(bs, group, null);

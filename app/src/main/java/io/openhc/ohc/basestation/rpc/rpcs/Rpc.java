@@ -20,7 +20,7 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 {
 	protected boolean finished;
 	protected final Basestation station;
-	protected final Rpc_group group;
+	protected Rpc_group group;
 	protected String session_token;
 	private Transaction_generator.Transaction transaction;
 
@@ -28,6 +28,16 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 	public final String RPC_ATTRIBUTE_SESSION_TOKEN;
 	public final String RPC_REQUEST_KEY;
 	public final String RPC_RESPONSE_KEY;
+
+	/**
+	 * Default constructor.
+	 *
+	 * @param bs    Linked basestation instance
+	 */
+	public Rpc(Basestation bs)
+	{
+		this(bs, null);
+	}
 
 	/**
 	 * Default constructor. The rpc group defines an action to perform when the execution of the rpc
@@ -94,6 +104,16 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 	protected void process_response(JSONObject response) throws Exception
 	{
 
+	}
+
+	/**
+	 * Sets the group of this RPC
+	 *
+	 * @param group The group
+	 */
+	public void set_group(Rpc_group group)
+	{
+		this.group = group;
 	}
 
 	/**

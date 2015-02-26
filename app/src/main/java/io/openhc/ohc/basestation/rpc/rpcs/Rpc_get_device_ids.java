@@ -21,6 +21,11 @@ public class Rpc_get_device_ids extends Rpc
 	public final String RPC_METHOD = "get_device_ids";
 	public final String RPC_ATTRIBUTE_IDS = "ids";
 
+	public Rpc_get_device_ids(Basestation bs)
+	{
+		super(bs, null);
+	}
+
 	public Rpc_get_device_ids(Basestation bs, Rpc_group group)
 	{
 		super(bs, group);

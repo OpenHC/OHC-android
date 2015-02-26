@@ -135,11 +135,20 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 	/**
 	 * Adds one or more RPCs
 	 *
-	 * @param rpcs Rpcs
+	 * @param rpcs RPCs
 	 */
 	public void add_rpcs(List<Rpc> rpcs)
 	{
 		this.rpcs.addAll(rpcs);
+	}
+
+	/**
+	 * Updates the reference to this group for each RPC
+	 */
+	public void update_group_ref()
+	{
+		for(Rpc rpc : this.rpcs)
+			rpc.set_group(this);
 	}
 
 	/**

@@ -22,6 +22,11 @@ public class Rpc_get_device_id extends Rpc
 	public final String RPC_ATTRIBUTE_INDEX = "index";
 	public final String RPC_ATTRIBUTE_ID = "id";
 
+	public Rpc_get_device_id(Basestation bs)
+	{
+		this(bs, null);
+	}
+
 	public Rpc_get_device_id(Basestation bs, Rpc_group group)
 	{
 		this(bs, group, -1);

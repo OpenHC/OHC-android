@@ -23,6 +23,11 @@ public class Rpc_set_device_name extends Rpc
 	public final String RPC_ATTRIBUTE_ID = "id";
 	public final String RPC_ATTRIBUTE_NAME = "name";
 
+	public Rpc_set_device_name(Basestation bs)
+	{
+		this(bs, null);
+	}
+
 	public Rpc_set_device_name(Basestation bs, Rpc_group group)
 	{
 		this(bs, group, null, null);

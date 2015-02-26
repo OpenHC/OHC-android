@@ -22,6 +22,11 @@ public class Rpc_device_get_num_fields extends Rpc
 	public final String RPC_ATTRIBUTE_ID = "id";
 	public final String RPC_ATTRIBUTE_NUM_FIELDS = "num_fields";
 
+	public Rpc_device_get_num_fields(Basestation bs)
+	{
+		this(bs, null, null);
+	}
+
 	public Rpc_device_get_num_fields(Basestation bs, Rpc_group group)
 	{
 		this(bs, group, null);

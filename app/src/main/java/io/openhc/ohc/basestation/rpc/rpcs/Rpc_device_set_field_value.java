@@ -25,6 +25,11 @@ public class Rpc_device_set_field_value extends Rpc
 	public final String RPC_ATTRIBUTE_FIELD_ID = "field_id";
 	public final String RPC_ATTRIBUTE_VALUE = "value";
 
+	public Rpc_device_set_field_value(Basestation bs)
+	{
+		this(bs, null);
+	}
+
 	public Rpc_device_set_field_value(Basestation bs, Rpc_group group)
 	{
 		this(bs, group, null, -1, null);
