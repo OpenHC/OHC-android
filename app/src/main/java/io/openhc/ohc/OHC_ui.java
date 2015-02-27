@@ -161,6 +161,7 @@ public class OHC_ui extends ActionBarActivity
 	@Override
 	public void onDestroy()
 	{
+		super.onDestroy();
 		if(this.ohc != null && this.ohc.get_basestation() != null)
 			this.ohc.get_basestation().destroy();
 	}

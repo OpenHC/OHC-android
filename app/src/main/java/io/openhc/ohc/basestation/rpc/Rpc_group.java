@@ -86,6 +86,7 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 		this.mode = mode;
 		this.bundle_requests = this.station.do_bundle_requests();
 		this.RPC_RESPONSE_KEY = this.station.get_resources().getString(R.string.ohc_rpc_response_key);
+		this.update_group_ref();
 	}
 
 	/**
@@ -130,6 +131,7 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 	public void add_rpcs(Rpc ... rpcs)
 	{
 		this.rpcs.addAll(Arrays.asList(rpcs));
+		this.update_group_ref();
 	}
 
 	/**
@@ -140,6 +142,7 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 	public void add_rpcs(List<Rpc> rpcs)
 	{
 		this.rpcs.addAll(rpcs);
+		this.update_group_ref();
 	}
 
 	/**
