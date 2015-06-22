@@ -84,9 +84,9 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 	{
 		this.ohc = ohc;
 		this.resources = ohc.get_context().getResources();
-		this.network = new Network(this);
+		this.network = new Network(this, protocol);
 		this.rpc_interface = new Base_rpc(ohc);
-		this.transaction_gen = new Transaction_generator(ohc);
+		this.transaction_gen = new Transaction_generator();
 		this.state = new Basestation_state();
 		this.state.set_remote_socket_addr(station_address);
 		this.state.set_protocol(protocol);
@@ -94,9 +94,6 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		switch(protocol)
 		{
 			case UDP:
-				//Receiver for state updates initiated by the basestation
-				this.rx_thread = network.setup_receiver();
-				this.rx_thread.start();
 				break;
 			case HTTP:
 				this.http_client = AndroidHttpClient.newInstance(this.resources.getString(
@@ -355,10 +352,8 @@ public class Basestation implements Rpc_group.Rpc_group_callback
 		switch(this.get_protocol())
 		{
 			case UDP:
-				Sender s_udp = new io.openhc.ohc.skynet.udp.Sender(this.ohc,
-						this.state.get_remote_socket_address(), rpc);
 				Transaction_generator.Transaction transaction_udp = rpc.get_transaction();
-				s_udp.execute(transaction_udp);
+				this.network.send_transaction(transaction_udp);
 				break;
 			case HTTP:
 				InetSocketAddress endpoint = new InetSocketAddress(this.state.get_remote_ip_address(),

@@ -30,7 +30,6 @@ import io.openhc.ohc.skynet.transaction.Transaction_generator;
  */
 public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Void, Transaction_generator.Transaction> implements Socket_timeout.Socket_provider
 {
-	private final OHC ohc;
 	private final InetAddress broadcast_addr;
 	private final int rport;
 	private final int timeout;
@@ -42,32 +41,27 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 	 * Default constructor. Initializes timeout with a sensible default value
 	 * Callback is optional and thus may be null
 	 *
-	 * @param ohc            OHC instance
 	 * @param broadcast_addr Broadcast address
 	 * @param rport          Remote port
 	 * @param receiver       Callback
 	 */
-	public Broadcaster(OHC ohc, InetAddress broadcast_addr, int rport, Broadcast_receiver receiver)
+	public Broadcaster(InetAddress broadcast_addr, int rport, Broadcast_receiver receiver)
 	{
 		//Pretty "low" default timeout but since broadcasts will only work inside LANs 100ms are enough
-		this(ohc, broadcast_addr, rport,
-				ohc.get_context().getResources().getInteger(R.integer.ohc_network_timeout_bcast),
-				receiver);
+		this(broadcast_addr, rport, OHC.resources.getInteger(R.integer.ohc_network_timeout_bcast), receiver);
 	}
 
 	/**
 	 * Constructor allowing for a manual adjustment of timeout
 	 * Callback is optional and thus may be null
 	 *
-	 * @param ohc            OHC instance
 	 * @param broadcast_addr Broadcast address
 	 * @param rport          Remote port
 	 * @param timeout        Timeout
 	 * @param receiver       Callback
 	 */
-	public Broadcaster(OHC ohc, InetAddress broadcast_addr, int rport, int timeout, Broadcast_receiver receiver)
+	public Broadcaster(InetAddress broadcast_addr, int rport, int timeout, Broadcast_receiver receiver)
 	{
-		this.ohc = ohc;
 		this.receiver = receiver;
 		this.broadcast_addr = broadcast_addr;
 		this.rport = rport;
@@ -101,7 +95,7 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 		}
 		catch(Exception ex)
 		{
-			ohc.logger.log(Level.WARNING, "Failed to retrieve broadcast address from dhcp info.");
+			OHC.logger.log(Level.WARNING, "Failed to retrieve broadcast address from dhcp info.");
 			return null;
 		}
 	}
@@ -139,11 +133,11 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 					DatagramPacket packet = new DatagramPacket(data_tx, data_tx.length,
 							this.broadcast_addr, this.rport);
 					socket.send(packet);
-					this.ohc.logger.log(Level.INFO, "Broadcast packet sent");
+					OHC.logger.log(Level.INFO, "Broadcast packet sent");
 				}
 				catch(Exception ex)
 				{
-					this.ohc.logger.log(Level.WARNING, "Failed to send broadcast: " + ex.toString(), ex);
+					OHC.logger.log(Level.WARNING, "Failed to send broadcast: " + ex.toString(), ex);
 				}
 				//... and wait for a response
 				try
@@ -152,7 +146,7 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 					/*One more timeout that's slightly longer than the socket timeout itself.
 					* Used to make a socket that receives a lot of data but not
 					* a valid response to it's transaction timeout*/
-					Socket_timeout timeout = new Socket_timeout(ohc, this, this.timeout + 1);
+					Socket_timeout timeout = new Socket_timeout(this, this.timeout + 1);
 					timeout.start();
 					try
 					{
@@ -171,16 +165,17 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 									timeout.cancel();
 								}
 								else
-									this.ohc.logger.log(Level.WARNING,
+									OHC.logger.log(Level.WARNING,
 											"Received invalid transaction uuid");
 							}
 							catch(Exception ex)
 							{
-								this.ohc.logger.log(Level.WARNING,
+								OHC.logger.log(Level.WARNING,
 										"Received invalid data on broadcast rx channel: " +
 												ex.getMessage());
 							}
 						}
+						this.socket_rx.close();
 					}
 					catch(SocketTimeoutException ex)
 					{
@@ -189,18 +184,20 @@ public class Broadcaster extends AsyncTask<Transaction_generator.Transaction, Vo
 				}
 				catch(IOException ex)
 				{
-					this.ohc.logger.log(Level.SEVERE, "Socket failed to receive data: " + ex.getMessage(), ex);
+					OHC.logger.log(Level.SEVERE, "Socket failed to receive data: " + ex.getMessage(), ex);
 				}
 				transaction.inc_retry_counter();
 			}
+			if(!this.socket_rx.isClosed())
+				this.socket_rx.close();
 		}
 		catch(IOException ex)
 		{
-			this.ohc.logger.log(Level.SEVERE, "Failed to create listening socket for broadcast response: " + ex.getMessage(), ex);
+			OHC.logger.log(Level.SEVERE, "Failed to create listening socket for broadcast response: " + ex.getMessage(), ex);
 		}
 		catch(JSONException ex)
 		{
-			this.ohc.logger.log(Level.SEVERE, "Broken JSON supplied: " + ex.getMessage(), ex);
+			OHC.logger.log(Level.SEVERE, "Broken JSON supplied: " + ex.getMessage(), ex);
 		}
 		return transaction;
 	}

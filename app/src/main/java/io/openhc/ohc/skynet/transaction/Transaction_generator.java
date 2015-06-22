@@ -5,6 +5,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -21,29 +23,25 @@ import io.openhc.ohc.OHC;
 public class Transaction_generator
 {
 	private final int default_retry_count;
-	private final OHC ohc;
 
 	/**
-	 * Default constructor
+	 * Constructs a new transaction generator
 	 *
-	 * @param ohc Related ohc instance
 	 */
-	public Transaction_generator(OHC ohc)
+	public Transaction_generator()
 	{
-		this(ohc, 5);
+		this(5);
 	}
 
 	/**
 	 * Constructs a new transaction generator specifying the default count of retransmits for
 	 * UDP transactions
 	 *
-	 * @param ohc         Related ohc instance
 	 * @param retry_count Default number of retransmits
 	 */
-	public Transaction_generator(OHC ohc, int retry_count)
+	public Transaction_generator(int retry_count)
 	{
 		this.default_retry_count = retry_count;
-		this.ohc = ohc;
 	}
 
 	/**
@@ -107,13 +105,13 @@ public class Transaction_generator
 			uuid = UUID.randomUUID();
 		try
 		{
-			return new Transaction(this.ohc, json, uuid, callback, tries);
+			return new Transaction(json, uuid, callback, tries);
 		}
 		catch(JSONException ex)
 		{
 			/* This should NEVER, absolutely __NEVER__ happen (except if you hand in a broken JSON object)
 			 * But that's why it's called an exception, isn't it?*/
-			this.ohc.logger.log(Level.SEVERE, "Transaction generator dying x(");
+			OHC.logger.log(Level.SEVERE, "Transaction generator dying x(");
 		}
 		return null;
 	}
@@ -126,8 +124,6 @@ public class Transaction_generator
 	 */
 	public class Transaction
 	{
-		public final String UUID_KEY = "transaction_uuid";
-
 		private JSONObject json_request;
 		private JSONObject json_response;
 		private UUID uuid;
@@ -135,21 +131,22 @@ public class Transaction_generator
 		private int max_retry_num;
 		private List<Transaction> sub_transactions = new ArrayList<>();
 		private Transaction_receiver callback;
+		private TimerTask timeout;
 
 		/**
 		 * Default Transaction constructor.
 		 *
-		 * @param ohc       Related ohc instance
 		 * @param json      Json data
 		 * @param uuid      A unique identifier
 		 * @param callback  Callback for finished transactions
 		 * @param max_retry Maximum number of retransmits
 		 * @throws JSONException
 		 */
-		protected Transaction(OHC ohc, JSONObject json, UUID uuid, Transaction_receiver callback, int max_retry) throws JSONException
+		protected Transaction(JSONObject json, UUID uuid, Transaction_receiver callback, int max_retry) throws JSONException
 		{
 			this.json_request = json;
 			this.uuid = uuid;
+			this.callback = callback;
 			this.max_retry_num = max_retry;
 			this.store_uuid();
 		}
@@ -163,11 +160,11 @@ public class Transaction_generator
 		{
 			try
 			{
-				this.json_request.put(UUID_KEY, this.get_uuid());
+				this.json_request.put(JSON.UUID_KEY, this.get_uuid());
 			}
 			catch(JSONException ex)
 			{
-				ohc.logger.log(Level.SEVERE, "FATAL ERROR! FAILED TO SET TRANSACTION ID!");
+				OHC.logger.log(Level.SEVERE, "FATAL ERROR! FAILED TO SET TRANSACTION ID!");
 				throw ex;
 			}
 		}
@@ -252,7 +249,7 @@ public class Transaction_generator
 		{
 			try
 			{
-				return this.get_uuid().equals(json.getString(UUID_KEY));
+				return this.get_uuid().equals(json.getString(JSON.UUID_KEY));
 			}
 			catch(Exception ex)
 			{
@@ -299,6 +296,43 @@ public class Transaction_generator
 		{
 			return this.sub_transactions;
 		}
+
+		public void set_timeout(long time, final Transaction_timeout timeout)
+		{
+			final Transaction transaction = this;
+			this.timeout = new TimerTask()
+			{
+				@Override
+				public void run()
+				{
+					timeout.on_transaction_timeout(transaction);
+					transaction.timeout = null;
+				}
+			};
+			Timer timer = new Timer();
+			timer.schedule(this.timeout, time);
+		}
+
+		public void cancel_timeout()
+		{
+			if(this.timeout != null)
+				this.timeout.cancel();
+		}
+
+		public Transaction_receiver get_callback()
+		{
+			return this.callback;
+		}
+	}
+
+	public static class JSON
+	{
+		public static String UUID_KEY = "transaction_uuid";
+	}
+
+	public interface Transaction_timeout
+	{
+		public void on_transaction_timeout(Transaction transaction);
 	}
 
 	public interface Transaction_receiver

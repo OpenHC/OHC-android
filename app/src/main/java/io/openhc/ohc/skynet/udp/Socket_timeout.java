@@ -14,20 +14,17 @@ import io.openhc.ohc.OHC;
  */
 public class Socket_timeout extends TimerTask
 {
-	private final OHC ohc;
 	private final Socket_provider supplier;
 	private final long timeout;
 
 	/**
 	 * Default constructor
 	 *
-	 * @param ohc      OHC instance
 	 * @param supplier A socket supplier
 	 * @param timeout  The timeout in ms
 	 */
-	public Socket_timeout(OHC ohc, Socket_provider supplier, long timeout)
+	public Socket_timeout(Socket_provider supplier, long timeout)
 	{
-		this.ohc = ohc;
 		this.supplier = supplier;
 		this.timeout = timeout;
 	}
@@ -48,18 +45,18 @@ public class Socket_timeout extends TimerTask
 		try
 		{
 			socket.close();
-			this.ohc.logger.log(Level.INFO, "Closing socket: " + socket.toString());
+			OHC.logger.log(Level.INFO, "Closing socket: " + socket.toString());
 		}
 		catch(Exception ex)
 		{
-			this.ohc.logger.log(Level.INFO, String.format("Closing socket %s : %s", socket.toString(), ex.getMessage()), ex);
+			OHC.logger.log(Level.INFO, String.format("Closing socket %s : %s", socket.toString(), ex.getMessage()), ex);
 		}
 	}
 
 	public interface Socket_provider
 	{
 		/**
-		 * Callback to get a socket
+		 * Callback to fetch socket
 		 *
 		 * @return The socket
 		 */

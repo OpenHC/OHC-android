@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import io.openhc.ohc.R;
 import io.openhc.ohc.basestation.Basestation;
 import io.openhc.ohc.basestation.rpc.Rpc_group;
+import io.openhc.ohc.skynet.Network;
 import io.openhc.ohc.skynet.Sender;
 import io.openhc.ohc.skynet.transaction.Transaction_generator;
 
@@ -56,7 +57,7 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 		this.RPC_REQUEST_KEY = bs.get_resources().getString(R.string.ohc_rpc_request_key);
 		this.RPC_RESPONSE_KEY = bs.get_resources().getString(R.string.ohc_rpc_response_key);
 		this.transaction = this.station.transaction_gen
-				.generate_transaction(new JSONObject());
+				.generate_transaction(new JSONObject(), this);
 	}
 
 	/**
@@ -123,7 +124,9 @@ public abstract class Rpc implements Transaction_generator.Transaction_receiver
 	 */
 	public Transaction_generator.Transaction get_transaction() throws JSONException
 	{
-		this.transaction.set_json(this.get_json());
+		JSONObject json = this.get_json();
+		json.put(Network.JSON.KEY_TYPE, Network.PacketType.RPC.id);
+		this.transaction.set_json(json);
 		return transaction;
 	}
 

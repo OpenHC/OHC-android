@@ -1,5 +1,6 @@
 package io.openhc.ohc;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 
@@ -27,7 +28,8 @@ import io.openhc.ohc.ui.Ui_state;
  */
 public class OHC implements Broadcaster.Broadcast_receiver
 {
-	public final OHC_Logger logger;
+	public static OHC_Logger logger;
+	public static Resources resources;
 
 	private OHC_ui context;
 	private Basestation station;
@@ -47,6 +49,7 @@ public class OHC implements Broadcaster.Broadcast_receiver
 	{
 		this.context = ctx;
 		this.logger = new OHC_Logger(ctx.getString(R.string.log_tag));
+		this.resources = ctx.getResources();
 		this.ui_state = new Ui_state();
 	}
 

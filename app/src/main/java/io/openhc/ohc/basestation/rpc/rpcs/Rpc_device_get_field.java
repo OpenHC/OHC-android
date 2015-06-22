@@ -90,8 +90,8 @@ public class Rpc_device_get_field extends Rpc
 	@Override
 	protected void process_response(JSONObject response) throws JSONException
 	{
-		String id = response.getString(RPC_ATTRIBUTE_DEVICE_ID);
-		int field_id = response.getInt(RPC_ATTRIBUTE_FIELD_ID);
+		final String id = response.getString(RPC_ATTRIBUTE_DEVICE_ID);
+		final int field_id = response.getInt(RPC_ATTRIBUTE_FIELD_ID);
 		try
 		{
 			JSONObject field_json = response.getJSONObject(RPC_ATTRIBUTE_FIELD);
@@ -102,8 +102,16 @@ public class Rpc_device_get_field extends Rpc
 			double min_value = field_json.getDouble(RPC_ATTRIBUTE_MIN_VALUE);
 			boolean writable = field_json.getBoolean(RPC_ATTRIBUTE_WRITABLE);
 			Field.Type data_type = Field.Type.valueOf(type.toUpperCase());
-			Field field = new Field(this.station.ohc, id, field_id, data_type, name, min_value, max_value, writable, value);
-			this.station.device_set_field(id, field_id, field);
+			final Field field = new Field(this.station.ohc, id, field_id, data_type, name, min_value, max_value, writable, value);
+			final Basestation station = this.station;
+			this.station.ohc.get_context().runOnUiThread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					station.device_set_field(id, field_id, field);
+				}
+			});
 		}
 		catch(Exception ex)
 		{

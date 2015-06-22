@@ -236,7 +236,7 @@ public class Rpc_group implements Transaction_generator.Transaction_receiver
 				for(int i = 0; i < responses.length(); i++)
 				{
 					JSONObject json = responses.getJSONObject(i);
-					String uuid = json.getString(transaction.UUID_KEY);
+					String uuid = json.getString(Transaction_generator.JSON.UUID_KEY);
 					Rpc rpc = this.uuid_map.get(uuid);
 					if(rpc == null)
 					{
